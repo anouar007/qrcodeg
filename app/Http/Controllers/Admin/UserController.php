@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::with('roles');
+        $query = User::with(['roles', 'directPermissions']);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -46,8 +47,9 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
+        $permissions = Permission::orderBy('module')->get()->groupBy('module');
 
-        return view('admin.users.create', compact('roles'));
+        return view('admin.users.create', compact('roles', 'permissions'));
     }
 
     public function store(Request $request)
@@ -60,8 +62,10 @@ class UserController extends Controller
             'phone' => 'nullable|string|max:30',
             'password' => 'required|string|min:8|confirmed',
             'status' => 'required|in:active,inactive',
-            'roles' => 'required|array',
+            'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,id',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'exists:permissions,id',
         ]);
 
         $user = User::create([
@@ -74,7 +78,10 @@ class UserController extends Controller
             'status' => $validated['status'],
         ]);
 
-        $user->roles()->sync($validated['roles']);
+        if (! empty($validated['roles'])) {
+            $user->roles()->sync($validated['roles']);
+        }
+        $user->directPermissions()->sync($request->input('permissions', []));
 
         ActivityLog::log(
             action: 'user_created',
@@ -89,9 +96,10 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::all();
-        $user->load('roles');
+        $permissions = Permission::orderBy('module')->get()->groupBy('module');
+        $user->load(['roles', 'directPermissions']);
 
-        return view('admin.users.edit', compact('user', 'roles'));
+        return view('admin.users.edit', compact('user', 'roles', 'permissions'));
     }
 
     public function update(Request $request, User $user)
@@ -104,8 +112,10 @@ class UserController extends Controller
             'phone' => 'nullable|string|max:30',
             'password' => 'nullable|string|min:8|confirmed',
             'status' => 'required|in:active,inactive',
-            'roles' => 'required|array',
+            'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,id',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'exists:permissions,id',
         ]);
 
         $updateData = [
@@ -122,7 +132,8 @@ class UserController extends Controller
         }
 
         $user->update($updateData);
-        $user->roles()->sync($validated['roles']);
+        $user->roles()->sync($validated['roles'] ?? []);
+        $user->directPermissions()->sync($request->input('permissions', []));
 
         ActivityLog::log(
             action: 'user_updated',

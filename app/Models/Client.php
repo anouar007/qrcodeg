@@ -15,6 +15,7 @@ class Client extends Authenticatable
 
     protected $fillable = [
         'company_name',
+        'project_name',
         'contact_name',
         'email',
         'phone',
@@ -29,6 +30,21 @@ class Client extends Authenticatable
         'is_password_set',
         'last_login_at',
     ];
+
+    public function getNameAttribute(): string
+    {
+        return $this->contact_name ?: ($this->company_name ?: 'Client #'.$this->id);
+    }
+
+    public function digitalCards(): HasMany
+    {
+        return $this->hasMany(DigitalCard::class);
+    }
+
+    public function nfcTags(): HasMany
+    {
+        return $this->hasMany(NfcTag::class);
+    }
 
     protected $hidden = [
         'password',

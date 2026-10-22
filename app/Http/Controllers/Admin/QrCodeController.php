@@ -74,6 +74,8 @@ class QrCodeController extends Controller
             'description' => 'nullable|string|max:500',
             'client_id' => 'nullable|exists:clients,id',
             'type' => 'required|string|in:website,text,contact,whatsapp,social,image,gallery,video,pdf,product,business,wifi,custom_landing',
+            'card_template' => 'nullable|string|in:google_review,social_media,menu',
+            'target_redirect_url' => 'nullable|string|max:1000',
             'foreground_color' => 'nullable|string|max:16',
             'background_color' => 'nullable|string|max:16',
             'dot_style' => 'nullable|string|in:square,dots,rounded',
@@ -134,6 +136,8 @@ class QrCodeController extends Controller
             'description' => 'nullable|string|max:500',
             'client_id' => 'nullable|exists:clients,id',
             'type' => 'required|string|in:website,text,contact,whatsapp,social,image,gallery,video,pdf,product,business,wifi,custom_landing',
+            'card_template' => 'nullable|string|in:google_review,social_media,menu',
+            'target_redirect_url' => 'nullable|string|max:1000',
             'status' => 'required|in:active,inactive,suspended,archived',
             // Design fields
             'foreground_color' => 'required|string|max:16',
@@ -156,6 +160,8 @@ class QrCodeController extends Controller
             'description' => $validated['description'] ?? null,
             'client_id' => $validated['client_id'] ?? null,
             'type' => $validated['type'],
+            'card_template' => $validated['card_template'] ?? ($qrCode->card_template ?: 'google_review'),
+            'target_redirect_url' => $validated['target_redirect_url'] ?? null,
             'status' => $validated['status'],
         ]);
 
@@ -332,6 +338,49 @@ class QrCodeController extends Controller
         );
 
         return response()->download($zipPath)->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Download printable PDF card in one of the 3 templates (google_review, social_media, menu)
+     */
+    public function downloadCardPdf(Request $request, QrCode $qrCode)
+    {
+        $template = $request->input('template', $qrCode->card_template ?: 'google_review');
+        $pdf = $this->qrCodeService->generateCardPdf($qrCode, $template);
+
+        ActivityLog::log(
+            action: 'qr_card_pdf_downloaded',
+            resourceType: 'QrCode',
+            resourceId: $qrCode->id,
+            details: ['template' => $template]
+        );
+
+        $safeName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $qrCode->name ?: $qrCode->public_code);
+
+        return $pdf->download("{$safeName}_{$template}_card.pdf");
+    }
+
+    /**
+     * Quick in-dashboard update of destination link without touching the physical QR code
+     */
+    public function updateDestination(Request $request, QrCode $qrCode)
+    {
+        $validated = $request->validate([
+            'target_redirect_url' => 'nullable|url|max:1000',
+            'card_template' => 'nullable|string|in:google_review,social_media,menu',
+            'status' => 'nullable|string|in:active,inactive,suspended,archived',
+        ]);
+
+        $qrCode->update($validated);
+
+        ActivityLog::log(
+            action: 'qr_destination_updated',
+            resourceType: 'QrCode',
+            resourceId: $qrCode->id,
+            details: $validated
+        );
+
+        return back()->with('success', 'Destination link & tracking settings updated instantly! The printed QR code remains 100% active and unchanged.');
     }
 
     public function destroy(QrCode $qrCode)

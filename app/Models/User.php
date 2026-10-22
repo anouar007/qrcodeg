@@ -52,6 +52,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class);
     }
 
+    public function directPermissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'permission_user');
+    }
+
     public function qrCodes(): HasMany
     {
         return $this->hasMany(QrCode::class, 'created_by');
@@ -80,6 +85,10 @@ class User extends Authenticatable
     public function hasPermission(string $permissionSlug): bool
     {
         if ($this->isAdmin()) {
+            return true;
+        }
+
+        if ($this->directPermissions->contains('slug', $permissionSlug)) {
             return true;
         }
 

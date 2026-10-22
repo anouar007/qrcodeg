@@ -42,6 +42,16 @@ class DynamicQrController extends Controller
         // Record scan statistics anonymously
         $this->analyticsService->recordScan($qr, $request);
 
+        // If explicit destination redirect URL is configured, redirect immediately
+        if (! empty($qr->target_redirect_url)) {
+            $destUrl = $qr->target_redirect_url;
+            if (! preg_match('#^https?://#i', $destUrl)) {
+                $destUrl = 'https://'.$destUrl;
+            }
+
+            return redirect()->away($destUrl);
+        }
+
         $content = $qr->content?->content_data ?? [];
         $type = $qr->type;
 

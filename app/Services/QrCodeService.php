@@ -6,6 +6,7 @@ use App\Models\QrCode as QrCodeModel;
 use App\Models\QrContent;
 use App\Models\QrDesign;
 use App\Models\User;
+use Barryvdh\DomPDF\PDF;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -194,6 +195,9 @@ SVG;
                 $accessCode = QrCodeModel::generateUniqueAccessCode();
                 $name = $quantity === 1 ? $namePrefix : "{$namePrefix} #".str_pad((string) $i, 3, '0', STR_PAD_LEFT);
 
+                $targetUrl = $data['target_redirect_url'] ?? ($data['url'] ?? null);
+                $cardTemplate = $data['card_template'] ?? 'google_review';
+
                 $qr = QrCodeModel::create([
                     'public_code' => $publicCode,
                     'access_code' => $accessCode,
@@ -201,8 +205,10 @@ SVG;
                     'description' => $data['description'] ?? null,
                     'client_id' => $clientId,
                     'type' => $type,
+                    'card_template' => $cardTemplate,
                     'status' => 'active',
                     'dynamic_url' => "{$baseUrl}/q/{$publicCode}",
+                    'target_redirect_url' => $targetUrl,
                     'created_by' => $creator?->id,
                 ]);
 
@@ -317,6 +323,27 @@ SVG;
             ],
             default => ['content' => 'Dynamic QR content'],
         };
+    }
+
+    /**
+     * Generate standalone printable card PDF in one of the 3 templates: google_review, social_media, menu
+     */
+    public function generateCardPdf(QrCodeModel $qr, string $template = 'google_review'): PDF
+    {
+        $pngRaw = $this->renderPng($qr, 400);
+        $qrPngBase64 = 'data:image/png;base64,'.base64_encode($pngRaw);
+
+        $validTemplates = ['google_review', 'social_media', 'menu'];
+        if (! in_array($template, $validTemplates)) {
+            $template = 'google_review';
+        }
+
+        // 105mm x 148mm = ~297.6pt x 419.5pt (A6 Card)
+        return \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.card-templates', [
+            'qr' => $qr,
+            'qrPngBase64' => $qrPngBase64,
+            'template' => $template,
+        ])->setPaper([0, 0, 297.64, 419.53], 'portrait');
     }
 
     protected function hexToRgb(string $hex): array

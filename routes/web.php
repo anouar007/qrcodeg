@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\ClientController;
+use App\Http\Controllers\Admin\DigitalCardController;
+use App\Http\Controllers\Admin\NfcTagController;
 use App\Http\Controllers\Admin\QrCodeController;
 use App\Http\Controllers\Admin\QrDocumentController;
 use App\Http\Controllers\Admin\QrTemplateController;
@@ -17,6 +19,8 @@ use App\Http\Controllers\Client\ClientDashboardController;
 use App\Http\Controllers\Client\ClientQrController;
 use App\Http\Controllers\DynamicQrController;
 use App\Http\Controllers\Public\PublicController;
+use App\Http\Controllers\Public\PublicDigitalCardController;
+use App\Http\Controllers\Public\PublicNfcController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,11 +38,19 @@ Route::post('/contact', [PublicController::class, 'submitContact'])->name('conta
 
 /*
 |--------------------------------------------------------------------------
-| 2. Dynamic QR Scanner Endpoints (No authentication required)
+| 2. Dynamic Endpoints: QR Codes, Digital Business Cards & NFC Tags
 |--------------------------------------------------------------------------
 */
+// Dynamic QR Scanner
 Route::get('/q/{publicCode}', [DynamicQrController::class, 'handle'])->name('qr.scan');
 Route::get('/q/{publicCode}/vcard', [DynamicQrController::class, 'downloadVCard'])->name('qr.vcard');
+
+// Carte Visite Digitale (Public View & vCard Download)
+Route::get('/c/{slug}', [PublicDigitalCardController::class, 'show'])->name('digital-cards.public.show');
+Route::get('/c/{slug}/vcard', [PublicDigitalCardController::class, 'downloadVCard'])->name('digital-cards.public.vcard');
+
+// NFC Touch & Detect Redirect
+Route::get('/n/{uid}', [PublicNfcController::class, 'handle'])->name('nfc.public.handle');
 
 /*
 |--------------------------------------------------------------------------
@@ -104,10 +116,18 @@ Route::prefix('admin')->name('admin.')->middleware('auth:web')->group(function (
     Route::post('clients/{client}/reset-access', [ClientController::class, 'resetAccess'])->name('clients.reset-access');
     Route::post('clients/{client}/toggle-status', [ClientController::class, 'toggleStatus'])->name('clients.toggle-status');
 
-    // QR Codes
+    // Carte Visite Digitale
+    Route::resource('digital-cards', DigitalCardController::class);
+
+    // NFC Tags
+    Route::resource('nfc-tags', NfcTagController::class);
+
+    // Dynamic QR Codes
     Route::post('qr-codes/preview-live', [QrCodeController::class, 'previewLive'])->name('qr-codes.preview-live');
     Route::post('qr-codes/batch-zip', [QrCodeController::class, 'downloadBatchZip'])->name('qr-codes.batch-zip');
     Route::get('qr-codes/{qrCode}/download/{format}', [QrCodeController::class, 'download'])->name('qr-codes.download');
+    Route::get('qr-codes/{qrCode}/card-pdf', [QrCodeController::class, 'downloadCardPdf'])->name('qr-codes.card-pdf');
+    Route::put('qr-codes/{qrCode}/destination', [QrCodeController::class, 'updateDestination'])->name('qr-codes.destination');
     Route::post('qr-codes/{qrCode}/toggle-status', [QrCodeController::class, 'toggleStatus'])->name('qr-codes.toggle-status');
     Route::resource('qr-codes', QrCodeController::class);
 

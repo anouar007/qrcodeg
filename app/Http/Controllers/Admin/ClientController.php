@@ -15,13 +15,16 @@ class ClientController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Client::withCount(['qrCodes', 'activityLogs']);
+        $query = Client::withCount(['qrCodes', 'digitalCards', 'nfcTags', 'activityLogs']);
 
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('company_name', 'like', "%{$search}%")
+                    ->orWhere('project_name', 'like', "%{$search}%")
                     ->orWhere('contact_name', 'like', "%{$search}%")
+                    ->orWhere('city', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('access_code', 'like', "%{$search}%");
             });
@@ -46,12 +49,13 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'company_name' => 'required|string|max:150',
             'contact_name' => 'required|string|max:100',
-            'email' => 'required|email|max:150|unique:clients,email',
-            'phone' => 'nullable|string|max:30',
-            'address' => 'nullable|string|max:255',
+            'project_name' => 'nullable|string|max:150',
+            'company_name' => 'nullable|string|max:150',
             'city' => 'nullable|string|max:100',
+            'phone' => 'nullable|string|max:30',
+            'email' => 'required|email|max:150|unique:clients,email',
+            'address' => 'nullable|string|max:255',
             'country' => 'nullable|string|max:100',
             'status' => 'required|in:active,inactive',
             'notes' => 'nullable|string|max:1000',
@@ -59,6 +63,10 @@ class ClientController extends Controller
             'password' => 'nullable|string|min:6',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:2048',
         ]);
+
+        $companyName = ! empty($validated['company_name'])
+            ? $validated['company_name']
+            : ($validated['project_name'] ?: $validated['contact_name']);
 
         $accessCode = ! empty($validated['access_code'])
             ? strtoupper(trim($validated['access_code']))
@@ -70,13 +78,14 @@ class ClientController extends Controller
         }
 
         $client = Client::create([
-            'company_name' => $validated['company_name'],
+            'company_name' => $companyName,
+            'project_name' => $validated['project_name'] ?? null,
             'contact_name' => $validated['contact_name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'] ?? null,
             'address' => $validated['address'] ?? null,
             'city' => $validated['city'] ?? null,
-            'country' => $validated['country'] ?? null,
+            'country' => $validated['country'] ?? 'Morocco',
             'status' => $validated['status'],
             'notes' => $validated['notes'] ?? null,
             'access_code' => $accessCode,
@@ -89,20 +98,36 @@ class ClientController extends Controller
             action: 'client_created',
             resourceType: 'Client',
             resourceId: $client->id,
-            details: ['company_name' => $client->company_name, 'access_code' => $client->access_code]
+            details: ['name' => $client->contact_name, 'project' => $client->project_name, 'access_code' => $client->access_code]
         );
 
-        return redirect()->route('admin.clients.show', $client)->with('success', "Client {$client->company_name} created successfully with access code {$client->access_code}.");
+        return redirect()->route('admin.clients.show', $client)->with('success', "Client {$client->contact_name} ({$client->project_name}) créé avec succès ! Code d'accès : {$client->access_code}");
     }
 
     public function show(Client $client)
     {
-        $client->load(['qrCodes.scans', 'qrCodes.content', 'qrCodes.design']);
-        $totalScans = $client->qrCodes->sum('scan_count');
-        $availableQrs = QrCode::whereNull('client_id')->get();
-        $recentLogs = $client->activityLogs()->latest()->take(10)->get();
+        $client->load([
+            'qrCodes.scans',
+            'digitalCards',
+            'nfcTags.taps',
+            'activityLogs' => fn ($q) => $q->latest()->take(50),
+        ]);
 
-        return view('admin.clients.show', compact('client', 'totalScans', 'availableQrs', 'recentLogs'));
+        $totalScans = $client->qrCodes->sum('scan_count');
+        $totalCardViews = $client->digitalCards->sum('views_count');
+        $totalNfcTaps = $client->nfcTags->sum('tap_count');
+        $availableQrs = QrCode::whereNull('client_id')->get();
+
+        // Comprehensive historic timeline about the client
+        $historicEvents = ActivityLog::where(function ($q) use ($client) {
+            $q->where(function ($sq) use ($client) {
+                $sq->where('resource_type', 'Client')->where('resource_id', $client->id);
+            })->orWhere(function ($sq) use ($client) {
+                $sq->where('client_id', $client->id);
+            });
+        })->latest()->take(50)->get();
+
+        return view('admin.clients.show', compact('client', 'totalScans', 'totalCardViews', 'totalNfcTaps', 'availableQrs', 'historicEvents'));
     }
 
     public function edit(Client $client)
@@ -113,8 +138,9 @@ class ClientController extends Controller
     public function update(Request $request, Client $client)
     {
         $validated = $request->validate([
-            'company_name' => 'required|string|max:150',
             'contact_name' => 'required|string|max:100',
+            'project_name' => 'nullable|string|max:150',
+            'company_name' => 'nullable|string|max:150',
             'email' => ['required', 'email', 'max:150', Rule::unique('clients')->ignore($client->id)],
             'phone' => 'nullable|string|max:30',
             'address' => 'nullable|string|max:255',
@@ -126,14 +152,19 @@ class ClientController extends Controller
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:2048',
         ]);
 
+        $companyName = ! empty($validated['company_name'])
+            ? $validated['company_name']
+            : ($validated['project_name'] ?: $validated['contact_name']);
+
         $updateData = [
-            'company_name' => $validated['company_name'],
+            'company_name' => $companyName,
+            'project_name' => $validated['project_name'] ?? null,
             'contact_name' => $validated['contact_name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'] ?? null,
             'address' => $validated['address'] ?? null,
             'city' => $validated['city'] ?? null,
-            'country' => $validated['country'] ?? null,
+            'country' => $validated['country'] ?? 'Morocco',
             'status' => $validated['status'],
             'notes' => $validated['notes'] ?? null,
         ];

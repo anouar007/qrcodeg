@@ -44,7 +44,17 @@
                 <span>Dashboard</span>
             </a>
 
-            <div class="sidebar-heading mt-3">QR Management</div>
+            <div class="sidebar-heading mt-3">Smart Media & Contact</div>
+            <a href="{{ route('admin.digital-cards.index') }}" class="sidebar-link {{ request()->routeIs('admin.digital-cards.*') ? 'active' : '' }}">
+                <i class="bi bi-person-vcard"></i>
+                <span>Cartes Visite</span>
+            </a>
+            <a href="{{ route('admin.nfc-tags.index') }}" class="sidebar-link {{ request()->routeIs('admin.nfc-tags.*') ? 'active' : '' }}">
+                <i class="bi bi-broadcast-pin"></i>
+                <span>NFC Tags</span>
+            </a>
+
+            <div class="sidebar-heading mt-3">Dynamic QR Codes</div>
             <a href="{{ route('admin.qr-codes.index') }}" class="sidebar-link {{ request()->routeIs('admin.qr-codes.index') || request()->routeIs('admin.qr-codes.show') || request()->routeIs('admin.qr-codes.edit') ? 'active' : '' }}">
                 <i class="bi bi-qr-code-scan"></i>
                 <span>All QR Codes</span>

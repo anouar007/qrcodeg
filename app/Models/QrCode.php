@@ -20,8 +20,10 @@ class QrCode extends Model
         'description',
         'client_id',
         'type',
+        'card_template',
         'status',
         'dynamic_url',
+        'target_redirect_url',
         'password',
         'is_password_set',
         'created_by',
@@ -73,6 +75,11 @@ class QrCode extends Model
         return $this->hasMany(QrDocumentItem::class);
     }
 
+    public function nfcTags(): HasMany
+    {
+        return $this->hasMany(NfcTag::class);
+    }
+
     public function isActive(): bool
     {
         return $this->status === 'active';
@@ -84,7 +91,7 @@ class QrCode extends Model
     }
 
     /**
-     * Generate unique cryptographically secure public code, e.g. QR-X7K9P2M4
+     * Generate unique cryptographically secure public code starting with VP, e.g. VP-8K9M2X4P
      */
     public static function generateUniquePublicCode(): string
     {
@@ -97,7 +104,7 @@ class QrCode extends Model
             for ($i = 0; $i < 8; $i++) {
                 $randomString .= $characters[ord($bytes[$i]) % $charLength];
             }
-            $code = 'QR-'.$randomString;
+            $code = 'VP-'.$randomString;
         } while (self::where('public_code', $code)->exists());
 
         return $code;

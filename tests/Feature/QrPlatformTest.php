@@ -179,7 +179,7 @@ class QrPlatformTest extends TestCase
 
         foreach ($batch as $qr) {
             $this->assertEquals($client->id, $qr->client_id);
-            $this->assertStringStartsWith('QR-', $qr->public_code);
+            $this->assertStringStartsWith('VP-', $qr->public_code);
             $this->assertNotEmpty($qr->access_code);
         }
     }
