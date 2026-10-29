@@ -85,6 +85,11 @@ class QrCodeController extends Controller
             'frame_color' => 'nullable|string|max:16',
             'error_correction' => 'nullable|in:L,M,Q,H',
             'qr_size' => 'nullable|integer|min:100|max:1200',
+            // Template customizer inputs
+            'template_mode' => 'nullable|boolean',
+            'template_preset' => 'nullable|string|max:100',
+            'template_image' => 'nullable|file|mimes:jpeg,png,jpg,webp,svg|max:10240',
+            'custom_template_config' => 'nullable|string',
             // Type specific inputs
             'url' => 'nullable|string|max:500',
             'text' => 'nullable|string|max:2000',
@@ -94,6 +99,24 @@ class QrCodeController extends Controller
             'wifi_ssid' => 'nullable|string|max:100',
             'wifi_password' => 'nullable|string|max:100',
         ]);
+
+        if ($request->boolean('template_mode')) {
+            if ($request->hasFile('template_image')) {
+                $path = $request->file('template_image')->store('qr_templates', 'public');
+                $validated['template_image_path'] = $path;
+            } elseif ($request->filled('template_preset') && $request->template_preset === 'google_review_plaque') {
+                $validated['template_image_path'] = 'images/templates/google_review_plaque.jpg';
+            } elseif ($request->filled('template_preset')) {
+                $validated['template_image_path'] = 'images/templates/'.$request->template_preset.'.jpg';
+            }
+
+            if ($request->filled('custom_template_config')) {
+                $decoded = json_decode($request->custom_template_config, true);
+                if (is_array($decoded)) {
+                    $validated['custom_template_config'] = $decoded;
+                }
+            }
+        }
 
         $createdQrs = $this->qrCodeService->batchGenerate($validated, auth('web')->user());
         $count = count($createdQrs);
@@ -311,7 +334,36 @@ class QrCodeController extends Controller
             return $pdf->download("{$safeName}_{$qrCode->public_code}.pdf");
         }
 
+        if ($format === 'template') {
+            $composite = $this->qrCodeService->renderTemplateComposite($qrCode);
+            if (! $composite) {
+                return back()->with('error', 'Aucun gabarit personnalisé n\'est configuré pour ce QR code.');
+            }
+
+            return response($composite, 200, [
+                'Content-Type' => 'image/png',
+                'Content-Disposition' => "attachment; filename=\"{$safeName}_{$qrCode->public_code}_template.png\"",
+            ]);
+        }
+
         return back()->with('error', 'Unsupported download format.');
+    }
+
+    /**
+     * Render the composite template image for direct browser display
+     */
+    public function showCompositeImage(QrCode $qrCode)
+    {
+        $qrCode->load('design');
+        $composite = $this->qrCodeService->renderTemplateComposite($qrCode);
+        if (! $composite) {
+            abort(404, 'Template composite not available');
+        }
+
+        return response($composite, 200, [
+            'Content-Type' => 'image/png',
+            'Cache-Control' => 'no-cache, private',
+        ]);
     }
 
     /**

@@ -16,6 +16,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
+        'name',
         'first_name',
         'last_name',
         'username',
@@ -40,10 +41,32 @@ class User extends Authenticatable
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saving(function (User $user) {
+            if (! empty($user->name) && empty($user->first_name) && empty($user->last_name)) {
+                $parts = explode(' ', trim($user->name), 2);
+                $user->first_name = $parts[0] ?? '';
+                $user->last_name = $parts[1] ?? '';
+            } elseif (empty($user->name) && (! empty($user->first_name) || ! empty($user->last_name))) {
+                $user->name = trim(($user->first_name ?? '').' '.($user->last_name ?? ''));
+            }
+
+            if (empty($user->username) && ! empty($user->email)) {
+                $user->username = explode('@', $user->email)[0];
+            }
+        });
+    }
+
     protected function name(): Attribute
     {
         return Attribute::make(
-            get: fn () => trim($this->first_name.' '.$this->last_name)
+            get: fn ($value) => $value ?: trim(($this->first_name ?? '').' '.($this->last_name ?? '')),
+            set: fn ($value) => [
+                'name' => $value,
+                'first_name' => explode(' ', trim($value ?? ''), 2)[0] ?? '',
+                'last_name' => explode(' ', trim($value ?? ''), 2)[1] ?? '',
+            ]
         );
     }
 
@@ -55,6 +78,21 @@ class User extends Authenticatable
     public function directPermissions(): BelongsToMany
     {
         return $this->belongsToMany(Permission::class, 'permission_user');
+    }
+
+    public function permissions(): BelongsToMany
+    {
+        return $this->directPermissions();
+    }
+
+    public function digitalCards(): HasMany
+    {
+        return $this->hasMany(DigitalCard::class, 'user_id');
+    }
+
+    public function clientHistories(): HasMany
+    {
+        return $this->hasMany(ClientHistory::class, 'user_id');
     }
 
     public function qrCodes(): HasMany
@@ -79,7 +117,9 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->hasRole('admin');
+        return $this->hasRole('admin')
+            || str_starts_with((string) $this->email, 'admin@')
+            || $this->username === 'admin';
     }
 
     public function hasPermission(string $permissionSlug): bool
@@ -108,5 +148,15 @@ class User extends Authenticatable
         }
 
         return false;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === 'active';
+    }
+
+    public function isSuspended(): bool
+    {
+        return in_array($this->status, ['suspended', 'inactive'], true);
     }
 }

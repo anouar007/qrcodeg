@@ -1,21 +1,23 @@
 @extends('layouts.admin')
 
 @section('title', 'Gestion des Utilisateurs')
-@section('page_title', 'Utilisateurs & Équipe Interne')
-@section('page_subtitle', 'Gestion des comptes collaborateurs, attribution des rôles et sélection des permissions granulaires (Non clients)')
+@section('page_title', 'Gestion des Utilisateurs & Contrôle d\'Accès')
+@section('page_subtitle', 'Comptes internes collaborateurs, rôles et privilèges granulaires')
 
 @section('content')
 <div class="card card-custom p-4 bg-white mb-4 border-0 shadow-sm rounded-3">
-    <!-- Header with Filters & Search -->
+    <!-- Header with Action -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
         <div>
-            <h5 class="fw-bold mb-0">Collaborateurs & Administrateurs (Non Clients)</h5>
-            <small class="text-muted">Total: {{ $users->total() }} comptes actifs ou assignés</small>
+            <h5 class="fw-bold mb-1">Comptes Utilisateurs Internes</h5>
+            <small class="text-muted">Total: {{ $users->total() }} utilisateur(s) répertorié(s)</small>
         </div>
+        @can('create', App\Models\User::class)
         <a href="{{ route('admin.users.create') }}" class="btn btn-primary d-flex align-items-center gap-2">
             <i class="bi bi-person-plus-fill"></i>
-            <span>Créer un Nouvel Utilisateur</span>
+            <span>Nouvel Utilisateur</span>
         </a>
+        @endcan
     </div>
 
     <!-- Filter Form -->
@@ -40,6 +42,7 @@
             <select name="status" class="form-select">
                 <option value="">Tous statuts</option>
                 <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Actif</option>
+                <option value="suspended" {{ request('status') === 'suspended' ? 'selected' : '' }}>Suspendu</option>
                 <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactif</option>
             </select>
         </div>
@@ -47,7 +50,7 @@
         <div class="col-md-2 d-flex gap-2">
             <button type="submit" class="btn btn-dark w-100"><i class="bi bi-filter"></i> Filtrer</button>
             @if(request()->hasAny(['search', 'role', 'status']))
-                <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary" title="Reset"><i class="bi bi-arrow-clockwise"></i></a>
+                <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary" title="Réinitialiser"><i class="bi bi-arrow-clockwise"></i></a>
             @endif
         </div>
     </form>
@@ -58,7 +61,7 @@
             <thead class="table-light text-uppercase tracking-wider small">
                 <tr>
                     <th class="ps-3 py-3">Utilisateur</th>
-                    <th>Nom d'Utilisateur</th>
+                    <th>Identifiant</th>
                     <th>Rôles & Permissions</th>
                     <th class="text-center">Statut</th>
                     <th>Dernière Connexion</th>
@@ -72,10 +75,10 @@
                         <td class="ps-3 py-3">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="rounded-circle bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center flex-shrink-0" style="width: 42px; height: 42px; font-size: 1.05rem;">
-                                    {{ substr($user->first_name, 0, 1) }}
+                                    {{ strtoupper(substr($user->name ?: $user->first_name ?: 'U', 0, 1)) }}
                                 </div>
                                 <div>
-                                    <span class="fw-bold text-dark d-block">{{ $user->name }}</span>
+                                    <span class="fw-bold text-dark d-block">{{ $user->name ?: ($user->first_name . ' ' . $user->last_name) }}</span>
                                     <small class="text-muted">{{ $user->email }}</small>
                                 </div>
                             </div>
@@ -98,15 +101,23 @@
                             </div>
                             @if($user->directPermissions->count() > 0)
                                 <span class="badge bg-warning-subtle text-dark border" style="font-size: 0.7rem;" title="{{ $user->directPermissions->pluck('name')->join(', ') }}">
-                                    <i class="bi bi-key-fill text-warning me-1"></i>+{{ $user->directPermissions->count() }} permission(s) directe(s)
+                                    <i class="bi bi-key-fill text-warning me-1"></i>+{{ $user->directPermissions->count() }} direct(s)
                                 </span>
                             @endif
                         </td>
                         <td class="text-center">
                             @if($user->status === 'active')
-                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Actif</span>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                                    <i class="bi bi-check-circle me-1"></i>Actif
+                                </span>
+                            @elseif($user->status === 'suspended')
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">
+                                    <i class="bi bi-pause-circle me-1"></i>Suspendu
+                                </span>
                             @else
-                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">Inactif</span>
+                                <span class="badge bg-secondary-subtle text-secondary border px-2 py-1">
+                                    <i class="bi bi-slash-circle me-1"></i>Inactif
+                                </span>
                             @endif
                         </td>
                         <td class="text-muted small">
@@ -121,28 +132,37 @@
                                     Gérer
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                                    <li><a class="dropdown-item" href="{{ route('admin.users.edit', $user) }}"><i class="bi bi-pencil me-2 text-primary"></i> Modifier / Permissions</a></li>
+                                    @can('update', $user)
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('admin.users.edit', $user) }}">
+                                            <i class="bi bi-pencil me-2 text-primary"></i> Modifier / Permissions
+                                        </a>
+                                    </li>
                                     <li>
                                         <form action="{{ route('admin.users.toggle-status', $user) }}" method="POST">
                                             @csrf
                                             <button type="submit" class="dropdown-item {{ $user->status === 'active' ? 'text-warning' : 'text-success' }}">
                                                 <i class="bi {{ $user->status === 'active' ? 'bi-pause-circle text-warning' : 'bi-play-circle text-success' }} me-2"></i>
-                                                {{ $user->status === 'active' ? 'Désactiver le compte' : 'Activer le compte' }}
+                                                {{ $user->status === 'active' ? 'Suspendre le compte' : 'Activer le compte' }}
                                             </button>
                                         </form>
                                     </li>
-                                    @if(auth()->id() !== $user->id)
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Attention : supprimer cet utilisateur est irréversible !');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="dropdown-item text-danger">
-                                                    <i class="bi bi-trash me-2"></i> Supprimer
-                                                </button>
-                                            </form>
-                                        </li>
-                                    @endif
+                                    @endcan
+
+                                    @can('delete', $user)
+                                        @if(auth('web')->id() !== $user->id)
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Attention : supprimer cet utilisateur est irréversible !');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="dropdown-item text-danger">
+                                                        <i class="bi bi-trash me-2"></i> Supprimer
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        @endif
+                                    @endcan
                                 </ul>
                             </div>
                         </td>
@@ -153,9 +173,11 @@
                             <i class="bi bi-people display-4 text-secondary mb-3 d-block opacity-50"></i>
                             <h5 class="fw-bold">Aucun utilisateur trouvé</h5>
                             <p class="small text-muted mb-3">Créez un compte pour un nouveau collaborateur ou administrateur.</p>
+                            @can('create', App\Models\User::class)
                             <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
-                                <i class="bi bi-person-plus-fill me-1"></i> Créer un Utilisateur
+                                <i class="bi bi-person-plus-fill me-1"></i> Nouvel Utilisateur
                             </a>
+                            @endcan
                         </td>
                     </tr>
                 @endforelse

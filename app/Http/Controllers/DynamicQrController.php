@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DynamicQrCode;
 use App\Models\QrCode;
 use App\Services\AnalyticsService;
 use Illuminate\Http\Request;
@@ -17,6 +18,11 @@ class DynamicQrController extends Controller
             ->first();
 
         if (! $qr) {
+            $dynamicQr = DynamicQrCode::where('code', $publicCode)->first();
+            if ($dynamicQr) {
+                return app(DynamicQrCodeController::class)->redirect($request, $publicCode);
+            }
+
             return response()->view('qr.unavailable', [
                 'title' => 'QR Code Not Found',
                 'message' => 'The scanned QR code is invalid or does not exist.',

@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Admin\ActivityLogController;
-use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\DigitalCardController;
@@ -17,11 +16,20 @@ use App\Http\Controllers\Auth\ClientAuthController;
 use App\Http\Controllers\Client\ClientAnalyticsController;
 use App\Http\Controllers\Client\ClientDashboardController;
 use App\Http\Controllers\Client\ClientQrController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DynamicQrCodeController;
 use App\Http\Controllers\DynamicQrController;
 use App\Http\Controllers\Public\PublicController;
 use App\Http\Controllers\Public\PublicDigitalCardController;
 use App\Http\Controllers\Public\PublicNfcController;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard Routes (Secured by auth:web)
+|--------------------------------------------------------------------------
+*/
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth:web')->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
@@ -41,7 +49,8 @@ Route::post('/contact', [PublicController::class, 'submitContact'])->name('conta
 | 2. Dynamic Endpoints: QR Codes, Digital Business Cards & NFC Tags
 |--------------------------------------------------------------------------
 */
-// Dynamic QR Scanner
+// Dynamic QR Scanner & Redirection Engine
+Route::get('/qr/{code}', [DynamicQrCodeController::class, 'redirect'])->name('qr.redirect');
 Route::get('/q/{publicCode}', [DynamicQrController::class, 'handle'])->name('qr.scan');
 Route::get('/q/{publicCode}/vcard', [DynamicQrController::class, 'downloadVCard'])->name('qr.vcard');
 
@@ -49,7 +58,8 @@ Route::get('/q/{publicCode}/vcard', [DynamicQrController::class, 'downloadVCard'
 Route::get('/c/{slug}', [PublicDigitalCardController::class, 'show'])->name('digital-cards.public.show');
 Route::get('/c/{slug}/vcard', [PublicDigitalCardController::class, 'downloadVCard'])->name('digital-cards.public.vcard');
 
-// NFC Touch & Detect Redirect
+// NFC Touch & Telemetry Redirection Endpoint
+Route::get('/nfc/{id_or_uid}', [NfcTagController::class, 'redirect'])->name('nfc.redirect');
 Route::get('/n/{uid}', [PublicNfcController::class, 'handle'])->name('nfc.public.handle');
 
 /*
@@ -101,43 +111,71 @@ Route::prefix('client')->name('client.')->middleware('client.auth')->group(funct
 */
 Route::prefix('admin')->name('admin.')->middleware('auth:web')->group(function () {
     // Dashboard
-    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Users & Staff
-    Route::resource('users', UserController::class);
-    Route::post('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+    Route::middleware('permission:view_users,manage_users')->group(function () {
+        Route::resource('users', UserController::class);
+        Route::post('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+    });
 
     // Roles & Dynamic Permissions
-    Route::resource('roles', RoleController::class);
+    Route::middleware('permission:manage_roles,manage_permissions')->group(function () {
+        Route::resource('roles', RoleController::class);
+    });
 
     // Clients
-    Route::resource('clients', ClientController::class);
-    Route::post('clients/{client}/assign-qr', [ClientController::class, 'assignQr'])->name('clients.assign-qr');
-    Route::post('clients/{client}/reset-access', [ClientController::class, 'resetAccess'])->name('clients.reset-access');
-    Route::post('clients/{client}/toggle-status', [ClientController::class, 'toggleStatus'])->name('clients.toggle-status');
+    Route::middleware('permission:view_clients')->group(function () {
+        Route::get('clients/export', [ClientController::class, 'export'])->name('clients.export');
+        Route::resource('clients', ClientController::class);
+        Route::post('clients/{client}/assign-qr', [ClientController::class, 'assignQr'])->name('clients.assign-qr');
+        Route::post('clients/{client}/reset-access', [ClientController::class, 'resetAccess'])->name('clients.reset-access');
+        Route::post('clients/{client}/toggle-status', [ClientController::class, 'toggleStatus'])->name('clients.toggle-status');
+    });
 
     // Carte Visite Digitale
-    Route::resource('digital-cards', DigitalCardController::class);
+    Route::middleware('permission:view_digital_cards')->group(function () {
+        Route::get('digital-cards/export', [DigitalCardController::class, 'exportCsv'])->name('digital-cards.export');
+        Route::resource('digital-cards', DigitalCardController::class);
+    });
 
-    // NFC Tags
-    Route::resource('nfc-tags', NfcTagController::class);
+    // NFC Tags (Chip Management, Quick Destination Swap & Telemetry)
+    Route::middleware('permission:view_nfc_tags')->group(function () {
+        Route::get('nfc-tags/export', [NfcTagController::class, 'exportCsv'])->name('nfc-tags.export');
+        Route::put('nfc-tags/{nfcTag}/destination', [NfcTagController::class, 'swapDestination'])->name('nfc-tags.destination');
+        Route::post('nfc-tags/{nfcTag}/toggle-status', [NfcTagController::class, 'toggleStatus'])->name('nfc-tags.toggle-status');
+        Route::resource('nfc-tags', NfcTagController::class);
+    });
 
-    // Dynamic QR Codes
-    Route::post('qr-codes/preview-live', [QrCodeController::class, 'previewLive'])->name('qr-codes.preview-live');
-    Route::post('qr-codes/batch-zip', [QrCodeController::class, 'downloadBatchZip'])->name('qr-codes.batch-zip');
-    Route::get('qr-codes/{qrCode}/download/{format}', [QrCodeController::class, 'download'])->name('qr-codes.download');
-    Route::get('qr-codes/{qrCode}/card-pdf', [QrCodeController::class, 'downloadCardPdf'])->name('qr-codes.card-pdf');
-    Route::put('qr-codes/{qrCode}/destination', [QrCodeController::class, 'updateDestination'])->name('qr-codes.destination');
-    Route::post('qr-codes/{qrCode}/toggle-status', [QrCodeController::class, 'toggleStatus'])->name('qr-codes.toggle-status');
-    Route::resource('qr-codes', QrCodeController::class);
+    // Dynamic QR Codes Engine (VP- Identifier & Target Management)
+    Route::middleware('permission:view_qr')->group(function () {
+        Route::post('dynamic-qrs/bulk', [DynamicQrCodeController::class, 'bulkStore'])->name('dynamic-qrs.bulk');
+        Route::post('dynamic-qrs/generate-pdf', [DynamicQrCodeController::class, 'generatePdfBatch'])->name('dynamic-qrs.generate-pdf');
+        Route::put('dynamic-qrs/{dynamicQr}/target', [DynamicQrCodeController::class, 'updateTarget'])->name('dynamic-qrs.target');
+        Route::post('dynamic-qrs/{dynamicQr}/toggle-status', [DynamicQrCodeController::class, 'toggleStatus'])->name('dynamic-qrs.toggle-status');
+        Route::get('dynamic-qrs/{dynamicQr}/pdf', [DynamicQrCodeController::class, 'exportPdf'])->name('dynamic-qrs.pdf');
+        Route::get('dynamic-qrs/{dynamicQr}/svg', [DynamicQrCodeController::class, 'downloadSvg'])->name('dynamic-qrs.svg');
+        Route::get('dynamic-qrs/{dynamicQr}/png', [DynamicQrCodeController::class, 'downloadPng'])->name('dynamic-qrs.png');
+        Route::resource('dynamic-qrs', DynamicQrCodeController::class);
 
-    // Printable QR Documents & Batch Sheet Builder
-    Route::get('qr-documents/{qrDocument}/print', [QrDocumentController::class, 'print'])->name('qr-documents.print');
-    Route::get('qr-documents/{qrDocument}/pdf', [QrDocumentController::class, 'downloadPdf'])->name('qr-documents.pdf');
-    Route::resource('qr-documents', QrDocumentController::class);
+        // Dynamic QR Codes (Legacy Graphic / Stored Layouts)
+        Route::post('qr-codes/preview-live', [QrCodeController::class, 'previewLive'])->name('qr-codes.preview-live');
+        Route::post('qr-codes/batch-zip', [QrCodeController::class, 'downloadBatchZip'])->name('qr-codes.batch-zip');
+        Route::get('qr-codes/{qrCode}/download/{format}', [QrCodeController::class, 'download'])->name('qr-codes.download');
+        Route::get('qr-codes/{qrCode}/composite-image', [QrCodeController::class, 'showCompositeImage'])->name('qr-codes.composite-image');
+        Route::get('qr-codes/{qrCode}/card-pdf', [QrCodeController::class, 'downloadCardPdf'])->name('qr-codes.card-pdf');
+        Route::put('qr-codes/{qrCode}/destination', [QrCodeController::class, 'updateDestination'])->name('qr-codes.destination');
+        Route::post('qr-codes/{qrCode}/toggle-status', [QrCodeController::class, 'toggleStatus'])->name('qr-codes.toggle-status');
+        Route::resource('qr-codes', QrCodeController::class);
 
-    // QR Templates
-    Route::resource('templates', QrTemplateController::class);
+        // Printable QR Documents & Batch Sheet Builder
+        Route::get('qr-documents/{qrDocument}/print', [QrDocumentController::class, 'print'])->name('qr-documents.print');
+        Route::get('qr-documents/{qrDocument}/pdf', [QrDocumentController::class, 'downloadPdf'])->name('qr-documents.pdf');
+        Route::resource('qr-documents', QrDocumentController::class);
+
+        // QR Templates
+        Route::resource('templates', QrTemplateController::class);
+    });
 
     // Analytics & Data Export
     Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
@@ -147,6 +185,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth:web')->group(function (
     Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
 
     // System Settings
-    Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
-    Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::middleware('permission:manage_settings')->group(function () {
+        Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
+    });
 });

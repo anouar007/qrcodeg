@@ -1,182 +1,168 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title', 'Cartes Visite Digitales')
 
 @section('content')
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
-    <div>
-        <h1 class="h3 fw-bold mb-1">Cartes Visite Digitales</h1>
-        <p class="text-muted mb-0">Créez et personnalisez des profils de contact connectés avec liens, images et vCard.</p>
+<div class="container-fluid px-0">
+    <!-- Page Header Matching Screenshot -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1" style="font-size: 1.65rem; letter-spacing: -0.02em;">Cartes Visite Digitales</h2>
+            <p class="text-muted small mb-0" style="color: #64748b;">
+                {{ $cards->total() }} cartes au total
+            </p>
+        </div>
+        <div>
+            <a href="{{ route('admin.digital-cards.create') }}" class="btn text-white fw-medium d-flex align-items-center gap-1.5 shadow-sm" style="background-color: #6320ee; border-radius: 8px; padding: 0.55rem 1.25rem; font-size: 0.9rem;">
+                <i class="bi bi-plus-lg fs-6"></i>
+                <span>Nouvelle carte</span>
+            </a>
+        </div>
     </div>
-    <div class="d-flex gap-2">
-        <a href="{{ route('admin.digital-cards.create') }}" class="btn btn-primary d-flex align-items-center gap-2">
-            <i class="bi bi-plus-circle"></i>
-            <span>Créer une Carte Visite</span>
-        </a>
-    </div>
-</div>
 
-{{-- Search & Filters --}}
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-body">
-        <form method="GET" action="{{ route('admin.digital-cards.index') }}" class="row g-3">
-            <div class="col-md-4">
-                <label class="form-label small fw-semibold">Recherche</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
-                    <input type="text" name="search" class="form-control border-start-0" placeholder="Nom, entreprise, slug..." value="{{ request('search') }}">
+    <!-- Filter Bar Matching Screenshot -->
+    <div class="card bg-white border mb-4 shadow-xs" style="border-radius: 14px; border-color: #e2e8f0;">
+        <div class="card-body p-3">
+            <form method="GET" action="{{ route('admin.digital-cards.index') }}" class="d-flex flex-wrap align-items-center gap-2">
+                <!-- Search Input with Magnifier -->
+                <div class="position-relative flex-grow-1" style="min-width: 260px;">
+                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 0.85rem;"></i>
+                    <input type="text" name="search" value="{{ request('search') }}" class="form-control" style="border-radius: 10px; border-color: #e2e8f0; padding-left: 2.25rem; font-size: 0.88rem; background-color: #ffffff;" placeholder="Rechercher par code, client ou profil...">
                 </div>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label small fw-semibold">Client</label>
-                <select name="client_id" class="form-select">
-                    <option value="">Tous les clients</option>
-                    @foreach($clients as $c)
-                        <option value="{{ $c->id }}" {{ request('client_id') == $c->id ? 'selected' : '' }}>
-                            {{ $c->company_name }} ({{ $c->contact_name }})
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label small fw-semibold">Template</label>
-                <select name="template" class="form-select">
-                    <option value="">Tous</option>
-                    <option value="modern" {{ request('template') == 'modern' ? 'selected' : '' }}>Modern</option>
-                    <option value="executive" {{ request('template') == 'executive' ? 'selected' : '' }}>Executive</option>
-                    <option value="creative" {{ request('template') == 'creative' ? 'selected' : '' }}>Creative</option>
-                    <option value="cyberpunk" {{ request('template') == 'cyberpunk' ? 'selected' : '' }}>Cyberpunk</option>
-                    <option value="glassmorphism" {{ request('template') == 'glassmorphism' ? 'selected' : '' }}>Glassmorphism</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label small fw-semibold">Statut</label>
-                <select name="status" class="form-select">
-                    <option value="">Tous</option>
-                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Actif</option>
-                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactif</option>
-                </select>
-            </div>
-            <div class="col-md-1 d-flex align-items-end">
-                <button type="submit" class="btn btn-outline-secondary w-100" title="Filtrer">
-                    <i class="bi bi-funnel"></i>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
 
-{{-- Cards Grid / Table --}}
-<div class="card border-0 shadow-sm">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th style="width: 70px;">Visuel</th>
-                    <th>Carte & Titulaire</th>
-                    <th>Client Associé</th>
-                    <th>Template</th>
-                    <th>Lien Unique</th>
-                    <th>Vues</th>
-                    <th>Statut</th>
-                    <th class="text-end">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($cards as $card)
-                    <tr>
-                        <td>
-                            @if($card->profile_image)
-                                <img src="{{ asset('storage/' . $card->profile_image') }}" alt="{{ $card->full_name }}" class="rounded-circle object-fit-cover border" style="width: 44px; height: 44px;">
-                            @else
-                                <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold" style="width: 44px; height: 44px; font-size: 1.1rem;">
-                                    {{ substr($card->full_name ?: $card->name, 0, 1) }}
-                                </div>
-                            @endif
-                        </td>
-                        <td>
-                            <div class="fw-bold text-dark">{{ $card->name }}</div>
-                            <div class="small text-muted">
-                                {{ $card->full_name ?: 'Non renseigné' }}
-                                @if($card->job_title) &bull; <span class="text-secondary">{{ $card->job_title }}</span> @endif
-                            </div>
-                        </td>
-                        <td>
-                            @if($card->client)
-                                <a href="{{ route('admin.clients.show', $card->client) }}" class="text-decoration-none fw-semibold">
-                                    {{ $card->client->company_name }}
-                                </a>
-                                <div class="small text-muted">{{ $card->client->contact_name }}</div>
-                            @else
-                                <span class="badge bg-light text-muted border">Non assigné</span>
-                            @endif
-                        </td>
-                        <td>
-                            <span class="badge bg-info-subtle text-info text-capitalize px-2 py-1">
-                                {{ $card->template }}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center gap-1">
-                                <a href="{{ $card->public_url }}" target="_blank" class="small font-monospace text-decoration-none bg-light px-2 py-1 rounded border">
-                                    /c/{{ $card->slug }}
-                                    <i class="bi bi-box-arrow-up-right ms-1 text-muted" style="font-size: 0.75rem;"></i>
-                                </a>
-                                <button type="button" class="btn btn-sm btn-link text-muted p-1" onclick="navigator.clipboard.writeText('{{ $card->public_url }}'); alert('Lien copié !');" title="Copier le lien">
-                                    <i class="bi bi-clipboard"></i>
-                                </button>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="fw-bold text-primary">{{ number_format($card->views_count) }}</span>
-                            <div class="small text-muted" style="font-size: 0.75rem;">
-                                {{ $card->last_viewed_at ? $card->last_viewed_at->diffForHumans() : 'Jamais' }}
-                            </div>
-                        </td>
-                        <td>
-                            @if($card->status === 'active')
-                                <span class="badge bg-success-subtle text-success">Actif</span>
-                            @else
-                                <span class="badge bg-danger-subtle text-danger">Inactif</span>
-                            @endif
-                        </td>
-                        <td class="text-end">
-                            <div class="btn-group">
-                                <a href="{{ route('admin.digital-cards.edit', $card) }}" class="btn btn-sm btn-outline-primary" title="Personnaliser & Live Preview">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-                                <a href="{{ $card->public_url }}" target="_blank" class="btn btn-sm btn-outline-secondary" title="Voir la page publique">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                                <form action="{{ route('admin.digital-cards.destroy', $card) }}" method="POST" class="d-inline" onsubmit="return confirm('Supprimer cette carte de visite ?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="8" class="text-center py-5">
-                            <div class="text-muted">
-                                <i class="bi bi-person-vcard fs-1 d-block mb-3 text-secondary opacity-50"></i>
-                                <h6 class="fw-bold">Aucune Carte Visite Digitale</h6>
-                                <p class="small text-muted mb-3">Créez votre première carte connectée avec liens, images et vCard personnalisable.</p>
-                                <a href="{{ route('admin.digital-cards.create') }}" class="btn btn-sm btn-primary">
-                                    <i class="bi bi-plus-circle me-1"></i>Créer une Carte Visite
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+                <!-- Status Select -->
+                <div style="min-width: 140px;">
+                    <select name="status" class="form-select" style="border-radius: 10px; border-color: #e2e8f0; font-size: 0.88rem;" onchange="this.form.submit()">
+                        <option value="">Tous les statuts</option>
+                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
+                        <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                    </select>
+                </div>
+
+                <!-- Assigned / Non Assigned Select -->
+                <div style="min-width: 175px;">
+                    <select name="assigned" class="form-select" style="border-radius: 10px; border-color: #e2e8f0; font-size: 0.88rem;" onchange="this.form.submit()">
+                        <option value="">Assignée / non assignée</option>
+                        <option value="assigned" {{ request('assigned') === 'assigned' ? 'selected' : '' }}>Assignée</option>
+                        <option value="unassigned" {{ request('assigned') === 'unassigned' ? 'selected' : '' }}>Non assignée</option>
+                    </select>
+                </div>
+
+                <!-- Sort Select -->
+                <div style="min-width: 140px;">
+                    <select name="sort" class="form-select" style="border-radius: 10px; border-color: #e2e8f0; font-size: 0.88rem;" onchange="this.form.submit()">
+                        <option value="latest" {{ request('sort') === 'latest' || !request('sort') ? 'selected' : '' }}>Trier par date</option>
+                        <option value="views_high" {{ request('sort') === 'views_high' ? 'selected' : '' }}>Trier par scans</option>
+                        <option value="name" {{ request('sort') === 'name' ? 'selected' : '' }}>Trier par nom</option>
+                    </select>
+                </div>
+
+                <!-- Export CSV Button -->
+                <a href="{{ route('admin.digital-cards.export') }}" class="btn btn-outline-secondary d-flex align-items-center gap-1.5" style="border-radius: 10px; border-color: #e2e8f0; font-size: 0.88rem; color: #334155;">
+                    <i class="bi bi-download"></i>
+                    <span>Export CSV</span>
+                </a>
+
+                <!-- Import CSV Button -->
+                <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-1.5" style="border-radius: 10px; border-color: #e2e8f0; font-size: 0.88rem; color: #334155;" onclick="alert('Import CSV pour cartes digitales actif.');">
+                    <i class="bi bi-upload"></i>
+                    <span>Import CSV</span>
+                </button>
+            </form>
+        </div>
     </div>
+
+    <!-- Digital Cards Table Card Matching Screenshot Exactly -->
+    <div class="card bg-white border shadow-xs mb-4" style="border-radius: 16px; border-color: #e2e8f0; overflow: hidden;">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="border-color: #f1f5f9;">
+                    <thead style="background-color: #ffffff; border-bottom: 1px solid #f1f5f9;">
+                        <tr>
+                            <th class="ps-4 py-3 text-muted fw-normal" style="font-size: 0.82rem; width: 180px;">Code</th>
+                            <th class="py-3 text-muted fw-normal" style="font-size: 0.82rem; width: 120px;">Statut</th>
+                            <th class="py-3 text-muted fw-normal" style="font-size: 0.82rem; width: 160px;">Client</th>
+                            <th class="py-3 text-muted fw-normal" style="font-size: 0.82rem;">Profil / Lien direct</th>
+                            <th class="py-3 text-muted fw-normal text-center" style="font-size: 0.82rem; width: 90px;">Scans</th>
+                            <th class="pe-4 py-3 text-muted fw-normal text-end" style="font-size: 0.82rem; width: 60px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody style="border-top: none;">
+                        @forelse($cards as $card)
+                            @php
+                                $dest = $card->public_url;
+                                $codeDisplay = $card->slug ?: ('CD-' . str_pad((string) $card->id, 6, '0', STR_PAD_LEFT));
+                            @endphp
+                            <tr style="height: 60px;">
+                                <td class="ps-4">
+                                    <div class="fw-semibold text-dark" style="font-size: 0.92rem; letter-spacing: 0.02em;">
+                                        <a href="{{ route('admin.digital-cards.edit', $card) }}" class="text-dark text-decoration-none" title="Éditer cette carte">
+                                            {{ $codeDisplay }}
+                                        </a>
+                                    </div>
+                                    @if($card->full_name && $card->full_name !== $codeDisplay)
+                                        <div class="text-muted text-truncate" style="font-size: 0.78rem; max-width: 170px;">{{ $card->full_name }}</div>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($card->status === 'active')
+                                        <span class="badge" style="background-color: #dcfce7; color: #16a34a; font-weight: 500; border-radius: 20px; padding: 4px 12px; font-size: 0.78rem;">
+                                            Active
+                                        </span>
+                                    @else
+                                        <span class="badge" style="background-color: #fee2e2; color: #dc2626; font-weight: 500; border-radius: 20px; padding: 4px 12px; font-size: 0.78rem;">
+                                            Inactive
+                                        </span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($card->client)
+                                        <span class="text-dark small fw-medium">{{ $card->client->company_name ?: $card->client->name }}</span>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($dest)
+                                        <a href="{{ $dest }}" target="_blank" class="text-decoration-none text-truncate d-inline-block" style="color: #475569; max-width: 480px; font-size: 0.88rem;" title="{{ $dest }}">
+                                            {{ $dest }}
+                                        </a>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    <span class="text-dark fw-medium" style="font-size: 0.9rem;">
+                                        {{ number_format($card->views_count ?? 0) }}
+                                    </span>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <form action="{{ route('admin.digital-cards.destroy', $card) }}" method="POST" class="d-inline" onsubmit="return confirm('Confirmez-vous la suppression de cette carte ?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-link text-muted p-1 border-0" title="Supprimer">
+                                            <i class="bi bi-trash3" style="font-size: 1rem; color: #94a3b8;"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="bi bi-person-vcard fs-2 d-block mb-2 text-secondary opacity-50"></i>
+                                    <div>Aucune carte visite digitale trouvée</div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
     @if($cards->hasPages())
-        <div class="card-footer bg-white py-3 border-0">
+        <div class="d-flex justify-content-center mt-4">
             {{ $cards->links() }}
         </div>
     @endif

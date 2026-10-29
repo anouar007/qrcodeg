@@ -156,6 +156,8 @@ class QrCodeService
 
         $totalWidth = $qrSize + ($padding * 2);
         $totalHeight = $qrSize + ($padding * 2) + $frameHeight;
+        $bannerY = $totalHeight - $frameHeight;
+        $textY = $totalHeight - 16;
 
         $cleanSvg = preg_replace('/<\?xml[^>]*\?>/i', '', $innerSvg);
         $cleanSvg = preg_replace('/<!DOCTYPE[^>]*>/i', '', $cleanSvg);
@@ -166,8 +168,8 @@ class QrCodeService
     <g transform="translate({$padding}, {$padding})">
         {$cleanSvg}
     </g>
-    <rect x="0" y="{$totalHeight} - {$frameHeight}" width="{$totalWidth}" height="{$frameHeight}" rx="0" fill="{$frameColor}"/>
-    <text x="50%" y="{$totalHeight} - 16" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle">
+    <rect x="0" y="{$bannerY}" width="{$totalWidth}" height="{$frameHeight}" rx="0" fill="{$frameColor}"/>
+    <text x="50%" y="{$textY}" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle">
         {$frameText}
     </text>
 </svg>
@@ -234,6 +236,8 @@ SVG;
                     'frame_color' => $data['frame_color'] ?? '#000000',
                     'error_correction' => $data['error_correction'] ?? 'M',
                     'qr_size' => (int) ($data['qr_size'] ?? 300),
+                    'template_image_path' => $data['template_image_path'] ?? null,
+                    'custom_template_config' => $data['custom_template_config'] ?? null,
                 ]);
 
                 $createdQrs[] = $qr;
@@ -244,7 +248,7 @@ SVG;
     }
 
     /**
-     * Create a ZIP file containing PNG and SVG files for given QR codes
+     * Create a ZIP file containing PNG, SVG and composite template files for given QR codes
      */
     public function createZipArchive(array $qrCodes, string $zipName = 'qr_codes.zip'): string
     {
@@ -262,11 +266,173 @@ SVG;
 
             $zip->addFromString("{$safeName}_{$qr->public_code}.svg", $svgData);
             $zip->addFromString("{$safeName}_{$qr->public_code}.png", $pngData);
+
+            if ($qr->design?->template_image_path) {
+                $composite = $this->renderTemplateComposite($qr);
+                if ($composite) {
+                    $zip->addFromString("{$safeName}_{$qr->public_code}_template.png", $composite);
+                }
+            }
         }
 
         $zip->close();
 
         return $tempPath;
+    }
+
+    /**
+     * Render high-resolution composite plaque/poster image combining template image, QR code, corner brackets, and unique code.
+     */
+    public function renderTemplateComposite(QrCodeModel $qr, ?int $targetWidth = null): ?string
+    {
+        $design = $qr->design;
+        $templatePath = $design?->template_image_path;
+        if (! $templatePath) {
+            return null;
+        }
+
+        $fullPath = null;
+        if (Storage::disk('public')->exists($templatePath)) {
+            $fullPath = Storage::disk('public')->path($templatePath);
+        } elseif (file_exists(public_path($templatePath))) {
+            $fullPath = public_path($templatePath);
+        } elseif (file_exists($templatePath)) {
+            $fullPath = $templatePath;
+        }
+
+        if (! $fullPath || ! file_exists($fullPath)) {
+            return null;
+        }
+
+        $fileContent = @file_get_contents($fullPath);
+        if (! $fileContent) {
+            return null;
+        }
+
+        $baseImg = @imagecreatefromstring($fileContent);
+        if (! $baseImg) {
+            return null;
+        }
+
+        imagealphablending($baseImg, true);
+        imagesavealpha($baseImg, true);
+
+        $origW = imagesx($baseImg);
+        $origH = imagesy($baseImg);
+
+        $config = $design->custom_template_config ?? [];
+        $qrXPercent = (float) ($config['qr_x'] ?? 65.5);
+        $qrYPercent = (float) ($config['qr_y'] ?? 66.0);
+        $qrSizePercent = (float) ($config['qr_size_percent'] ?? 24.0);
+
+        $destW = max(30, (int) round(($qrSizePercent / 100) * $origW));
+        $destH = $destW;
+        $destX = (int) round(($qrXPercent / 100) * $origW);
+        $destY = (int) round(($qrYPercent / 100) * $origH);
+
+        // Render high-res QR code PNG
+        $qrPng = $this->renderPng($qr, $destW);
+        $qrImg = @imagecreatefromstring($qrPng);
+        if ($qrImg) {
+            imagecopyresampled($baseImg, $qrImg, $destX, $destY, 0, 0, $destW, $destH, imagesx($qrImg), imagesy($qrImg));
+            imagedestroy($qrImg);
+        }
+
+        $pad = max(4, (int) round($destW * 0.08));
+
+        // Draw Corner Brackets if enabled
+        if (! isset($config['show_brackets']) || $config['show_brackets']) {
+            $bracketHex = $config['bracket_color'] ?? '#d9a74a';
+            [$brR, $brG, $brB] = $this->hexToRgb($bracketHex);
+            $bracketColor = imagecolorallocate($baseImg, $brR, $brG, $brB);
+
+            $arm = max(10, (int) round($destW * 0.22));
+            $thick = max(2, (int) round($destW * 0.024));
+
+            // Top-Left corner
+            imagefilledrectangle($baseImg, $destX - $pad, $destY - $pad, $destX - $pad + $arm, $destY - $pad + $thick, $bracketColor);
+            imagefilledrectangle($baseImg, $destX - $pad, $destY - $pad, $destX - $pad + $thick, $destY - $pad + $arm, $bracketColor);
+
+            // Top-Right corner
+            imagefilledrectangle($baseImg, $destX + $destW + $pad - $arm, $destY - $pad, $destX + $destW + $pad, $destY - $pad + $thick, $bracketColor);
+            imagefilledrectangle($baseImg, $destX + $destW + $pad - $thick, $destY - $pad, $destX + $destW + $pad, $destY - $pad + $arm, $bracketColor);
+
+            // Bottom-Left corner
+            imagefilledrectangle($baseImg, $destX - $pad, $destY + $destH + $pad - $thick, $destX - $pad + $arm, $destY + $destH + $pad, $bracketColor);
+            imagefilledrectangle($baseImg, $destX - $pad, $destY + $destH + $pad - $arm, $destX - $pad + $thick, $destY + $destH + $pad, $bracketColor);
+
+            // Bottom-Right corner
+            imagefilledrectangle($baseImg, $destX + $destW + $pad - $arm, $destY + $destH + $pad - $thick, $destX + $destW + $pad, $destY + $destH + $pad, $bracketColor);
+            imagefilledrectangle($baseImg, $destX + $destW + $pad - $thick, $destY + $destH + $pad - $arm, $destX + $destW + $pad, $destY + $destH + $pad, $bracketColor);
+        }
+
+        $fontBold = base_path('vendor/dompdf/dompdf/lib/fonts/DejaVuSans-Bold.ttf');
+        $fontRegular = base_path('vendor/dompdf/dompdf/lib/fonts/DejaVuSans.ttf');
+
+        // Draw Top Label (e.g. "Qr Code")
+        if (! empty($config['show_top_label'])) {
+            $topLabelText = $config['top_label_text'] ?? 'Qr Code';
+            $topColorHex = $config['top_label_color'] ?? '#334155';
+            [$tlR, $tlG, $tlB] = $this->hexToRgb($topColorHex);
+            $topColor = imagecolorallocate($baseImg, $tlR, $tlG, $tlB);
+            $topFontSize = max(10, (int) round(($config['top_label_size'] ?? 14) * ($origW / 1000)));
+
+            if (file_exists($fontRegular)) {
+                $bbox = imagettfbbox($topFontSize, 0, $fontRegular, $topLabelText);
+                $textW = abs($bbox[4] - $bbox[0]);
+                $topX = (int) round($destX + ($destW / 2) - ($textW / 2));
+                $topY = (int) round($destY - $pad - 10);
+                imagettftext($baseImg, $topFontSize, 0, $topX, $topY, $topColor, $fontRegular, $topLabelText);
+            }
+        }
+
+        // Draw Unique Tracking Code (e.g., "VPM 013" or $qr->public_code)
+        $codePrefix = $config['code_prefix'] ?? '';
+        $codeText = trim($codePrefix.' '.$qr->public_code);
+        $codeColorHex = $config['code_color'] ?? '#1e293b';
+        [$cR, $cG, $cB] = $this->hexToRgb($codeColorHex);
+        $codeColor = imagecolorallocate($baseImg, $cR, $cG, $cB);
+        $codeFontSize = max(12, (int) round(($config['code_size'] ?? 16) * ($origW / 1000)));
+
+        $codePixelX = isset($config['code_x']) ? (int) round(($config['code_x'] / 100) * $origW) : null;
+        $codePixelY = isset($config['code_y']) ? (int) round(($config['code_y'] / 100) * $origH) : null;
+
+        if (file_exists($fontBold)) {
+            $bbox = imagettfbbox($codeFontSize, 0, $fontBold, $codeText);
+            $textW = abs($bbox[4] - $bbox[0]);
+            $textH = abs($bbox[5] - $bbox[1]);
+
+            if ($codePixelX === null || $codePixelY === null) {
+                $codePixelX = (int) round($destX + ($destW / 2) - ($textW / 2));
+                $codePixelY = (int) round($destY + $destH + $pad + $textH + 12);
+            } else {
+                $codePixelX = (int) round($codePixelX - ($textW / 2));
+            }
+
+            imagettftext($baseImg, $codeFontSize, 0, $codePixelX, $codePixelY, $codeColor, $fontBold, $codeText);
+        } else {
+            $defX = $codePixelX ?? (int) round($destX + ($destW / 2) - 30);
+            $defY = $codePixelY ?? (int) round($destY + $destH + 20);
+            imagestring($baseImg, 5, $defX, $defY, $codeText, $codeColor);
+        }
+
+        // Resample if target width specified
+        if ($targetWidth && $targetWidth !== $origW) {
+            $scaledH = (int) round($origH * ($targetWidth / $origW));
+            $scaledImg = imagecreatetruecolor($targetWidth, $scaledH);
+            imagealphablending($scaledImg, true);
+            imagesavealpha($scaledImg, true);
+            imagecopyresampled($scaledImg, $baseImg, 0, 0, 0, 0, $targetWidth, $scaledH, $origW, $origH);
+            imagedestroy($baseImg);
+            $baseImg = $scaledImg;
+        }
+
+        ob_start();
+        imagepng($baseImg, null, 9);
+        $compositePng = ob_get_clean();
+        imagedestroy($baseImg);
+
+        return $compositePng;
     }
 
     protected function getDefaultContentForType(string $type, array $data): array

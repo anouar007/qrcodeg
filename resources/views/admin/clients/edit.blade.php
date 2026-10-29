@@ -1,131 +1,175 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
-@section('title', 'Modifier le Client: ' . $client->contact_name)
-@section('page_title', 'Modifier le Client: ' . $client->contact_name)
-@section('page_subtitle', 'Mettre à jour les coordonnées, projet, ville, téléphone et accès portail')
+@section('title', 'Edit Client: ' . ($client->name ?: $client->contact_name))
+
+@section('breadcrumbs')
+    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.clients.index') }}">Clients</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.clients.show', $client) }}">{{ $client->name ?: $client->contact_name }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+@endsection
 
 @section('content')
 <div class="row justify-content-center">
     <div class="col-lg-9">
-        <div class="card card-custom p-4 bg-white shadow-sm border-0 rounded-3">
-            <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom">
-                <div>
-                    <h5 class="fw-bold mb-1">Modifier les Informations</h5>
-                    <p class="text-muted small mb-0">Mise à jour des coordonnées pour {{ $client->contact_name }} ({{ $client->project_name ?? $client->company_name }}).</p>
-                </div>
-                <a href="{{ route('admin.clients.show', $client) }}" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-arrow-left me-1"></i> Retour au Profil
+        <x-card title="Edit Client Profile" :subtitle="'Update details for ' . ($client->name ?: $client->contact_name) . ' (' . ($client->project_name ?: 'Standard Project') . ')'" icon="bi-pencil">
+            <x-slot:actions>
+                <a href="{{ route('admin.clients.show', $client) }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Profile
                 </a>
-            </div>
+            </x-slot:actions>
 
             <form method="POST" action="{{ route('admin.clients.update', $client) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
                 <div class="row g-3">
-                    {{-- 1. Essential Fields: Name, Project Name, City, Phone --}}
+                    <!-- Name -->
                     <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Nom du Client / Contact <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light text-muted"><i class="bi bi-person"></i></span>
-                            <input type="text" name="contact_name" class="form-control @error('contact_name') is-invalid @enderror" value="{{ old('contact_name', $client->contact_name) }}" required>
+                        <x-input
+                            name="name"
+                            label="Client / Contact Name"
+                            :value="old('name', $client->name ?: $client->contact_name)"
+                            required
+                            placeholder="e.g. Sara Mansouri"
+                            icon="bi-person"
+                        />
+                    </div>
+
+                    <!-- Project Name -->
+                    <div class="col-md-6">
+                        <x-input
+                            name="project_name"
+                            label="Project Name"
+                            :value="old('project_name', $client->project_name)"
+                            placeholder="e.g. Luxury Resort Rebranding"
+                            icon="bi-folder2-open"
+                        />
+                    </div>
+
+                    <!-- City -->
+                    <div class="col-md-6">
+                        <x-input
+                            name="city"
+                            label="City"
+                            :value="old('city', $client->city)"
+                            placeholder="e.g. Marrakech, Casablanca, Paris"
+                            icon="bi-geo-alt"
+                        />
+                    </div>
+
+                    <!-- Phone (International / Local) -->
+                    <div class="col-md-6">
+                        <x-input
+                            name="phone"
+                            label="Phone (International / Local)"
+                            :value="old('phone', $client->phone)"
+                            placeholder="+212600112233 or 0600112233"
+                            icon="bi-telephone"
+                            help="International (+212..., +1...) or national (06...) format."
+                        />
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-md-6">
+                        <x-select
+                            name="status"
+                            label="Status"
+                            :options="['active' => 'Active', 'inactive' => 'Inactive']"
+                            :selected="old('status', $client->status)"
+                            required
+                        />
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <x-input
+                            name="email"
+                            label="Email Address"
+                            type="email"
+                            :value="old('email', $client->email)"
+                            required
+                            placeholder="contact@company.com"
+                            icon="bi-envelope"
+                        />
+                    </div>
+
+                    <!-- Company / Brand Name -->
+                    <div class="col-md-6">
+                        <x-input
+                            name="company_name"
+                            label="Company / Brand Name"
+                            :value="old('company_name', $client->company_name)"
+                            placeholder="e.g. Mansour Group SARL"
+                            icon="bi-building"
+                        />
+                    </div>
+
+                    <!-- Access Code -->
+                    <div class="col-md-6">
+                        <x-input
+                            name="access_code"
+                            label="Portal Access Code"
+                            :value="old('access_code', $client->access_code)"
+                            placeholder="CL-XXXXXX"
+                            icon="bi-key"
+                            help="Leave blank to maintain current access code."
+                        />
+                    </div>
+
+                    <!-- Password (Optional reset) -->
+                    <div class="col-md-6">
+                        <x-input
+                            name="password"
+                            label="Set New Password"
+                            type="password"
+                            placeholder="Leave blank to keep current password"
+                            icon="bi-lock"
+                        />
+                    </div>
+
+                    <!-- Logo Upload -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="logo" class="form-label fw-semibold text-dark small mb-1">Update Logo</label>
+                            @if($client->logo)
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <img src="{{ asset('storage/' . $client->logo) }}" alt="Logo" class="rounded border p-1" style="height: 38px; width: 38px; object-fit: contain;">
+                                    <span class="small text-muted font-mono">Current logo uploaded</span>
+                                </div>
+                            @endif
+                            <input type="file" name="logo" id="logo" class="form-control form-control-custom" accept="image/*">
                         </div>
-                        @error('contact_name') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                     </div>
 
-                    <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Nom du Projet</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light text-muted"><i class="bi bi-folder2-open"></i></span>
-                            <input type="text" name="project_name" class="form-control @error('project_name') is-invalid @enderror" value="{{ old('project_name', $client->project_name) }}">
+                    <!-- Notes -->
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="notes" class="form-label fw-semibold text-dark small mb-1">Notes</label>
+                            <textarea
+                                name="notes"
+                                id="notes"
+                                rows="3"
+                                class="form-control form-control-custom @error('notes') is-invalid @enderror"
+                                placeholder="Internal client notes..."
+                            >{{ old('notes', $client->notes) }}</textarea>
+                            @error('notes')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
-                        @error('project_name') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Ville</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light text-muted"><i class="bi bi-geo-alt"></i></span>
-                            <input type="text" name="city" class="form-control" value="{{ old('city', $client->city) }}" placeholder="ex. Casablanca">
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Téléphone</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light text-muted"><i class="bi bi-telephone"></i></span>
-                            <input type="text" name="phone" class="form-control" value="{{ old('phone', $client->phone) }}" placeholder="+212 6 ...">
-                        </div>
-                    </div>
-
-                    {{-- Additional Business Details --}}
-                    <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Entreprise / Société</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light text-muted"><i class="bi bi-building"></i></span>
-                            <input type="text" name="company_name" class="form-control" value="{{ old('company_name', $client->company_name) }}">
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Adresse Email <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light text-muted"><i class="bi bi-envelope"></i></span>
-                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $client->email) }}" required>
-                        </div>
-                        @error('email') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                    </div>
-
-                    <div class="col-md-8">
-                        <label class="form-label small fw-semibold">Adresse Complète</label>
-                        <input type="text" name="address" class="form-control" value="{{ old('address', $client->address) }}">
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label small fw-semibold">Pays</label>
-                        <input type="text" name="country" class="form-control" value="{{ old('country', $client->country ?? 'Maroc') }}">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Logo de l'Entreprise</label>
-                        <input type="file" name="logo" class="form-control" accept="image/*">
-                        @if($client->logo)
-                            <div class="mt-2 d-flex align-items-center gap-2">
-                                <img src="{{ asset('storage/' . $client->logo) }}" alt="Logo" class="rounded border p-1" style="height: 36px; object-fit: contain;">
-                                <small class="text-muted">Logo Actuel</small>
-                            </div>
-                        @endif
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Statut du Compte <span class="text-danger">*</span></label>
-                        <select name="status" class="form-select" required>
-                            <option value="active" {{ old('status', $client->status) === 'active' ? 'selected' : '' }}>Actif (Accès autorisé)</option>
-                            <option value="inactive" {{ old('status', $client->status) === 'inactive' ? 'selected' : '' }}>Inactif (Suspendu)</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Code d'Accès au Portail Client</label>
-                        <input type="text" name="access_code" class="form-control font-monospace fw-bold text-uppercase @error('access_code') is-invalid @enderror" value="{{ old('access_code', $client->access_code) }}">
-                        @error('access_code') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                    </div>
-
-                    <div class="col-12 mt-3">
-                        <label class="form-label small fw-semibold">Notes Internes Administrateur</label>
-                        <textarea name="notes" class="form-control" rows="2">{{ old('notes', $client->notes) }}</textarea>
-                    </div>
-
-                    <div class="col-12 mt-4 pt-3 border-top d-flex justify-content-end gap-2">
-                        <a href="{{ route('admin.clients.show', $client) }}" class="btn btn-outline-secondary">Annuler</a>
-                        <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 px-4">
-                            <i class="bi bi-check2-circle"></i>
-                            <span>Enregistrer les Modifications</span>
-                        </button>
                     </div>
                 </div>
+
+                <x-slot:footer>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{{ route('admin.clients.show', $client) }}" class="btn btn-sm btn-light border">Cancel</a>
+                        <button type="submit" class="btn btn-primary-custom px-4 shadow-sm">
+                            <i class="bi bi-check2-circle me-1"></i> Update Client Profile
+                        </button>
+                    </div>
+                </x-slot:footer>
             </form>
-        </div>
+        </x-card>
     </div>
 </div>
 @endsection

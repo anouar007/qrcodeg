@@ -25,6 +25,8 @@ class QrDesign extends Model
         'frame_color',
         'error_correction',
         'qr_size',
+        'template_image_path',
+        'custom_template_config',
     ];
 
     protected function casts(): array
@@ -33,6 +35,7 @@ class QrDesign extends Model
             'logo_size' => 'integer',
             'logo_padding' => 'integer',
             'qr_size' => 'integer',
+            'custom_template_config' => 'array',
         ];
     }
 

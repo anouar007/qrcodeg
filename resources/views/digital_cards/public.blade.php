@@ -27,18 +27,24 @@
     <!-- Bootstrap 5 & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Font Awesome 6 Free (2,163 icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
     @php
-        $styles = $card->style_settings ?? [];
+        $styles = $card->theme_config ?? ($card->style_settings ?? []);
         $layout = $card->layout_settings ?? [];
         $font = $styles['font_family'] ?? 'Outfit';
-        $bgColor = $styles['bg_color'] ?? '#0f172a';
-        $primaryColor = $styles['primary_color'] ?? '#6366f1';
+        $bgColor = $styles['background_color'] ?? ($styles['bg_color'] ?? '#0f172a');
+        $primaryColor = $styles['primary_color'] ?? '#4f46e5';
         $textColor = $styles['text_color'] ?? '#ffffff';
         $cardBg = $styles['card_bg'] ?? '#1e293b';
         $borderRadius = $styles['border_radius'] ?? '16px';
         $shadow = $styles['shadow_style'] ?? 'soft';
         $bgStyle = $styles['bg_style'] ?? 'solid';
+        $elementSpacing = $styles['element_spacing'] ?? '14px';
+
+        $profilePhoto = $card->profile_photo_path ?: $card->profile_image;
+        $coverPhoto = $card->cover_photo_path ?: $card->cover_image;
 
         $avatarAlign = $layout['avatar_align'] ?? 'center';
         $avatarShape = $layout['avatar_shape'] ?? 'circle';
@@ -113,8 +119,8 @@
             position: relative;
             background-size: cover;
             background-position: center;
-            @if($card->cover_image)
-                background-image: url('{{ asset("storage/" . $card->cover_image) }}');
+            @if($coverPhoto)
+                background-image: url('{{ asset("storage/" . $coverPhoto) }}');
             @else
                 background: linear-gradient(135deg, {{ $primaryColor }} 0%, #1e1b4b 100%);
             @endif
@@ -306,10 +312,10 @@
         {{-- Profile Information --}}
         <div class="profile-section">
             <div class="profile-avatar-wrap">
-                @if($card->profile_image)
-                    <img src="{{ asset('storage/' . $card->profile_image) }}" alt="{{ $card->full_name }}" class="profile-avatar">
+                @if($profilePhoto)
+                    <img src="{{ asset('storage/' . $profilePhoto) }}" alt="{{ $card->full_name }}" class="profile-avatar">
                 @else
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode($card->full_name ?: $card->name) }}&background={{ substr($primaryColor, 1) }}&color=fff&size=150" alt="{{ $card->full_name }}" class="profile-avatar">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode($card->full_name ?: ($card->title ?: $card->name)) }}&background={{ substr($primaryColor, 1) }}&color=fff&size=150" alt="{{ $card->full_name }}" class="profile-avatar">
                 @endif
             </div>
 
@@ -344,14 +350,18 @@
             @endif
         </div>
 
+        @php
+            $displayBlocks = $card->content_blocks ?: ($card->links ?: []);
+        @endphp
+
         {{-- Custom Links List --}}
-        <div class="links-wrapper">
-            @if(is_array($card->links) && count($card->links) > 0)
-                @foreach($card->links as $link)
+        <div class="links-wrapper" style="gap: {{ $elementSpacing }};">
+            @if(is_array($displayBlocks) && count($displayBlocks) > 0)
+                @foreach($displayBlocks as $link)
                     @php
                         $type = $link['type'] ?? 'custom';
-                        $val = $link['value'] ?? '#';
-                        $title = $link['title'] ?? 'Lien';
+                        $val = $link['url'] ?? ($link['value'] ?? '#');
+                        $title = $link['label'] ?? ($link['title'] ?? 'Lien');
                         $desc = $link['description'] ?? '';
 
                         // Format target URL based on type
@@ -400,7 +410,12 @@
                         }
 
                         if (!empty($link['icon'])) {
-                            $iconClass = 'bi ' . $link['icon'];
+                            $rawIcon = trim($link['icon']);
+                            if (str_contains($rawIcon, 'fa-') || str_starts_with($rawIcon, 'fas ') || str_starts_with($rawIcon, 'fab ') || str_starts_with($rawIcon, 'far ')) {
+                                $iconClass = $rawIcon;
+                            } else {
+                                $iconClass = str_starts_with($rawIcon, 'bi ') ? $rawIcon : 'bi ' . $rawIcon;
+                            }
                         }
                     @endphp
 

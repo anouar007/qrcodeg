@@ -1,229 +1,255 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
-@section('title', 'Détails Tag NFC: ' . $nfcTag->name)
+@section('title', ($nfcTag->label ?: $nfcTag->name) . ' - NFC Tag Details')
 
 @section('content')
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-    <div>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-1">
-                <li class="breadcrumb-item"><a href="{{ route('admin.nfc-tags.index') }}" class="text-decoration-none">Tags NFC</a></li>
-                <li class="breadcrumb-item active">{{ $nfcTag->tag_uid }}</li>
-            </ol>
-        </nav>
+<div class="container-fluid px-0">
+    <!-- Breadcrumb & Header -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}" class="text-decoration-none">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.nfc-tags.index') }}" class="text-decoration-none">NFC Tags</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ $nfcTag->tag_uid }}</li>
+                </ol>
+            </nav>
+            <h1 class="h3 fw-bold text-dark mb-1 d-flex align-items-center gap-2">
+                <span class="font-mono text-primary">{{ $nfcTag->tag_uid }}</span>
+                <span class="text-muted fw-normal">| {{ $nfcTag->label ?: $nfcTag->name }}</span>
+            </h1>
+        </div>
         <div class="d-flex align-items-center gap-2">
-            <h1 class="h3 fw-bold mb-0">{{ $nfcTag->name }}</h1>
-            <span class="badge bg-dark-subtle text-dark border font-monospace">{{ $nfcTag->tag_uid }}</span>
-            @if($nfcTag->status === 'active')
-                <span class="badge bg-success-subtle text-success border border-success-subtle">Actif</span>
-            @elseif($nfcTag->status === 'locked')
-                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Verrouillé</span>
-            @else
-                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Inactif</span>
-            @endif
+            <a href="{{ route('admin.nfc-tags.edit', $nfcTag) }}" class="btn btn-outline-secondary">
+                <i class="bi bi-pencil me-1"></i> Edit Tag
+            </a>
+            <a href="{{ route('nfc.redirect', ['id_or_uid' => $nfcTag->tag_uid ?: $nfcTag->id]) }}" target="_blank" class="btn btn-primary shadow-sm">
+                <i class="bi bi-box-arrow-up-right me-1"></i> Test Live Tap (302 Redirect)
+            </a>
         </div>
     </div>
-    <div class="d-flex gap-2">
-        <a href="{{ $nfcTag->public_url }}" target="_blank" class="btn btn-outline-info d-flex align-items-center gap-2">
-            <i class="bi bi-play-circle"></i>
-            <span>Tester le Tap</span>
-        </a>
-        <a href="{{ route('admin.nfc-tags.edit', $nfcTag) }}" class="btn btn-outline-primary d-flex align-items-center gap-2">
-            <i class="bi bi-pencil"></i>
-            <span>Modifier</span>
-        </a>
-        <a href="{{ route('admin.nfc-tags.index') }}" class="btn btn-outline-secondary">
-            <span>Retour</span>
-        </a>
-    </div>
-</div>
 
-{{-- Metric Cards --}}
-<div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm rounded-3">
-            <div class="card-body p-3 d-flex align-items-center gap-3">
-                <div class="rounded-3 p-3 bg-primary-subtle text-primary">
-                    <i class="bi bi-phone-vibrate fs-4"></i>
-                </div>
-                <div>
-                    <div class="text-muted small fw-medium">Total Taps Détectés</div>
-                    <div class="fs-4 fw-bold text-dark">{{ $nfcTag->tap_count }}</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm rounded-3">
-            <div class="card-body p-3 d-flex align-items-center gap-3">
-                <div class="rounded-3 p-3 bg-success-subtle text-success">
-                    <i class="bi bi-broadcast-pin fs-4"></i>
-                </div>
-                <div>
-                    <div class="text-muted small fw-medium">Type de Cible</div>
-                    <div class="fs-6 fw-bold text-dark text-capitalize">{{ str_replace('_', ' ', $nfcTag->target_type) }}</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm rounded-3">
-            <div class="card-body p-3 d-flex align-items-center gap-3">
-                <div class="rounded-3 p-3 bg-info-subtle text-info">
-                    <i class="bi bi-clock-history fs-4"></i>
-                </div>
-                <div>
-                    <div class="text-muted small fw-medium">Dernier Tap</div>
-                    <div class="fs-6 fw-bold text-dark">{{ $nfcTag->last_tapped_at ? $nfcTag->last_tapped_at->diffForHumans() : 'Jamais' }}</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm rounded-3">
-            <div class="card-body p-3 d-flex align-items-center gap-3">
-                <div class="rounded-3 p-3 bg-warning-subtle text-warning">
-                    <i class="bi bi-building fs-4"></i>
-                </div>
-                <div>
-                    <div class="text-muted small fw-medium">Client</div>
-                    <div class="fs-6 fw-bold text-dark text-truncate" style="max-width: 140px;">
-                        {{ $nfcTag->client ? $nfcTag->client->company_name : 'Usage Interne' }}
+    <div class="row g-4">
+        <!-- LEFT COLUMN: Chip Info & Instant Target Swapper -->
+        <div class="col-12 col-lg-5">
+            <!-- Chip Visual Card -->
+            <div class="card border-0 shadow-sm rounded-3 mb-4 text-center">
+                <div class="card-body p-4">
+                    <div class="d-inline-flex align-items-center justify-content-center p-4 bg-primary-subtle text-primary rounded-circle mb-3 shadow-sm" style="width: 90px; height: 90px;">
+                        <i class="bi bi-broadcast fs-1"></i>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="row g-4">
-    {{-- Left: Details & Link --}}
-    <div class="col-lg-5">
-        <div class="card border-0 shadow-sm rounded-3 mb-4">
-            <div class="card-header bg-white py-3 border-bottom-0">
-                <h5 class="fw-bold mb-0">Paramètres du Tag</h5>
-            </div>
-            <div class="card-body pt-0">
-                <div class="mb-3">
-                    <label class="small text-muted mb-1">Lien NFC Programmé</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control font-monospace small bg-light" value="{{ $nfcTag->public_url }}" readonly>
-                        <button class="btn btn-outline-secondary" type="button" onclick="copyNfcUrl('{{ $nfcTag->public_url }}')">
-                            <i class="bi bi-clipboard"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="small text-muted mb-1">Cible Actuelle Résolue</label>
-                    <div class="p-3 bg-light rounded-3">
-                        <div class="fw-semibold text-dark mb-1 d-flex align-items-center gap-2">
-                            @if($nfcTag->target_type === 'digital_card')
-                                <i class="bi bi-person-vcard text-primary"></i> Carte Visite Digitale
-                            @elseif($nfcTag->target_type === 'qr_code')
-                                <i class="bi bi-qr-code text-info"></i> Dynamic QR Code VP
-                            @else
-                                <i class="bi bi-link-45deg text-success"></i> URL Directe
-                            @endif
-                        </div>
-                        <a href="{{ $nfcTag->destination_url }}" target="_blank" class="small font-monospace text-break text-decoration-none">
-                            {{ $nfcTag->destination_url }}
-                            <i class="bi bi-box-arrow-up-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-
-                @if($nfcTag->notes)
+                    <h5 class="fw-bold text-dark mb-1">{{ $nfcTag->label ?: $nfcTag->name }}</h5>
                     <div class="mb-3">
-                        <label class="small text-muted mb-1">Notes / Emplacement Physique</label>
-                        <p class="small text-dark mb-0 bg-light p-2 rounded-2">{{ $nfcTag->notes }}</p>
+                        <span class="badge bg-dark-subtle text-dark border font-mono fs-6 px-3 py-1">
+                            UID: {{ $nfcTag->tag_uid }}
+                        </span>
                     </div>
-                @endif
 
-                <div class="d-flex justify-content-between py-2 border-top text-muted small">
-                    <span>Créé par</span>
-                    <span class="text-dark">{{ $nfcTag->creator ? $nfcTag->creator->name : 'Système' }}</span>
+                    <div class="small text-muted mb-3 text-start bg-light border rounded p-3">
+                        <div class="fw-semibold text-dark mb-1">Physical Programming Tap URL:</div>
+                        <div class="font-mono text-break text-primary small">
+                            {{ route('nfc.redirect', ['id_or_uid' => $nfcTag->tag_uid ?: $nfcTag->id]) }}
+                        </div>
+                        <div class="mt-2 text-muted" style="font-size: 0.72rem;">
+                            Encode this permanent URL into the physical chip using NFC Tools or smartphone writer.
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-2">
+                        <form method="POST" action="{{ route('admin.nfc-tags.toggle-status', $nfcTag) }}">
+                            @csrf
+                            <button type="submit" class="btn btn-sm {{ $nfcTag->status === 'active' ? 'btn-outline-warning' : 'btn-outline-success' }}">
+                                <i class="bi {{ $nfcTag->status === 'active' ? 'bi-pause-circle' : 'bi-play-circle' }} me-1"></i>
+                                {{ $nfcTag->status === 'active' ? 'Suspend Chip' : 'Activate Chip' }}
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <div class="d-flex justify-content-between py-2 border-top text-muted small">
-                    <span>Date d'enregistrement</span>
-                    <span class="text-dark">{{ $nfcTag->created_at->format('d/m/Y H:i') }}</span>
+            </div>
+
+            <!-- Instant Target Swapper Form -->
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                    <h5 class="fw-bold mb-1 d-flex align-items-center gap-2">
+                        <i class="bi bi-lightning-charge-fill text-warning"></i>
+                        Target Destination Swapper
+                    </h5>
+                    <p class="text-muted small mb-0">Swap the campaign destination instantly. The physical NFC card remains unchanged.</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ route('admin.nfc-tags.destination', $nfcTag) }}">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-muted">Select Target Preset</label>
+                            <select id="showPresetSelect" name="preset_target" class="form-select bg-light">
+                                <option value="custom" selected>Custom Destination URL</option>
+                                @if($digitalCards->isNotEmpty())
+                                    <optgroup label="--- Digital Business Cards ---">
+                                        @foreach($digitalCards as $card)
+                                            <option value="card:{{ $card->id }}" data-url="{{ route('digital-cards.public.show', $card->slug) }}">
+                                                {{ $card->title ?: $card->name }} (Slug: {{ $card->slug }})
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
+                                @endif
+                                @if($dynamicQrs->isNotEmpty())
+                                    <optgroup label="--- Dynamic QR Codes (VP-) ---">
+                                        @foreach($dynamicQrs as $dqr)
+                                            <option value="qr:{{ $dqr->id }}" data-url="{{ route('qr.redirect', ['code' => $dqr->code]) }}">
+                                                {{ $dqr->code }} - {{ $dqr->label }}
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
+                                @endif
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-muted">Designated Destination URL</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted"><i class="bi bi-globe"></i></span>
+                                <input type="text" id="showDestUrlInput" name="destination_url" class="form-control" 
+                                       value="{{ old('destination_url', $nfcTag->destination_url ?: $nfcTag->target_url) }}" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 shadow-sm">
+                            <i class="bi bi-check-lg me-1"></i> Swap Destination Instantly
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
-    </div>
 
-    {{-- Right: Recent Taps Log --}}
-    <div class="col-lg-7">
-        <div class="card border-0 shadow-sm rounded-3">
-            <div class="card-header bg-white py-3 border-bottom-0 d-flex justify-content-between align-items-center">
-                <h5 class="fw-bold mb-0">Historique des Derniers Taps</h5>
-                <span class="badge bg-light text-muted border">{{ $nfcTag->taps->count() }} détections récentes</span>
+        <!-- RIGHT COLUMN: Metrics, Client & Telemetry Scan Log Stream -->
+        <div class="col-12 col-lg-7">
+            <!-- Metrics -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-sm-4">
+                    <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+                        <div class="text-muted small text-uppercase fw-semibold mb-1">Total Taps / Scans</div>
+                        <div class="fs-4 fw-bold font-mono text-dark d-flex align-items-center gap-2">
+                            <i class="bi bi-broadcast text-success"></i>
+                            {{ number_format($nfcTag->scans_count ?: $nfcTag->tap_count) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-4">
+                    <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+                        <div class="text-muted small text-uppercase fw-semibold mb-1">Status</div>
+                        <div class="mt-1">
+                            <x-badge :status="$nfcTag->status" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4">
+                    <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+                        <div class="text-muted small text-uppercase fw-semibold mb-1">Last Interaction</div>
+                        <div class="small fw-bold text-dark mt-1 font-mono">
+                            {{ $nfcTag->last_tapped_at ? $nfcTag->last_tapped_at->diffForHumans() : 'Never' }}
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-3 py-2">Date & Heure</th>
-                            <th>Appareil</th>
-                            <th>OS & Navigateur</th>
-                            <th class="text-end pe-3">IP Hash</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($nfcTag->taps as $tap)
-                            <tr>
-                                <td class="ps-3 py-2">
-                                    <div class="small fw-semibold text-dark">{{ $tap->tapped_at->format('d/m/Y H:i:s') }}</div>
-                                    <div class="text-muted" style="font-size: 0.72rem;">{{ $tap->tapped_at->diffForHumans() }}</div>
-                                </td>
-                                <td>
-                                    <span class="badge bg-light text-dark border text-capitalize">
-                                        <i class="bi bi-{{ $tap->device_type === 'mobile' ? 'phone' : ($tap->device_type === 'tablet' ? 'tablet' : 'laptop') }} me-1"></i>
-                                        {{ $tap->device_type ?? 'Mobile' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="small text-dark">{{ $tap->operating_system ?? 'Inconnu' }}</div>
-                                    <div class="text-muted" style="font-size: 0.72rem;">{{ $tap->browser ?? 'Inconnu' }}</div>
-                                </td>
-                                <td class="text-end pe-3 font-monospace text-muted small">
-                                    {{ substr($tap->ip_hash, 0, 10) }}...
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="text-center py-4 text-muted small">
-                                    Aucun tap enregistré pour le moment. Approchez un smartphone pour tester la détection !
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080">
-    <div id="copyToast" class="toast align-items-center text-bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body small">
-                <i class="bi bi-check-circle-fill text-success me-2"></i> Lien NFC copié !
+            <!-- Client Info Card -->
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-building text-primary"></i>
+                        Client Association
+                    </h6>
+                    @if($nfcTag->client)
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="mb-0 fw-bold">{{ $nfcTag->client->name }}</h6>
+                                <div class="text-muted small">
+                                    Project: {{ $nfcTag->client->project_name ?: 'Standard' }} &bull; Phone: {{ $nfcTag->client->phone ?: 'N/A' }}
+                                </div>
+                            </div>
+                            <a href="{{ route('admin.clients.show', $nfcTag->client) }}" class="btn btn-sm btn-outline-primary">
+                                View Client Profile
+                            </a>
+                        </div>
+                    @else
+                        <div class="text-muted small">
+                            Not assigned to a client. Available in inventory.
+                        </div>
+                    @endif
+                </div>
             </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+
+            <!-- Polymorphic ScanLog Telemetry Stream -->
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-header bg-white border-0 pt-4 px-4 pb-0 d-flex align-items-center justify-content-between">
+                    <div>
+                        <h5 class="fw-bold mb-1">NFC Tap Telemetry Stream</h5>
+                        <p class="text-muted small mb-0">Polymorphic ScanLog events recorded on every physical chip detection.</p>
+                    </div>
+                    <span class="badge bg-light text-secondary border font-mono">
+                        {{ $nfcTag->scanLogs->count() }} Recorded Events
+                    </span>
+                </div>
+                <div class="card-body p-0 mt-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-muted small text-uppercase">
+                                <tr>
+                                    <th class="ps-4">IP Address</th>
+                                    <th>User Agent / Device</th>
+                                    <th class="pe-4 text-end">Tapped At</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y small">
+                                @forelse($nfcTag->scanLogs as $log)
+                                    <tr>
+                                        <td class="ps-4 font-mono fw-semibold text-primary">
+                                            {{ $log->ip_address ?: '127.0.0.1' }}
+                                        </td>
+                                        <td>
+                                            <div class="text-truncate text-muted" style="max-width: 320px;" title="{{ $log->user_agent }}">
+                                                {{ $log->user_agent ?: 'NFC Mobile Browser' }}
+                                            </div>
+                                        </td>
+                                        <td class="pe-4 text-end font-mono text-muted">
+                                            {{ $log->scanned_at ? $log->scanned_at->format('M d, Y H:i:s') : 'N/A' }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center py-4 text-muted">
+                                            <i class="bi bi-broadcast fs-4 d-block mb-1"></i>
+                                            No tap telemetry recorded yet for this NFC chip.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 @push('scripts')
 <script>
-function copyNfcUrl(url) {
-    navigator.clipboard.writeText(url).then(() => {
-        const toastEl = document.getElementById('copyToast');
-        const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
-        toast.show();
-    });
-}
+document.addEventListener('DOMContentLoaded', function () {
+    const showPreset = document.getElementById('showPresetSelect');
+    const showInput = document.getElementById('showDestUrlInput');
+    if (showPreset && showInput) {
+        showPreset.addEventListener('change', function () {
+            const selectedOpt = this.options[this.selectedIndex];
+            const url = selectedOpt.getAttribute('data-url');
+            if (url) {
+                showInput.value = url;
+            }
+        });
+    }
+});
 </script>
 @endpush
 @endsection

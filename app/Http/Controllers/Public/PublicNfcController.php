@@ -50,8 +50,7 @@ class PublicNfcController extends Controller
             'user_agent' => substr($agent, 0, 500),
         ]);
 
-        $tag->increment('tap_count');
-        $tag->update(['last_tapped_at' => now()]);
+        $tag->recordScan($request->ip(), $request->userAgent());
 
         // Destination resolution
         $destUrl = $tag->destination_url;

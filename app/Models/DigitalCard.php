@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,12 +15,22 @@ class DigitalCard extends Model
 
     protected $fillable = [
         'client_id',
-        'created_by',
+        'user_id',
+        'title',
         'slug',
+        'template_id',
+        'theme_config',
+        'content_blocks',
+        'views_count',
+        'status',
+        // Legacy & extended attributes
+        'created_by',
         'name',
         'template',
         'profile_image',
         'cover_image',
+        'profile_photo_path',
+        'cover_photo_path',
         'full_name',
         'job_title',
         'company',
@@ -28,14 +39,14 @@ class DigitalCard extends Model
         'links',
         'layout_settings',
         'style_settings',
-        'status',
-        'views_count',
         'last_viewed_at',
     ];
 
     protected function casts(): array
     {
         return [
+            'theme_config' => 'array',
+            'content_blocks' => 'array',
             'links' => 'array',
             'layout_settings' => 'array',
             'style_settings' => 'array',
@@ -44,14 +55,81 @@ class DigitalCard extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::creating(function (DigitalCard $card) {
+            if (empty($card->slug)) {
+                $card->slug = static::generateUniqueSlug();
+            }
+            if (empty($card->title)) {
+                $card->title = $card->name ?: ($card->full_name ?: 'Digital Business Card');
+            }
+            if (empty($card->name)) {
+                $card->name = $card->title;
+            }
+            if (empty($card->template_id)) {
+                $card->template_id = $card->template ?: 'modern';
+            }
+            if (empty($card->user_id) && ! empty($card->created_by)) {
+                $card->user_id = $card->created_by;
+            }
+            if (empty($card->created_by) && ! empty($card->user_id)) {
+                $card->created_by = $card->user_id;
+            }
+        });
+
+        static::saving(function (DigitalCard $card) {
+            // Keep style_settings <-> theme_config in sync
+            if (! empty($card->theme_config) && empty($card->style_settings)) {
+                $card->style_settings = $card->theme_config;
+            } elseif (! empty($card->style_settings) && empty($card->theme_config)) {
+                $card->theme_config = $card->style_settings;
+            }
+
+            // Keep content_blocks <-> links in sync
+            if (! empty($card->content_blocks) && empty($card->links)) {
+                $card->links = $card->content_blocks['social_links'] ?? ($card->content_blocks['links'] ?? null);
+            }
+
+            // Sync photo paths
+            if (! empty($card->profile_photo_path) && empty($card->profile_image)) {
+                $card->profile_image = $card->profile_photo_path;
+            } elseif (! empty($card->profile_image) && empty($card->profile_photo_path)) {
+                $card->profile_photo_path = $card->profile_image;
+            }
+
+            if (! empty($card->cover_photo_path) && empty($card->cover_image)) {
+                $card->cover_image = $card->cover_photo_path;
+            } elseif (! empty($card->cover_image) && empty($card->cover_photo_path)) {
+                $card->cover_photo_path = $card->cover_image;
+            }
+        });
+    }
+
+    protected function title(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value ?: ($this->name ?: ($this->full_name ?: 'Card #'.$this->id)),
+            set: fn ($value) => [
+                'title' => $value,
+                'name' => $value,
+            ]
+        );
+    }
+
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->user();
     }
 
     public function nfcTags(): HasMany
@@ -98,7 +176,7 @@ class DigitalCard extends Model
     {
         $vcard = "BEGIN:VCARD\r\n";
         $vcard .= "VERSION:3.0\r\n";
-        $vcard .= 'FN;CHARSET=UTF-8:'.($this->full_name ?: $this->name)."\r\n";
+        $vcard .= 'FN;CHARSET=UTF-8:'.($this->full_name ?: ($this->title ?: $this->name))."\r\n";
 
         if ($this->company) {
             $vcard .= 'ORG;CHARSET=UTF-8:'.$this->company."\r\n";
@@ -110,21 +188,22 @@ class DigitalCard extends Model
             $vcard .= 'NOTE;CHARSET=UTF-8:'.str_replace(["\r", "\n"], ' ', $this->bio)."\r\n";
         }
 
-        if (is_array($this->links)) {
-            foreach ($this->links as $link) {
+        $items = $this->content_blocks['contact_details'] ?? ($this->content_blocks ?? ($this->links ?? []));
+        if (is_array($items)) {
+            foreach ($items as $link) {
                 $type = $link['type'] ?? '';
-                $val = trim($link['value'] ?? '');
+                $val = trim($link['url'] ?? ($link['value'] ?? ''));
                 if (! $val) {
                     continue;
                 }
 
-                if ($type === 'phone') {
+                if ($type === 'phone' || $type === 'contact') {
                     $vcard .= 'TEL;TYPE=CELL:'.$val."\r\n";
                 } elseif ($type === 'whatsapp') {
                     $vcard .= 'TEL;TYPE=WHATSAPP:'.$val."\r\n";
                 } elseif ($type === 'email') {
                     $vcard .= 'EMAIL;TYPE=INTERNET:'.$val."\r\n";
-                } elseif ($type === 'website') {
+                } elseif ($type === 'website' || $type === 'custom_link') {
                     $vcard .= 'URL:'.$val."\r\n";
                 }
             }
