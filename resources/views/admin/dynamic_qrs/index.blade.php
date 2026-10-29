@@ -239,22 +239,25 @@
     height: 38px;
     display: inline-flex;
     align-items: center;
-    gap: 2px;
+    gap: 3px;
+    flex-shrink: 0;
 }
 .dyn-segmented-btn {
     border: none;
     background: transparent;
     color: #64748b;
-    font-size: 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 600;
     height: 30px;
-    width: 34px;
-    padding: 0;
+    padding: 0 0.7rem;
     border-radius: 7px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 5px;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
+    white-space: nowrap;
 }
 .dyn-segmented-btn:hover {
     color: #0f172a;
@@ -263,7 +266,40 @@
     background: #ffffff;
     color: #6320ee;
     font-weight: 700;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+}
+
+/* Per-Page Top Capsule */
+.dyn-perpage-capsule {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    height: 38px;
+    padding: 0 0.35rem 0 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+.dyn-perpage-capsule label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    margin: 0;
+    white-space: nowrap;
+}
+.dyn-perpage-capsule select {
+    border: none !important;
+    background-color: #ffffff !important;
+    border-radius: 7px !important;
+    height: 28px !important;
+    min-height: 28px !important;
+    padding: 0 1.65rem 0 0.55rem !important;
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+    cursor: pointer;
 }
 
 /* Table Card & Zero-Horizontal-Scroll Fluid Layout */
@@ -602,6 +638,31 @@
     opacity: 1;
     transform: translateY(0);
 }
+
+/* Unified Pagination Links */
+.dyn-pagination-links nav > div:first-child {
+    display: none !important;
+}
+.dyn-pagination-links nav > div:last-child > div:first-child {
+    display: none !important;
+}
+.dyn-pagination-links .pagination {
+    margin-bottom: 0 !important;
+    gap: 4px;
+}
+.dyn-pagination-links .page-link {
+    border-radius: 8px !important;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+    padding: 0.35rem 0.7rem;
+}
+.dyn-pagination-links .page-item.active .page-link {
+    background-color: #6320ee !important;
+    border-color: #6320ee !important;
+    color: #ffffff !important;
+}
 </style>
 @endpush
 
@@ -752,49 +813,79 @@
     </div>
 
     <!-- Command Bar: Quick Status Tabs + Search, Filters & View Toggle -->
+    @php
+        $activePerPage = (string) ($perPage ?? request('per_page', '20'));
+    @endphp
     <div class="filter-card p-3 mb-4">
-        <!-- Top Row: Quick Status Filter Pills & Helper Hint -->
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pb-3 mb-3 border-bottom" style="border-color: #f1f5f9 !important;">
-            <div class="quick-status-pills">
-                <a href="{{ route('admin.dynamic-qrs.index', array_filter(array_merge(request()->query(), ['status' => null, 'page' => null]))) }}"
-                   class="quick-status-pill {{ !request('status') ? 'active' : '' }}">
-                    <span>Tous</span>
-                    <span class="badge rounded-pill bg-light text-secondary border font-mono" style="font-size: 0.68rem;">{{ $metrics['total'] }}</span>
-                </a>
-                <a href="{{ route('admin.dynamic-qrs.index', array_merge(request()->query(), ['status' => 'active', 'page' => null])) }}"
-                   class="quick-status-pill {{ request('status') === 'active' ? 'active' : '' }}">
-                    <span class="d-inline-block rounded-circle bg-success" style="width: 6px; height: 6px;"></span>
-                    <span>Actifs</span>
-                    <span class="badge rounded-pill bg-light text-secondary border font-mono" style="font-size: 0.68rem;">{{ $metrics['active'] }}</span>
-                </a>
-                <a href="{{ route('admin.dynamic-qrs.index', array_merge(request()->query(), ['status' => 'inactive', 'page' => null])) }}"
-                   class="quick-status-pill {{ request('status') === 'inactive' ? 'active' : '' }}">
-                    <span class="d-inline-block rounded-circle bg-secondary" style="width: 6px; height: 6px;"></span>
-                    <span>Inactifs</span>
-                    <span class="badge rounded-pill bg-light text-secondary border font-mono" style="font-size: 0.68rem;">{{ $metrics['inactive'] }}</span>
-                </a>
+        <!-- Top Row: Quick Status Filter Pills + Per-Page & View Switcher -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2.5 pb-3 mb-3 border-bottom" style="border-color: #f1f5f9 !important;">
+            <div class="d-flex flex-wrap align-items-center gap-3">
+                <div class="quick-status-pills">
+                    <a href="{{ route('admin.dynamic-qrs.index', array_filter(array_merge(request()->query(), ['status' => null, 'page' => null]))) }}"
+                       class="quick-status-pill {{ !request('status') ? 'active' : '' }}">
+                        <span>Tous</span>
+                        <span class="badge rounded-pill bg-light text-secondary border font-mono" style="font-size: 0.68rem;">{{ $metrics['total'] }}</span>
+                    </a>
+                    <a href="{{ route('admin.dynamic-qrs.index', array_merge(request()->query(), ['status' => 'active', 'page' => null])) }}"
+                       class="quick-status-pill {{ request('status') === 'active' ? 'active' : '' }}">
+                        <span class="d-inline-block rounded-circle bg-success" style="width: 6px; height: 6px;"></span>
+                        <span>Actifs</span>
+                        <span class="badge rounded-pill bg-light text-secondary border font-mono" style="font-size: 0.68rem;">{{ $metrics['active'] }}</span>
+                    </a>
+                    <a href="{{ route('admin.dynamic-qrs.index', array_merge(request()->query(), ['status' => 'inactive', 'page' => null])) }}"
+                       class="quick-status-pill {{ request('status') === 'inactive' ? 'active' : '' }}">
+                        <span class="d-inline-block rounded-circle bg-secondary" style="width: 6px; height: 6px;"></span>
+                        <span>Inactifs</span>
+                        <span class="badge rounded-pill bg-light text-secondary border font-mono" style="font-size: 0.68rem;">{{ $metrics['inactive'] }}</span>
+                    </a>
+                </div>
+
+                <span class="text-muted d-none d-xxl-inline-flex align-items-center gap-1" style="font-size: 0.75rem;">
+                    <i class="bi bi-lightning-charge-fill text-warning"></i>                </span>
             </div>
 
-            <div class="d-flex align-items-center gap-2">
-                <span class="text-muted d-none d-lg-inline-flex align-items-center gap-1" style="font-size: 0.75rem;">
-                    <i class="bi bi-lightning-charge-fill text-warning"></i>
-                    <span>Cliquez sur une miniature QR pour l'aperçu HD ou sur « Éditer » pour router l'URL en direct</span>
-                </span>
+            <!-- Right Controls: Items Per Page Capsule + View Switcher (Table / Cards) -->
+            <div class="d-flex flex-wrap align-items-center gap-2 ms-auto">
+                <div class="dyn-perpage-capsule">
+                    <label for="dynPerPageSelectTop"><i class="bi bi-eye me-1 text-primary"></i>Afficher :</label>
+                    <select id="dynPerPageSelectTop" class="form-select" onchange="changeDynPerPage(this.value)" title="Nombre d'éléments affichés par page">
+                        <option value="12" {{ $activePerPage === '12' ? 'selected' : '' }}>12 / page</option>
+                        <option value="20" {{ $activePerPage === '20' ? 'selected' : '' }}>20 / page</option>
+                        <option value="24" {{ $activePerPage === '24' ? 'selected' : '' }}>24 / page</option>
+                        <option value="48" {{ $activePerPage === '48' ? 'selected' : '' }}>48 / page</option>
+                        <option value="100" {{ $activePerPage === '100' ? 'selected' : '' }}>100 / page</option>
+                        <option value="all" {{ $activePerPage === 'all' ? 'selected' : '' }}>Tout ({{ $qrCodes->total() }})</option>
+                    </select>
+                </div>
+
+                <div class="dyn-segmented-control" role="group" aria-label="Sélecteur d'affichage">
+                    <button type="button" class="dyn-segmented-btn active" id="btnViewTable" title="Affichage tableau">
+                        <i class="bi bi-list-ul"></i>
+                        <span>Tableau</span>
+                    </button>
+                    <button type="button" class="dyn-segmented-btn" id="btnViewGrid" title="Affichage visuel en cartes">
+                        <i class="bi bi-grid-fill"></i>
+                        <span>Cartes</span>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Bottom Row: Filter Form -->
-        <form method="GET" action="{{ route('admin.dynamic-qrs.index') }}" class="row g-2 align-items-center" id="dynFilterForm">
+        <!-- Bottom Row: Balanced Flex Filter Toolbar (Zero Overlap) -->
+        <form method="GET" action="{{ route('admin.dynamic-qrs.index') }}" class="d-flex flex-wrap align-items-center gap-2" id="dynFilterForm">
+            @if(request('status'))
+                <input type="hidden" name="status" value="{{ request('status') }}">
+            @endif
+            <input type="hidden" name="per_page" id="dynPerPageHiddenInput" value="{{ $activePerPage }}">
+
             <!-- Search Box -->
-            <div class="col-12 col-md-4 col-xl-3">
-                <div class="position-relative">
-                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 0.84rem; pointer-events: none;"></i>
-                    <input type="text" name="search" id="dynSearchInput" value="{{ request('search') }}" class="form-control filter-input" placeholder="Code VP-, libellé, client ou URL..." style="padding-left: 2.25rem !important;">
-                </div>
+            <div class="position-relative" style="flex: 1 1 260px; min-width: 220px;">
+                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 0.84rem; pointer-events: none;"></i>
+                <input type="text" name="search" id="dynSearchInput" value="{{ request('search') }}" class="form-control filter-input" placeholder="Code VP-, libellé, client ou URL..." style="padding-left: 2.25rem !important;">
             </div>
 
             <!-- Template Filter -->
-            <div class="col-6 col-md-3 col-xl-2">
+            <div style="flex: 0 1 185px; min-width: 155px;">
                 <select name="template_type" class="form-select filter-input" onchange="this.form.submit()">
                     <option value="">Tous les gabarits</option>
                     <option value="google_review" {{ request('template_type') === 'google_review' ? 'selected' : '' }}>Avis Google</option>
@@ -805,7 +896,7 @@
             </div>
 
             <!-- Client Filter -->
-            <div class="col-6 col-md-3 col-xl-2">
+            <div style="flex: 0 1 210px; min-width: 170px;">
                 <select name="client_id" class="form-select filter-input" onchange="this.form.submit()">
                     <option value="">Tous les clients</option>
                     <option value="unassigned" {{ request('client_id') === 'unassigned' ? 'selected' : '' }}>— Non assignés —</option>
@@ -817,50 +908,31 @@
                 </select>
             </div>
 
-            <!-- Status Filter -->
-            <div class="col-6 col-md-2 col-xl-1">
-                <select name="status" class="form-select filter-input" onchange="this.form.submit()">
-                    <option value="">Statut</option>
-                    <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Actif</option>
-                    <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactif</option>
-                    <option value="archived" {{ request('status') === 'archived' ? 'selected' : '' }}>Archivé</option>
-                </select>
-            </div>
-
             <!-- Sort Dropdown -->
-            <div class="col-6 col-md-3 col-xl-2">
+            <div style="flex: 0 1 180px; min-width: 155px;">
                 <select name="sort" class="form-select filter-input" onchange="this.form.submit()">
-                    <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Plus récents</option>
-                    <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Plus anciens</option>
-                    <option value="scans_high" {{ request('sort') === 'scans_high' ? 'selected' : '' }}>Plus scannés</option>
-                    <option value="scans_low" {{ request('sort') === 'scans_low' ? 'selected' : '' }}>Moins scannés</option>
-                    <option value="code" {{ request('sort') === 'code' ? 'selected' : '' }}>Code VP- (A-Z)</option>
-                    <option value="label" {{ request('sort') === 'label' ? 'selected' : '' }}>Libellé (A-Z)</option>
+                    <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Trier : Plus récents</option>
+                    <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Trier : Plus anciens</option>
+                    <option value="scans_high" {{ request('sort') === 'scans_high' ? 'selected' : '' }}>Trier : Plus scannés</option>
+                    <option value="scans_low" {{ request('sort') === 'scans_low' ? 'selected' : '' }}>Trier : Moins scannés</option>
+                    <option value="code" {{ request('sort') === 'code' ? 'selected' : '' }}>Trier : Code VP- (A-Z)</option>
+                    <option value="label" {{ request('sort') === 'label' ? 'selected' : '' }}>Trier : Libellé (A-Z)</option>
                 </select>
             </div>
 
-            <!-- Submit, Reset & View Switcher -->
-            <div class="col-12 col-md-auto col-xl-2 d-flex align-items-center justify-content-end gap-2 ms-auto">
-                <button type="submit" class="btn btn-sm text-white px-3 d-inline-flex align-items-center gap-1 shadow-xs border-0" style="background-color: #6320ee; height: 38px; border-radius: 10px; font-weight: 600;" title="Appliquer les filtres">
-                    <i class="bi bi-funnel"></i>
+            <!-- Submit & Reset Actions -->
+            <div class="d-flex align-items-center gap-2 flex-shrink-0 ms-auto">
+                <button type="submit" class="btn text-white d-inline-flex align-items-center justify-content-center gap-1.5 shadow-xs border-0" style="background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%); height: 38px !important; padding: 0 1.1rem !important; border-radius: 10px !important; font-weight: 600 !important; font-size: 0.83rem !important; white-space: nowrap;">
+                    <i class="bi bi-funnel-fill" style="font-size: 0.78rem;"></i>
                     <span>Filtrer</span>
                 </button>
 
-                @if(request()->hasAny(['search', 'template_type', 'client_id', 'status', 'sort']))
-                    <a href="{{ route('admin.dynamic-qrs.index') }}" class="btn btn-sm btn-light border d-inline-flex align-items-center justify-content-center" title="Réinitialiser les filtres" style="height: 38px; width: 38px; padding: 0; border-radius: 10px;">
-                        <i class="bi bi-x-lg"></i>
+                @if(request()->hasAny(['search', 'template_type', 'client_id', 'status', 'sort', 'per_page']))
+                    <a href="{{ route('admin.dynamic-qrs.index') }}" class="btn btn-light border d-inline-flex align-items-center justify-content-center gap-1" title="Réinitialiser tous les filtres" style="height: 38px !important; padding: 0 0.8rem !important; border-radius: 10px !important; font-size: 0.8rem !important; font-weight: 600 !important; color: #64748b; white-space: nowrap;">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        <span class="d-none d-sm-inline">Réinitialiser</span>
                     </a>
                 @endif
-
-                <!-- View Switcher (Table vs Grid Segmented Capsule) -->
-                <div class="dyn-segmented-control" role="group" aria-label="Sélecteur d'affichage">
-                    <button type="button" class="dyn-segmented-btn active" id="btnViewTable" title="Affichage tableau">
-                        <i class="bi bi-list-ul"></i>
-                    </button>
-                    <button type="button" class="dyn-segmented-btn" id="btnViewGrid" title="Affichage visuel en cartes">
-                        <i class="bi bi-grid-fill"></i>
-                    </button>
-                </div>
             </div>
         </form>
     </div>
@@ -1158,17 +1230,6 @@
                 </tbody>
             </table>
         </div>
-
-        @if($qrCodes->hasPages())
-            <div class="p-3 border-top bg-light-subtle d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <span class="small text-muted font-mono">
-                    Affichage de {{ $qrCodes->firstItem() }} à {{ $qrCodes->lastItem() }} sur {{ $qrCodes->total() }} codes
-                </span>
-                <div>
-                    {{ $qrCodes->links() }}
-                </div>
-            </div>
-        @endif
     </div>
 
     <!-- ===================================================================== -->
@@ -1368,6 +1429,37 @@
             </div>
         @endforelse
     </div>
+
+    <!-- ===================================================================== -->
+    <!-- SHARED PAGINATION & ITEMS PER PAGE FOOTER (TABLE & VISUAL CARDS)      -->
+    <!-- ===================================================================== -->
+    @if($qrCodes->total() > 0)
+        <div id="dynamicQrsPaginationBar" class="filter-card p-3 mb-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div class="d-flex flex-wrap align-items-center gap-3">
+                <span class="small text-muted font-mono">
+                    Affichage de <strong class="text-dark">{{ $qrCodes->firstItem() ?? 1 }}</strong> à <strong class="text-dark">{{ $qrCodes->lastItem() ?? $qrCodes->count() }}</strong> sur <strong class="text-dark">{{ number_format($qrCodes->total()) }}</strong> codes
+                </span>
+
+                <div class="d-flex align-items-center gap-2">
+                    <label for="dynPerPageSelectBottom" class="small text-muted mb-0" style="font-size: 0.78rem; white-space: nowrap;">Éléments par page :</label>
+                    <select id="dynPerPageSelectBottom" class="form-select filter-input py-1 px-2" style="width: auto; min-width: 115px; height: 34px !important; min-height: 34px !important; font-size: 0.8rem;" onchange="changeDynPerPage(this.value)">
+                        <option value="12" {{ $activePerPage === '12' ? 'selected' : '' }}>12 éléments</option>
+                        <option value="20" {{ $activePerPage === '20' ? 'selected' : '' }}>20 éléments</option>
+                        <option value="24" {{ $activePerPage === '24' ? 'selected' : '' }}>24 éléments</option>
+                        <option value="48" {{ $activePerPage === '48' ? 'selected' : '' }}>48 éléments</option>
+                        <option value="100" {{ $activePerPage === '100' ? 'selected' : '' }}>100 éléments</option>
+                        <option value="all" {{ $activePerPage === 'all' ? 'selected' : '' }}>Tout ({{ $qrCodes->total() }})</option>
+                    </select>
+                </div>
+            </div>
+
+            @if($qrCodes->hasPages())
+                <div class="dyn-pagination-links">
+                    {{ $qrCodes->links() }}
+                </div>
+            @endif
+        </div>
+    @endif
 </div>
 
 <!-- ========================================================================= -->
@@ -2137,6 +2229,21 @@ document.addEventListener('DOMContentLoaded', function () {
             setView('grid');
         }
     }
+
+    // 8. Per-Page Handler (Bottom & Top Select Sync)
+    window.changeDynPerPage = function (val) {
+        const hiddenInput = document.getElementById('dynPerPageHiddenInput');
+        const filterForm = document.getElementById('dynFilterForm');
+        if (hiddenInput && filterForm) {
+            hiddenInput.value = val;
+            filterForm.submit();
+        } else {
+            const url = new URL(window.location.href);
+            url.searchParams.set('per_page', val);
+            url.searchParams.delete('page');
+            window.location.href = url.toString();
+        }
+    };
 });
 </script>
 @endpush

@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\DynamicQrCode;
+use App\Models\FileUpload;
 use App\Services\DynamicQrCodeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class DynamicQrCodeController extends Controller
@@ -99,7 +101,18 @@ class DynamicQrCodeController extends Controller
             default => $query->latest(),
         };
 
-        $qrCodes = $query->paginate(20)->withQueryString();
+        $rawPerPage = $request->input('per_page', '20');
+        if ($rawPerPage === 'all') {
+            $perPageCount = max(1, (clone $query)->count());
+            $perPage = 'all';
+        } else {
+            $allowedPerPage = [12, 20, 24, 48, 100];
+            $parsed = (int) $rawPerPage;
+            $perPageCount = in_array($parsed, $allowedPerPage, true) ? $parsed : 20;
+            $perPage = (string) $perPageCount;
+        }
+
+        $qrCodes = $query->paginate($perPageCount)->withQueryString();
         $clients = Client::orderBy('name')->get();
 
         $totalQrs = DynamicQrCode::count();
@@ -118,7 +131,7 @@ class DynamicQrCodeController extends Controller
             'active_rate' => $totalQrs > 0 ? round(($activeQrs / $totalQrs) * 100) : 0,
         ];
 
-        return view('admin.dynamic_qrs.index', compact('qrCodes', 'clients', 'metrics'));
+        return view('admin.dynamic_qrs.index', compact('qrCodes', 'clients', 'metrics', 'perPage'));
     }
 
     /**
@@ -227,8 +240,223 @@ class DynamicQrCodeController extends Controller
     {
         $clients = Client::where('status', 'active')->orderBy('name')->get();
         $sampleQrSvg = (string) @QrCode::format('svg')->size(300)->margin(0)->generate('https://example.com/demo');
+        $designLibrary = $this->getDesignLibraryItems();
 
-        return view('admin.dynamic_qrs.create', compact('clients', 'sampleQrSvg'));
+        return view('admin.dynamic_qrs.create', compact('clients', 'sampleQrSvg', 'designLibrary'));
+    }
+
+    /**
+     * Build the list of available Design Library items (System Presets + User Uploaded Designs)
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    protected function getDesignLibraryItems(?string $search = null): array
+    {
+        $items = [];
+
+        // 1. User-uploaded designs from FileUpload table (newest first)
+        $uploadsQuery = FileUpload::where('file_type', 'design_template')->latest();
+        if ($search !== null && trim($search) !== '') {
+            $term = trim($search);
+            $uploadsQuery->where(function ($q) use ($term) {
+                $q->where('original_name', 'like', "%{$term}%")
+                    ->orWhere('mime_type', 'like', "%{$term}%");
+            });
+        }
+
+        foreach ($uploadsQuery->get() as $upload) {
+            $ext = strtoupper(pathinfo($upload->file_path, PATHINFO_EXTENSION) ?: 'IMG');
+            $items[] = [
+                'id' => $upload->id,
+                'name' => $upload->original_name,
+                'file_path' => $upload->file_path,
+                'url' => $upload->url,
+                'size_formatted' => $upload->formatted_size,
+                'format' => $ext,
+                'is_system' => false,
+                'created_at' => $upload->created_at?->format('d/m/Y H:i') ?? '',
+                'delete_url' => route('admin.dynamic-qrs.designs.destroy', $upload->id),
+            ];
+        }
+
+        // 2. Built-in system templates
+        $systemTemplates = [
+            [
+                'id' => 'sys_google_dark',
+                'name' => 'Plaque Avis Google (Noir & Or)',
+                'file_path' => 'images/templates/google_review_plaque.jpg',
+                'format' => 'JPG',
+            ],
+            [
+                'id' => 'sys_google_white',
+                'name' => 'Plaque Avis Google (Blanc & Or)',
+                'file_path' => 'images/templates/google_review_plaque_white.jpg',
+                'format' => 'JPG',
+            ],
+        ];
+
+        foreach ($systemTemplates as $sys) {
+            if (! file_exists(public_path($sys['file_path']))) {
+                continue;
+            }
+            if ($search !== null && trim($search) !== '') {
+                $term = mb_strtolower(trim($search));
+                if (! str_contains(mb_strtolower($sys['name']), $term) && ! str_contains(mb_strtolower($sys['format']), $term)) {
+                    continue;
+                }
+            }
+            $sizeBytes = @filesize(public_path($sys['file_path'])) ?: 0;
+            $items[] = [
+                'id' => $sys['id'],
+                'name' => $sys['name'],
+                'file_path' => $sys['file_path'],
+                'url' => asset($sys['file_path']),
+                'size_formatted' => $sizeBytes > 1024 ? number_format($sizeBytes / 1024, 0).' KB' : $sizeBytes.' B',
+                'format' => $sys['format'],
+                'is_system' => true,
+                'created_at' => 'Système',
+                'delete_url' => null,
+            ];
+        }
+
+        return $items;
+    }
+
+    /**
+     * List & search designs in the Design Library (JSON API)
+     */
+    public function listDesigns(Request $request): JsonResponse
+    {
+        $search = $request->input('search');
+        $designs = $this->getDesignLibraryItems($search);
+
+        return response()->json([
+            'success' => true,
+            'count' => count($designs),
+            'designs' => $designs,
+        ]);
+    }
+
+    /**
+     * Upload and add one or more designs to the Design Library
+     */
+    public function storeDesign(Request $request): JsonResponse|RedirectResponse
+    {
+        $request->validate([
+            'name' => 'nullable|string|max:150',
+            'design_file' => 'nullable|file|mimes:jpeg,png,jpg,webp,svg|extensions:jpeg,png,jpg,webp,svg|max:12288',
+            'design_files' => 'nullable|array',
+            'design_files.*' => 'file|mimes:jpeg,png,jpg,webp,svg|extensions:jpeg,png,jpg,webp,svg|max:12288',
+        ]);
+
+        $filesToProcess = [];
+        if ($request->hasFile('design_file')) {
+            $filesToProcess[] = $request->file('design_file');
+        }
+        if ($request->hasFile('design_files')) {
+            foreach ($request->file('design_files') as $f) {
+                $filesToProcess[] = $f;
+            }
+        }
+
+        if (empty($filesToProcess)) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Veuillez sélectionner au moins un fichier image valide (PNG, JPG, WebP ou SVG).',
+                ], 422);
+            }
+
+            return back()->withErrors(['design_file' => 'Veuillez sélectionner une image à ajouter.']);
+        }
+
+        $createdItems = [];
+        $customName = trim((string) $request->input('name', ''));
+
+        foreach ($filesToProcess as $idx => $file) {
+            $storedPath = $file->store('templates', 'public');
+            $rawOriginal = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $cleanOriginal = ucfirst(str_replace(['_', '-'], ' ', $rawOriginal)) ?: 'Design Personnalisé';
+
+            $displayName = $customName !== ''
+                ? (count($filesToProcess) > 1 ? "{$customName} #".($idx + 1) : $customName)
+                : $cleanOriginal;
+
+            $upload = FileUpload::create([
+                'original_name' => $displayName,
+                'file_path' => $storedPath,
+                'file_type' => 'design_template',
+                'file_size' => $file->getSize() ?: 0,
+                'mime_type' => $file->getMimeType() ?: 'image/jpeg',
+                'uploaded_by_type' => 'User',
+                'uploaded_by_id' => auth('web')->id(),
+            ]);
+
+            $ext = strtoupper(pathinfo($upload->file_path, PATHINFO_EXTENSION) ?: 'IMG');
+            $createdItems[] = [
+                'id' => $upload->id,
+                'name' => $upload->original_name,
+                'file_path' => $upload->file_path,
+                'url' => $upload->url,
+                'size_formatted' => $upload->formatted_size,
+                'format' => $ext,
+                'is_system' => false,
+                'created_at' => $upload->created_at?->format('d/m/Y H:i') ?? '',
+                'delete_url' => route('admin.dynamic-qrs.designs.destroy', $upload->id),
+            ];
+        }
+
+        $message = count($createdItems) > 1
+            ? count($createdItems).' designs ajoutés à la bibliothèque.'
+            : "Design « {$createdItems[0]['name']} » ajouté à la bibliothèque.";
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'design' => $createdItems[0],
+                'designs' => $createdItems,
+                'library' => $this->getDesignLibraryItems(),
+            ], 201);
+        }
+
+        return back()->with('success', $message);
+    }
+
+    /**
+     * Delete a user-uploaded design from the Design Library
+     */
+    public function destroyDesign(Request $request, FileUpload $design): JsonResponse|RedirectResponse
+    {
+        if ($design->file_type !== 'design_template') {
+            abort(404);
+        }
+
+        $id = $design->id;
+        $name = $design->original_name;
+        $filePath = $design->file_path;
+
+        $design->delete();
+
+        // Remove file from public disk if no existing DynamicQrCode still relies on it
+        $stillUsed = DynamicQrCode::where('template_image', $filePath)->exists();
+        if (! $stillUsed && $filePath && Storage::disk('public')->exists($filePath)) {
+            Storage::disk('public')->delete($filePath);
+        }
+
+        $message = "Design « {$name} » supprimé de la bibliothèque.";
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'id' => $id,
+                'file_path' => $filePath,
+                'message' => $message,
+                'library' => $this->getDesignLibraryItems(),
+            ]);
+        }
+
+        return back()->with('success', $message);
     }
 
     /**
@@ -377,15 +605,30 @@ class DynamicQrCodeController extends Controller
 
         if (! $isExplicitlyBlank) {
             if ($request->hasFile('template_image')) {
-                $templateStoragePath = $request->file('template_image')->store('templates', 'public');
-                $absoluteTemplatePath = storage_path('app/public/'.$templateStoragePath);
+                $uploadedFile = $request->file('template_image');
+                $templateStoragePath = $uploadedFile->store('templates', 'public');
+                $absoluteTemplatePath = Storage::disk('public')->path($templateStoragePath);
+
+                if ($request->boolean('save_to_library', true)) {
+                    $rawOriginal = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
+                    $cleanOriginal = ucfirst(str_replace(['_', '-'], ' ', $rawOriginal)) ?: ($validated['label_prefix'] ?? 'Design Personnalisé');
+                    FileUpload::create([
+                        'original_name' => $cleanOriginal,
+                        'file_path' => $templateStoragePath,
+                        'file_type' => 'design_template',
+                        'file_size' => $uploadedFile->getSize() ?: 0,
+                        'mime_type' => $uploadedFile->getMimeType() ?: 'image/jpeg',
+                        'uploaded_by_type' => 'User',
+                        'uploaded_by_id' => auth('web')->id(),
+                    ]);
+                }
             } elseif (! empty($validated['existing_template_image'])) {
                 $rawPath = trim($validated['existing_template_image']);
                 if (file_exists(public_path($rawPath))) {
                     $absoluteTemplatePath = public_path($rawPath);
                     $templateStoragePath = $rawPath;
-                } elseif (file_exists(storage_path('app/public/'.$rawPath))) {
-                    $absoluteTemplatePath = storage_path('app/public/'.$rawPath);
+                } elseif (Storage::disk('public')->exists($rawPath)) {
+                    $absoluteTemplatePath = Storage::disk('public')->path($rawPath);
                     $templateStoragePath = $rawPath;
                 }
             }

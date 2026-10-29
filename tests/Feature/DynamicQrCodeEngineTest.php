@@ -5,10 +5,13 @@ namespace Tests\Feature;
 use App\Models\Client;
 use App\Models\ClientHistory;
 use App\Models\DynamicQrCode;
+use App\Models\FileUpload;
 use App\Models\ScanLog;
 use App\Models\User;
 use App\Services\DynamicQrCodeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class DynamicQrCodeEngineTest extends TestCase
@@ -595,5 +598,76 @@ class DynamicQrCodeEngineTest extends TestCase
         $bulkTargetRes->assertStatus(200)->assertJson(['success' => true]);
         $this->assertEquals('https://example.com/unified-campaign', $qr1->fresh()->target_url);
         $this->assertEquals('https://example.com/unified-campaign', $qr2->fresh()->target_url);
+    }
+
+    /**
+     * 17. Test Design Library: add/upload design, search library, reuse design without re-uploading, and delete design
+     */
+    public function test_design_library_upload_search_reuse_and_delete(): void
+    {
+        Storage::fake('public');
+
+        $image = UploadedFile::fake()->image('gold_vip_plaque.png', 500, 500);
+
+        // 1. Upload a design to the library
+        $uploadRes = $this->actingAs($this->admin, 'web')
+            ->postJson(route('admin.dynamic-qrs.designs.store'), [
+                'name' => 'Gold VIP Plaque',
+                'design_file' => $image,
+            ]);
+
+        $uploadRes->assertStatus(201)
+            ->assertJson([
+                'success' => true,
+            ]);
+
+        $designData = $uploadRes->json('design');
+        $this->assertNotNull($designData);
+        $this->assertEquals('Gold VIP Plaque', $designData['name']);
+        $this->assertNotEmpty($designData['file_path']);
+        Storage::disk('public')->assertExists($designData['file_path']);
+
+        // 2. Search for the design in the library
+        $searchRes = $this->actingAs($this->admin, 'web')
+            ->getJson(route('admin.dynamic-qrs.designs.index', ['search' => 'Gold VIP']));
+
+        $searchRes->assertStatus(200)
+            ->assertJson(['success' => true]);
+
+        $foundNames = collect($searchRes->json('designs'))->pluck('name')->all();
+        $this->assertContains('Gold VIP Plaque', $foundNames);
+
+        // 3. Reuse the saved design in generatePdfBatch without uploading a file again
+        $pdfRes = $this->actingAs($this->admin, 'web')
+            ->post(route('admin.dynamic-qrs.generate-pdf'), [
+                'client_id' => $this->client->id,
+                'quantity' => 2,
+                'label_prefix' => 'Reused VIP Stand',
+                'target_url' => 'https://marrakechpalace.ma/vip',
+                'canvas_unit' => 'px',
+                'canvas_width' => 500,
+                'canvas_height' => 500,
+                'existing_template_image' => $designData['file_path'],
+                'qr_x' => 50,
+                'qr_y' => 50,
+                'qr_size' => 35,
+            ]);
+
+        $pdfRes->assertStatus(200);
+        $createdQr = DynamicQrCode::where('label', 'like', 'Reused VIP Stand%')->first();
+        $this->assertNotNull($createdQr);
+        $this->assertEquals($designData['file_path'], $createdQr->template_image);
+
+        // 4. Delete the design from the library
+        $uploadModel = FileUpload::find($designData['id']);
+        $this->assertNotNull($uploadModel);
+
+        $delRes = $this->actingAs($this->admin, 'web')
+            ->deleteJson(route('admin.dynamic-qrs.designs.destroy', $uploadModel));
+
+        $delRes->assertStatus(200)
+            ->assertJson(['success' => true, 'id' => $uploadModel->id]);
+
+        $this->assertNull(FileUpload::find($uploadModel->id));
     }
 }

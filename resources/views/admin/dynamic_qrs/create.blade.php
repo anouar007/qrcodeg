@@ -10,7 +10,7 @@
 @push('styles')
 <style>
 /* ==========================================================================
-   DYNAMIC QR STUDIO DESIGN SYSTEM (YNS NFC / NEO-SAAS)
+   DYNAMIC QR STUDIO DESIGN SYSTEM (PRO CAD & SAAS INSPECTOR)
    ========================================================================== */
 :root {
     --dyn-primary: #6320ee;
@@ -24,6 +24,17 @@
 .cursor-grab { cursor: grab !important; user-select: none; }
 .cursor-grab:active, .cursor-grab.is-dragging { cursor: grabbing !important; }
 .cursor-grab:focus-visible { outline: 2px solid #6320ee !important; outline-offset: 3px; }
+
+/* Executive Hero Banner */
+.studio-hero-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f7ff 55%, #f3f0ff 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.04);
+    position: relative;
+    overflow: hidden;
+}
 
 /* Pulse animation on alignment dock click */
 .stage-pulse {
@@ -65,22 +76,22 @@
     padding: 4px;
     display: inline-flex;
     gap: 4px;
-    max-width: 620px;
-    width: 100%;
 }
 .studio-tabs-nav .nav-link {
     border-radius: 9px !important;
     font-weight: 600;
-    font-size: 0.88rem;
+    font-size: 0.84rem !important;
     color: #64748b;
-    padding: 0.6rem 1.25rem;
+    padding: 0.48rem 1rem !important;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     border: none !important;
     background: transparent;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.45rem;
+    white-space: nowrap;
+    height: 36px;
 }
 .studio-tabs-nav .nav-link:hover {
     color: #0f172a;
@@ -88,51 +99,188 @@
 .studio-tabs-nav .nav-link.active {
     background: #ffffff !important;
     color: #6320ee !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
 }
 
-/* Studio Card */
+/* Studio Card & Step Header Badge */
 .studio-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 18px;
-    box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.05);
+    border-radius: 16px;
+    box-shadow: 0 4px 18px -4px rgba(15, 23, 42, 0.04);
     overflow: hidden;
 }
+.studio-step-badge {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    background-color: #f3f0ff;
+    color: #6320ee;
+    font-size: 0.76rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid #ddd6fe;
+}
 
-/* Form Controls & Inputs */
+/* Form Controls, Input Groups & Color Swatch Capsules (Strict 38px Baseline) */
+.studio-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 0.35rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .studio-input {
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
-    font-size: 0.84rem;
-    height: 38px;
-    border-radius: 10px;
-    transition: all 0.2s ease;
+    background-color: #f8fafc !important;
+    border: 1.5px solid #e2e8f0 !important;
+    font-size: 0.84rem !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 0.4rem 0.75rem !important;
+    border-radius: 10px !important;
+    color: #0f172a !important;
+    transition: all 0.18s ease !important;
+    box-shadow: none !important;
 }
 .studio-input:focus {
+    background-color: #ffffff !important;
+    border-color: #6320ee !important;
+    box-shadow: 0 0 0 3px rgba(99, 32, 238, 0.12) !important;
+}
+.studio-input-group {
+    display: flex;
+    align-items: stretch;
+    height: 38px;
+}
+.studio-input-group .studio-input {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.studio-input-group.has-suffix .studio-input {
+    border-radius: 10px 0 0 10px !important;
+    border-right: 0 !important;
+}
+.studio-input-group.has-prefix .studio-input {
+    border-radius: 0 10px 10px 0 !important;
+    border-left: 0 !important;
+}
+.studio-input-addon {
+    height: 38px !important;
+    padding: 0 0.7rem !important;
+    background-color: #f1f5f9 !important;
+    border: 1.5px solid #e2e8f0 !important;
+    color: #64748b !important;
+    font-size: 0.78rem !important;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.studio-input-group.has-suffix .studio-input-addon {
+    border-radius: 0 10px 10px 0 !important;
+}
+.studio-input-group.has-prefix .studio-input-addon {
+    border-radius: 10px 0 0 10px !important;
+}
+
+/* Color Picker Capsule matching 38px Studio Input */
+.studio-color-capsule {
+    height: 38px;
+    background-color: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0 0.55rem;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    transition: all 0.18s ease;
+}
+.studio-color-capsule:focus-within {
     background-color: #ffffff;
     border-color: #6320ee;
     box-shadow: 0 0 0 3px rgba(99, 32, 238, 0.12);
 }
+.studio-color-capsule input[type="color"] {
+    width: 24px !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    padding: 0 !important;
+    border: 1px solid rgba(15, 23, 42, 0.15) !important;
+    border-radius: 6px !important;
+    cursor: pointer;
+    flex-shrink: 0;
+    background: transparent;
+}
+.studio-color-capsule input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+.studio-color-capsule input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 5px;
+}
 
-/* Clean Pure White Studio Stage */
+/* Studio Toolbar & Action Buttons (Override global .btn padding) */
+.btn-studio-tool {
+    height: 32px !important;
+    padding: 0 0.65rem !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.35rem !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+    transition: all 0.15s ease !important;
+}
+.btn-group .btn-studio-tool {
+    border-radius: 0 !important;
+}
+.btn-group .btn-studio-tool:first-child {
+    border-radius: 8px 0 0 8px !important;
+}
+.btn-group .btn-studio-tool:last-child {
+    border-radius: 0 8px 8px 0 !important;
+}
+.btn-studio-action {
+    height: 34px !important;
+    padding: 0 0.8rem !important;
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.4rem !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+}
+
+/* Architectural Studio Stage */
 .studio-canvas-stage {
-    background-color: #ffffff !important;
-    background-image: none !important;
+    background-color: #f8fafc !important;
+    background-image: radial-gradient(#cbd5e1 1px, transparent 1px) !important;
+    background-size: 16px 16px !important;
     position: relative;
-    border-radius: 0 0 16px 16px;
-    min-height: 480px;
+    min-height: 470px;
     padding: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     transition: background-color 0.2s ease;
-    border-top: 1px solid #f1f5f9;
 }
 .studio-canvas-stage.drag-over {
-    background-color: #f8f6ff !important;
-    background-image: none !important;
+    background-color: #f3f0ff !important;
 }
 
 /* Dropzone Overlay Alert */
@@ -169,8 +317,7 @@
     -webkit-user-drag: none;
 }
 #canvasViewport {
-    box-shadow: none !important;
-    border: 1px solid #e2e8f0;
+    box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.12), 0 0 0 1px #e2e8f0 !important;
     border-radius: 12px;
     position: relative;
     background: #ffffff;
@@ -180,7 +327,7 @@
     transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1), height 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Figma-Grade Precision Selection System (Zero Shadow Flat Design) */
+/* Figma-Grade Precision Selection System */
 .stage-element-wrapper {
     touch-action: none;
     user-select: none;
@@ -314,25 +461,41 @@
 
 /* Presets & Pill Buttons */
 .dimension-preset, .qty-pill {
-    font-size: 0.75rem;
-    font-weight: 600;
-    border-radius: 8px;
-    padding: 0.35rem 0.65rem;
-    border: 1px solid #e2e8f0;
-    background: #ffffff;
-    color: #475569;
-    transition: all 0.15s ease;
+    font-size: 0.74rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 0 0.65rem !important;
+    height: 30px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid #e2e8f0 !important;
+    background: #ffffff !important;
+    color: #475569 !important;
+    transition: all 0.15s ease !important;
+    white-space: nowrap !important;
 }
 .dimension-preset:hover, .qty-pill:hover {
-    background: #f8fafc;
-    color: #0f172a;
-    border-color: #cbd5e1;
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
 }
 .dimension-preset.active, .qty-pill.active {
     background-color: #6320ee !important;
     color: #ffffff !important;
     border-color: #6320ee !important;
-    box-shadow: 0 2px 8px rgba(99, 32, 238, 0.35);
+    box-shadow: 0 2px 6px rgba(99, 32, 238, 0.28) !important;
+}
+
+/* 6-Column Equal Grid for Quantity Pills */
+.qty-pills-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.4rem;
+}
+.qty-pills-grid .qty-pill {
+    width: 100%;
+    height: 32px !important;
 }
 
 /* SVG Rendering within Box */
@@ -345,14 +508,19 @@
 /* Quick URL Chips */
 .quick-url-chip {
     font-size: 0.72rem;
-    padding: 3px 9px;
+    height: 26px;
+    padding: 0 9px;
     border-radius: 7px;
-    background: #f1f5f9;
+    background: #f8fafc;
     color: #475569;
     border: 1px solid #e2e8f0;
     cursor: pointer;
     transition: all 0.15s ease;
-    font-weight: 500;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
 }
 .quick-url-chip:hover {
     background: #f3f0ff;
@@ -370,49 +538,201 @@ input[type="range"].form-range::-moz-range-thumb {
     background-color: #6320ee;
     box-shadow: 0 0 0 3px rgba(99, 32, 238, 0.25);
 }
+
+/* ==========================================================================
+   DESIGN LIBRARY (INLINE STRIP & FULL MODAL)
+   ========================================================================== */
+.design-library-panel {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.75rem;
+}
+.design-library-scroll {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+    gap: 0.6rem;
+    max-height: 225px;
+    overflow-y: auto;
+    padding: 2px;
+}
+.design-lib-card {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+}
+.design-lib-card:hover {
+    border-color: #a78bfa;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px -4px rgba(99, 32, 238, 0.14);
+}
+.design-lib-card.active {
+    border-color: #6320ee !important;
+    box-shadow: 0 0 0 3px rgba(99, 32, 238, 0.16) !important;
+}
+.design-lib-thumb-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: #f1f5f9;
+    overflow: hidden;
+    border-bottom: 1px solid #f1f5f9;
+}
+.design-lib-thumb-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.25s ease;
+}
+.design-lib-card:hover .design-lib-thumb-wrap img {
+    transform: scale(1.04);
+}
+.design-lib-active-badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    background: #6320ee;
+    color: #ffffff;
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 5px;
+    display: none;
+    align-items: center;
+    gap: 3px;
+    z-index: 4;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+.design-lib-card.active .design-lib-active-badge {
+    display: inline-flex;
+}
+.design-lib-del-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: rgba(15, 23, 42, 0.72);
+    color: #ffffff;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    opacity: 0;
+    transition: all 0.15s ease;
+    z-index: 5;
+}
+.design-lib-card:hover .design-lib-del-btn {
+    opacity: 1;
+}
+.design-lib-del-btn:hover {
+    background: #ef4444 !important;
+    transform: scale(1.08);
+}
+.design-lib-meta {
+    padding: 0.4rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.design-lib-title {
+    font-size: 0.73rem;
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.design-lib-sub {
+    font-size: 0.65rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.modal-library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+    gap: 0.85rem;
+    max-height: 440px;
+    overflow-y: auto;
+    padding: 4px;
+}
+.lib-filter-pill {
+    font-size: 0.73rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: 7px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.lib-filter-pill.active {
+    background: #6320ee;
+    color: #ffffff;
+    border-color: #6320ee;
+}
 </style>
 @endpush
 
 @section('content')
-<div class="container-fluid px-0" style="max-width: 1280px;">
-    <!-- Breadcrumb & Top Header -->
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-        <div>
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="status-dot-radar"></span>
-                <span class="text-uppercase tracking-wider font-mono text-muted" style="font-size: 0.72rem; font-weight: 700;">
-                    Dynamic Telemetry Core &bull; Print Studio Engine
-                </span>
+<div class="container-fluid px-0">
+    <!-- Executive Hero Header with Integrated Mode Switcher -->
+    <div class="studio-hero-card mb-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="status-dot-radar"></span>
+                    <span class="text-uppercase tracking-wider font-mono text-muted" style="font-size: 0.7rem; font-weight: 700;">
+                        Dynamic Telemetry Core &bull; Print Studio Engine
+                    </span>
+                </div>
+                <h1 class="h4 fw-bold text-dark mb-1 d-flex align-items-center gap-2.5">
+                    <span class="d-inline-flex align-items-center justify-content-center rounded-3 text-white shadow-xs flex-shrink-0" style="width: 36px; height: 36px; background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%); font-size: 1.05rem;">
+                        <i class="bi bi-palette2"></i>
+                    </span>
+                    <span>Générateur de QR Codes Dynamiques &amp; Studio</span>
+                </h1>
+                <p class="text-muted small mb-0">
+                    Définissez la taille de votre support, positionnez le QR et son code unique par glisser-déposer, puis téléchargez directement votre lot en PDF multi-pages.
+                </p>
             </div>
-            <h1 class="h3 fw-bold text-dark mb-1 d-flex align-items-center gap-2">
-                <span class="d-inline-flex align-items-center justify-content-center rounded-3 text-white shadow-xs" style="width: 38px; height: 38px; background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%); font-size: 1.15rem;">
-                    <i class="bi bi-palette2"></i>
-                </span>
-                <span>Générateur de QR Codes Dynamiques &amp; Studio</span>
-            </h1>
-            <p class="text-muted small mb-0">
-                Définissez la taille de votre support, positionnez le QR et son code unique par glisser-déposer, puis téléchargez directement votre lot en PDF multi-pages.
-            </p>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-            <a href="{{ route('admin.dynamic-qrs.index') }}" class="btn btn-outline-secondary d-flex align-items-center gap-2 shadow-xs" style="border-radius: 10px; font-weight: 600; padding: 0.55rem 1rem;">
-                <i class="bi bi-arrow-left"></i>
-                <span>Retour à la liste</span>
-            </a>
-        </div>
-    </div>
 
-    <!-- Generator Mode Switcher Tabs -->
-    <div class="mb-4">
-        <div class="studio-tabs-nav" id="generatorTabs" role="tablist">
-            <button class="nav-link active flex-grow-1" id="studio-tab" data-bs-toggle="tab" data-bs-target="#studio-pane" type="button" role="tab" aria-selected="true">
-                <i class="bi bi-palette2 text-primary"></i>
-                <span>Studio Visuel &amp; Export PDF</span>
-            </button>
-            <button class="nav-link flex-grow-1" id="standard-tab" data-bs-toggle="tab" data-bs-target="#standard-pane" type="button" role="tab" aria-selected="false">
-                <i class="bi bi-qr-code"></i>
-                <span>Génération Standard Simple</span>
-            </button>
+            <div class="d-flex flex-wrap align-items-center gap-2.5">
+                <!-- Mode Switcher Capsule -->
+                <div class="studio-tabs-nav" id="generatorTabs" role="tablist">
+                    <button class="nav-link active" id="studio-tab" data-bs-toggle="tab" data-bs-target="#studio-pane" type="button" role="tab" aria-selected="true">
+                        <i class="bi bi-palette2 text-primary"></i>
+                        <span>Studio Visuel &amp; Export PDF</span>
+                    </button>
+                    <button class="nav-link" id="standard-tab" data-bs-toggle="tab" data-bs-target="#standard-pane" type="button" role="tab" aria-selected="false">
+                        <i class="bi bi-qr-code"></i>
+                        <span>Génération Standard Simple</span>
+                    </button>
+                </div>
+
+                <button type="button" class="btn btn-white bg-white border d-inline-flex align-items-center gap-2 shadow-xs" id="btnOpenDesignLibraryHero" data-bs-toggle="modal" data-bs-target="#designLibraryModal" style="border-radius: 10px; font-weight: 600; font-size: 0.84rem; height: 44px; padding: 0 1rem; color: #6320ee; border-color: #ddd6fe !important;">
+                    <i class="bi bi-collection-play-fill"></i>
+                    <span>Bibliothèque</span>
+                    <span class="badge rounded-pill" id="heroLibraryCountBadge" style="background: #f3f0ff; color: #6320ee; font-size: 0.72rem;">{{ count($designLibrary ?? []) }}</span>
+                </button>
+
+                <a href="{{ route('admin.dynamic-qrs.index') }}" class="btn btn-white bg-white border d-inline-flex align-items-center gap-2 shadow-xs" style="border-radius: 10px; font-weight: 600; font-size: 0.84rem; height: 44px; padding: 0 1rem; color: #334155;">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Retour à la liste</span>
+                </a>
+            </div>
         </div>
     </div>
 
@@ -459,44 +779,46 @@ input[type="range"].form-range::-moz-range-thumb {
 
                 <input type="hidden" name="existing_template_image" id="inputExistingTemplateImage" value="images/templates/google_review_plaque.jpg">
 
-                <div class="row g-4">
+                <div class="row g-3 align-items-start">
                     <!-- LEFT COLUMN: Canvas / Interactive Drag & Drop Stage -->
                     <div class="col-xl-7 col-lg-6">
-                        <!-- Step 1 & 2: Canvas Size & Upload Bar -->
-                        <div class="studio-card mb-3 p-3">
-                            <!-- Dimensions Settings Header -->
-                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                        <!-- Step 1: Canvas Size & Upload Bar -->
+                        <div class="studio-card mb-3 p-3.5">
+                            <!-- Dimensions Header -->
+                            <div class="d-flex align-items-center justify-content-between gap-2 mb-2.5">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="badge" style="background-color: #f3f0ff; color: #6320ee; font-size: 0.75rem; border-radius: 6px;">1</span>
+                                    <span class="studio-step-badge">1</span>
                                     <h6 class="fw-bold text-dark mb-0" style="font-size: 0.92rem;">Dimensions du support physique</h6>
                                 </div>
-                                <!-- Preset Pills & Ratio Indicator -->
-                                <div class="d-flex flex-wrap align-items-center gap-1.5">
-                                    <button type="button" class="dimension-preset active" data-unit="px" data-w="300" data-h="300">
-                                        300×300 px
-                                    </button>
-                                    <button type="button" class="dimension-preset" data-unit="cm" data-w="30" data-h="30">
-                                        30×30 cm
-                                    </button>
-                                    <button type="button" class="dimension-preset" data-unit="cm" data-w="8.5" data-h="5.4">
-                                        Carte 8.5×5.4 cm
-                                    </button>
-                                    <button type="button" class="dimension-preset" data-unit="cm" data-w="10.5" data-h="14.8">
-                                        Plaque A6
-                                    </button>
-                                    <button type="button" class="dimension-preset" data-unit="cm" data-w="21" data-h="29.7">
-                                        A4
-                                    </button>
-                                    <span class="badge bg-light text-secondary border font-mono small py-1 px-2" id="canvasRatioBadge" style="font-size: 0.72rem; border-radius: 6px;">
-                                        Ratio 1:1.00
-                                    </span>
-                                </div>
+                                <span class="badge bg-light text-secondary border font-mono py-1 px-2.5" id="canvasRatioBadge" style="font-size: 0.72rem; border-radius: 6px; font-weight: 600;">
+                                    Ratio 1:1.00
+                                </span>
                             </div>
 
-                            <!-- Custom Inputs: Unit, Width, Height Perfectly Baseline Aligned -->
-                            <div class="row g-2 align-items-end mb-3">
+                            <!-- Dedicated Quick Format Presets Bar -->
+                            <div class="d-flex flex-wrap align-items-center gap-1.5 mb-3 pb-2.5 border-bottom">
+                                <span class="text-muted fw-semibold me-1" style="font-size: 0.73rem;">Formats :</span>
+                                <button type="button" class="dimension-preset active" data-unit="px" data-w="300" data-h="300">
+                                    300×300 px
+                                </button>
+                                <button type="button" class="dimension-preset" data-unit="cm" data-w="30" data-h="30">
+                                    30×30 cm
+                                </button>
+                                <button type="button" class="dimension-preset" data-unit="cm" data-w="8.5" data-h="5.4">
+                                    Carte 8.5×5.4 cm
+                                </button>
+                                <button type="button" class="dimension-preset" data-unit="cm" data-w="10.5" data-h="14.8">
+                                    Plaque A6
+                                </button>
+                                <button type="button" class="dimension-preset" data-unit="cm" data-w="21" data-h="29.7">
+                                    A4
+                                </button>
+                            </div>
+
+                            <!-- Custom Inputs: Unit, Width, Height & Swap (Strictly Baseline Aligned at 38px) -->
+                            <div class="row g-2.5 align-items-end mb-3">
                                 <div class="col-6 col-sm-3">
-                                    <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Unité</label>
+                                    <label class="studio-label" for="canvasUnitSelect">Unité</label>
                                     <select name="canvas_unit" id="canvasUnitSelect" class="form-select studio-input">
                                         <option value="px" selected>Pixels (px)</option>
                                         <option value="cm">Centimètres (cm)</option>
@@ -504,105 +826,134 @@ input[type="range"].form-range::-moz-range-thumb {
                                     </select>
                                 </div>
                                 <div class="col-6 col-sm-4">
-                                    <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Largeur (Width)</label>
-                                    <div class="input-group">
-                                        <input type="number" step="any" min="1" name="canvas_width" id="canvasWidthInput" class="form-control studio-input" value="300" required style="border-radius: 10px 0 0 10px;">
-                                        <span class="input-group-text unit-indicator small bg-light text-muted" style="border-radius: 0 10px 10px 0; border-color: #e2e8f0; height: 38px;">px</span>
+                                    <label class="studio-label" for="canvasWidthInput">Largeur (Width)</label>
+                                    <div class="studio-input-group has-suffix">
+                                        <input type="number" step="any" min="1" name="canvas_width" id="canvasWidthInput" class="form-control studio-input" value="300" required>
+                                        <span class="studio-input-addon unit-indicator">px</span>
                                     </div>
                                 </div>
                                 <div class="col-9 col-sm-4">
-                                    <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Hauteur (Height)</label>
-                                    <div class="input-group">
-                                        <input type="number" step="any" min="1" name="canvas_height" id="canvasHeightInput" class="form-control studio-input" value="300" required style="border-radius: 10px 0 0 10px;">
-                                        <span class="input-group-text unit-indicator small bg-light text-muted" style="border-radius: 0 10px 10px 0; border-color: #e2e8f0; height: 38px;">px</span>
+                                    <label class="studio-label" for="canvasHeightInput">Hauteur (Height)</label>
+                                    <div class="studio-input-group has-suffix">
+                                        <input type="number" step="any" min="1" name="canvas_height" id="canvasHeightInput" class="form-control studio-input" value="300" required>
+                                        <span class="studio-input-addon unit-indicator">px</span>
                                     </div>
                                 </div>
                                 <div class="col-3 col-sm-1">
-                                    <label class="form-label small text-muted mb-1 d-none d-sm-block" style="font-size: 0.75rem; visibility: hidden;">Inverser</label>
-                                    <button type="button" class="btn btn-light border w-100 d-flex align-items-center justify-content-center" id="btnSwapDimensions" title="Inverser orientation (Paysage / Portrait)" style="height: 38px; border-radius: 10px;">
-                                        <i class="bi bi-arrow-left-right"></i>
+                                    <span class="studio-label d-none d-sm-block" style="visibility: hidden;">Axe</span>
+                                    <button type="button" class="btn btn-light border w-100 d-flex align-items-center justify-content-center p-0" id="btnSwapDimensions" title="Inverser orientation (Paysage / Portrait)" style="height: 38px !important; border-radius: 10px !important; border-width: 1.5px !important;">
+                                        <i class="bi bi-arrow-left-right text-secondary"></i>
                                     </button>
                                 </div>
                             </div>
 
                             <!-- Design Upload Area -->
-                            <div class="border rounded-3 p-2.5 bg-light-subtle d-flex flex-wrap align-items-center justify-content-between gap-2" id="uploadZoneBox" style="border-style: dashed !important; border-color: #cbd5e1 !important;">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="rounded-2 d-flex align-items-center justify-content-center bg-white border shadow-xs" style="width: 40px; height: 40px; color: #6320ee; flex-shrink: 0;">
+                            <div class="border rounded-3 p-2.5 bg-light-subtle d-flex flex-wrap align-items-center justify-content-between gap-2.5" id="uploadZoneBox" style="border-style: dashed !important; border-color: #cbd5e1 !important;">
+                                <div class="d-flex align-items-center gap-2.5" style="min-width: 0; flex: 1 1 220px;">
+                                    <div class="rounded-3 d-flex align-items-center justify-content-center bg-white border shadow-xs flex-shrink-0" style="width: 38px; height: 38px; color: #6320ee;">
                                         <i class="bi bi-image fs-5"></i>
                                     </div>
-                                    <div>
+                                    <div class="text-truncate">
                                         <div class="d-flex align-items-center gap-2">
-                                            <div class="fw-semibold text-dark small" id="templateNameDisplay">Gabarit : Plaque Avis Google (Prêt à l'emploi)</div>
-                                            <span class="badge bg-primary-subtle text-primary font-mono d-none" id="imgDetectedDimBadge" style="font-size: 0.68rem;"></span>
+                                            <div class="fw-semibold text-dark small text-truncate" id="templateNameDisplay">Gabarit : Plaque Avis Google (Prêt à l'emploi)</div>
+                                            <span class="badge bg-primary-subtle text-primary font-mono d-none flex-shrink-0" id="imgDetectedDimBadge" style="font-size: 0.68rem;"></span>
                                         </div>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <small class="text-muted" style="font-size: 0.72rem;">PNG, JPG, WebP ou SVG &bull; Glissez-déposez directement sur le canevas</small>
+                                        <div class="d-flex align-items-center flex-wrap gap-2">
+                                            <small class="text-muted" style="font-size: 0.72rem;">PNG, JPG, WebP ou SVG &bull; Glisser-déposer ou choisir de la bibliothèque</small>
                                             <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none d-none" id="btnAdoptImgDimensions" style="font-size: 0.72rem; color: #6320ee; font-weight: 600;">
                                                 <i class="bi bi-aspect-ratio me-0.5"></i>Adapter taille canevas
+                                            </button>
+                                            <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none d-none" id="btnQuickSaveToLibrary" style="font-size: 0.72rem; color: #10b981; font-weight: 700;">
+                                                <i class="bi bi-bookmark-plus-fill me-0.5"></i>Sauvegarder dans la bibliothèque
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="d-flex align-items-center gap-1.5">
-                                    <label class="btn btn-sm text-white mb-0 cursor-pointer d-inline-flex align-items-center gap-1.5 shadow-xs" style="background-color: #6320ee; border-radius: 8px; font-size: 0.82rem; font-weight: 600; padding: 0.4rem 0.85rem;">
+                                <div class="d-flex flex-wrap align-items-center gap-1.5 flex-shrink-0">
+                                    <input type="hidden" name="save_to_library" value="1">
+                                    <button type="button" class="btn-studio-action shadow-xs" id="btnOpenDesignLibraryStep1" data-bs-toggle="modal" data-bs-target="#designLibraryModal" title="Ouvrir la bibliothèque de designs" style="color: #6320ee !important; border: 1.5px solid #ddd6fe !important; background: #f3f0ff !important;">
+                                        <i class="bi bi-collection-play-fill"></i>
+                                        <span>Bibliothèque de Designs</span>
+                                        <span class="badge rounded-pill" id="step1LibraryCountBadge" style="background: #6320ee; color: #fff; font-size: 0.65rem;">{{ count($designLibrary ?? []) }}</span>
+                                    </button>
+                                    <label class="btn-studio-action text-white mb-0 cursor-pointer shadow-xs" style="background-color: #6320ee; border: 1px solid #6320ee;">
                                         <i class="bi bi-upload"></i>
-                                        <span>Changer l'image</span>
+                                        <span>Importer</span>
                                         <input type="file" name="template_image" id="templateFileInput" class="d-none" accept="image/png,image/jpeg,image/webp,image/svg+xml">
                                     </label>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1" id="btnBlankCanvas" title="Utiliser un canevas blanc uni sans image" style="border-radius: 8px; font-size: 0.82rem;">
+                                    <button type="button" class="btn btn-outline-secondary btn-studio-action bg-white" id="btnBlankCanvas" title="Utiliser un canevas blanc uni sans image">
                                         <i class="bi bi-square"></i>
                                         <span>Fond Blanc</span>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="btnResetToSample" title="Restaurer exemple Google" style="border-radius: 8px; font-size: 0.82rem;">
-                                        Exemple
+                                    <button type="button" class="btn btn-outline-secondary btn-studio-action bg-white" id="btnResetToSample" title="Restaurer exemple Google">
+                                        <span>Exemple</span>
                                     </button>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Step 2: Interactive Canvas Stage -->
-                        <div class="studio-card mb-4">
-                            <div class="card-header bg-white border-0 py-3 px-3.5 d-flex flex-wrap align-items-center justify-content-between gap-2">
+                        <div class="studio-card mb-3">
+                            <!-- Card Header -->
+                            <div class="card-header bg-white border-0 py-2.5 px-3.5 d-flex flex-wrap align-items-center justify-content-between gap-2">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="badge" style="background-color: #f3f0ff; color: #6320ee; font-size: 0.75rem; border-radius: 6px;">2</span>
-                                    <span class="fw-bold text-dark small">Atelier Interactif (Glisser-Déposer &amp; Alignement Pro)</span>
+                                    <span class="studio-step-badge">2</span>
+                                    <span class="fw-bold text-dark" style="font-size: 0.92rem;">Atelier Interactif (Glisser-Déposer &amp; Alignement Pro)</span>
                                 </div>
-                                <!-- Pro Alignment Toolbar -->
-                                <div class="d-flex flex-wrap align-items-center gap-1.5">
-                                    <div class="btn-group btn-group-sm" role="group" aria-label="Alignement QR">
-                                        <button type="button" class="btn btn-light border py-1 px-2.5 d-flex align-items-center gap-1" id="btnCenterQrH" title="Centrer QR horizontalement (X: 50%)" style="border-radius: 8px 0 0 8px; font-size: 0.75rem; height: 32px;">
-                                            <i class="bi bi-align-center text-primary"></i>
-                                            <span>QR H</span>
-                                        </button>
-                                        <button type="button" class="btn btn-light border py-1 px-2.5 d-flex align-items-center gap-1" id="btnCenterQrV" title="Centrer QR verticalement au milieu (Y: 50%)" style="border-radius: 0; font-size: 0.75rem; height: 32px;">
-                                            <i class="bi bi-align-middle text-primary"></i>
-                                            <span>QR V</span>
-                                        </button>
-                                        <button type="button" class="btn btn-light border py-1 px-2.5 d-flex align-items-center gap-1" id="btnCenterQrBoth" title="Centrer QR au milieu total (50% / 50%)" style="border-radius: 0 8px 8px 0; font-size: 0.75rem; height: 32px;">
-                                            <i class="bi bi-bullseye text-primary"></i>
-                                            <span>Milieu</span>
-                                        </button>
-                                    </div>
-                                    <div class="btn-group btn-group-sm" role="group" aria-label="Alignement Code">
-                                        <button type="button" class="btn btn-light border py-1 px-2.5 d-flex align-items-center gap-1" id="btnCenterCodeH" title="Centrer Code horizontalement (X: 50%)" style="border-radius: 8px 0 0 8px; font-size: 0.75rem; height: 32px;">
-                                            <i class="bi bi-text-center text-primary"></i>
-                                            <span>Code H</span>
-                                        </button>
-                                        <button type="button" class="btn btn-light border py-1 px-2.5 d-flex align-items-center gap-1" id="btnCenterCodeV" title="Centrer Code verticalement (Y: 50%)" style="border-radius: 0 8px 8px 0; font-size: 0.75rem; height: 32px;">
-                                            <i class="bi bi-align-middle text-primary"></i>
-                                            <span>Code V</span>
-                                        </button>
-                                    </div>
-                                    <button type="button" class="btn btn-sm py-1 px-2.5 fw-semibold d-flex align-items-center gap-1.5 shadow-xs" id="btnAlignEverything" title="Alignement optique parfait selon le cadre de la plaque" style="background: #f3f0ff; color: #6320ee; border: 1px solid #ddd6fe; border-radius: 8px; font-size: 0.75rem; height: 32px;">
+                                <div class="d-flex align-items-center gap-1.5">
+                                    <button type="button" class="btn-studio-tool shadow-xs" id="btnAlignEverything" title="Alignement optique parfait selon le cadre de la plaque" style="background: #f3f0ff; color: #6320ee; border: 1px solid #ddd6fe;">
                                         <i class="bi bi-stars"></i>
                                         <span>Aligner Tout</span>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 fw-semibold d-flex align-items-center gap-1.5 shadow-xs" id="btnToggleCleanPreview" title="Masquer / Afficher les repères pour voir le rendu final pur" style="border-radius: 8px; font-size: 0.75rem; height: 32px;">
+                                    <button type="button" class="btn btn-light border btn-studio-tool shadow-xs" id="btnToggleCleanPreview" title="Masquer / Afficher les repères pour voir le rendu final pur">
                                         <i class="bi bi-eye" id="iconCleanPreview"></i>
                                         <span id="lblCleanPreviewText">Aperçu Net</span>
                                     </button>
                                 </div>
+                            </div>
+
+                            <!-- Dedicated CAD Alignment Sub-Toolbar -->
+                            <div class="px-3.5 py-2 bg-light-subtle border-top border-bottom d-flex flex-wrap align-items-center justify-content-between gap-2">
+                                <div class="d-flex flex-wrap align-items-center gap-2">
+                                    <div class="d-flex align-items-center gap-1.5">
+                                        <span class="text-muted fw-semibold" style="font-size: 0.72rem;">QR :</span>
+                                        <div class="btn-group" role="group" aria-label="Alignement QR">
+                                            <button type="button" class="btn btn-white bg-white border btn-studio-tool" id="btnCenterQrH" title="Centrer QR horizontalement (X: 50%)">
+                                                <i class="bi bi-align-center text-primary"></i>
+                                                <span>QR H</span>
+                                            </button>
+                                            <button type="button" class="btn btn-white bg-white border btn-studio-tool" id="btnCenterQrV" title="Centrer QR verticalement au milieu (Y: 50%)">
+                                                <i class="bi bi-align-middle text-primary"></i>
+                                                <span>QR V</span>
+                                            </button>
+                                            <button type="button" class="btn btn-white bg-white border btn-studio-tool" id="btnCenterQrBoth" title="Centrer QR au milieu total (50% / 50%)">
+                                                <i class="bi bi-bullseye text-primary"></i>
+                                                <span>Milieu</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="vr opacity-25 d-none d-sm-block" style="height: 20px;"></div>
+
+                                    <div class="d-flex align-items-center gap-1.5">
+                                        <span class="text-muted fw-semibold" style="font-size: 0.72rem;">Code :</span>
+                                        <div class="btn-group" role="group" aria-label="Alignement Code">
+                                            <button type="button" class="btn btn-white bg-white border btn-studio-tool" id="btnCenterCodeH" title="Centrer Code horizontalement (X: 50%)">
+                                                <i class="bi bi-text-center text-primary"></i>
+                                                <span>Code H</span>
+                                            </button>
+                                            <button type="button" class="btn btn-white bg-white border btn-studio-tool" id="btnCenterCodeV" title="Centrer Code verticalement (Y: 50%)">
+                                                <i class="bi bi-align-middle text-primary"></i>
+                                                <span>Code V</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <span class="text-muted d-none d-md-inline-flex align-items-center gap-1" style="font-size: 0.7rem;">
+                                    <i class="bi bi-keyboard text-secondary"></i>
+                                    <span>Flèches : ±0.5%</span>
+                                </span>
                             </div>
 
                             <div class="studio-canvas-stage position-relative" id="canvasDropStage">
@@ -679,20 +1030,18 @@ input[type="range"].form-range::-moz-range-thumb {
                             </div>
 
                             <!-- Live Coordinates Status Footer -->
-                            <div class="card-footer bg-white border-top p-2.5 px-3.5 d-flex flex-wrap align-items-center justify-content-between text-muted small" style="font-size: 0.76rem;">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div>
-                                        <i class="bi bi-crosshair me-1 text-primary"></i>
-                                        <span>QR: <strong id="lblQrCoords" class="text-dark">X: 50% | Y: 47.5% | Taille: 35%</strong></span>
-                                    </div>
-                                    <span class="text-secondary opacity-50">&bull;</span>
-                                    <div>
-                                        <i class="bi bi-type me-1 text-primary"></i>
-                                        <span>Code: <strong id="lblCodeCoords" class="text-dark">X: 50% | Y: 74% | Police: 15pt</strong></span>
-                                    </div>
+                            <div class="card-footer bg-white border-top py-2.5 px-3.5 d-flex flex-wrap align-items-center justify-content-between gap-2 text-muted small" style="font-size: 0.75rem;">
+                                <div class="d-flex flex-wrap align-items-center gap-2">
+                                    <span class="badge bg-light text-dark border fw-normal py-1 px-2">
+                                        <i class="bi bi-crosshair me-1 text-primary"></i>QR: <strong id="lblQrCoords" class="font-mono">X: 50% | Y: 47.5% | Taille: 35%</strong>
+                                    </span>
+                                    <span class="badge bg-light text-dark border fw-normal py-1 px-2">
+                                        <i class="bi bi-type me-1 text-primary"></i>Code: <strong id="lblCodeCoords" class="font-mono">X: 50% | Y: 74% | Police: 15pt</strong>
+                                    </span>
                                 </div>
-                                <div class="text-muted" style="font-size: 0.72rem;">
-                                    <i class="bi bi-magnet text-primary me-1"></i>Magnétisme &amp; alignement actif
+                                <div class="text-muted d-flex align-items-center gap-1" style="font-size: 0.72rem;">
+                                    <i class="bi bi-magnet-fill text-primary"></i>
+                                    <span>Magnétisme actif</span>
                                 </div>
                             </div>
                         </div>
@@ -702,43 +1051,44 @@ input[type="range"].form-range::-moz-range-thumb {
                     <div class="col-xl-5 col-lg-6">
                         <!-- Step 3: Styling Options for QR and Code -->
                         <div class="studio-card mb-3 p-3.5">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="d-flex align-items-center justify-content-between gap-2 mb-3 pb-2.5 border-bottom">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="badge" style="background-color: #f3f0ff; color: #6320ee; font-size: 0.75rem; border-radius: 6px;">3</span>
+                                    <span class="studio-step-badge">3</span>
                                     <h6 class="fw-bold text-dark mb-0" style="font-size: 0.92rem;">Personnalisation du QR &amp; du Code</h6>
                                 </div>
-                                <button class="btn btn-link btn-sm text-decoration-none p-0 text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#fineTuneCoords" aria-expanded="false" style="font-size: 0.74rem;">
-                                    <i class="bi bi-sliders me-1"></i>Coordonnées numériques
+                                <button class="btn btn-light border btn-studio-tool text-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#fineTuneCoords" aria-expanded="false">
+                                    <i class="bi bi-sliders text-primary"></i>
+                                    <span>Coordonnées X/Y</span>
                                 </button>
                             </div>
 
                             <!-- Collapsible Fine Numerical Tuning -->
                             <div class="collapse mb-3" id="fineTuneCoords">
                                 <div class="p-2.5 bg-light rounded-3 border">
-                                    <div class="small fw-semibold text-dark mb-1.5" style="font-size: 0.74rem;">Coordonnées exactes (%) :</div>
-                                    <div class="row g-2 mb-2">
+                                    <div class="small fw-semibold text-dark mb-2" style="font-size: 0.74rem;">Coordonnées exactes (%) :</div>
+                                    <div class="row g-2">
                                         <div class="col-6">
-                                            <div class="input-group input-group-sm">
-                                                <span class="input-group-text bg-white small" style="font-size: 0.72rem;">QR X%</span>
-                                                <input type="number" step="any" min="5" max="95" class="form-control" id="numQrX" value="50">
+                                            <div class="studio-input-group has-prefix">
+                                                <span class="studio-input-addon">QR X%</span>
+                                                <input type="number" step="any" min="5" max="95" class="form-control studio-input" id="numQrX" value="50">
                                             </div>
                                         </div>
                                         <div class="col-6">
-                                            <div class="input-group input-group-sm">
-                                                <span class="input-group-text bg-white small" style="font-size: 0.72rem;">QR Y%</span>
-                                                <input type="number" step="any" min="5" max="95" class="form-control" id="numQrY" value="47.5">
+                                            <div class="studio-input-group has-prefix">
+                                                <span class="studio-input-addon">QR Y%</span>
+                                                <input type="number" step="any" min="5" max="95" class="form-control studio-input" id="numQrY" value="47.5">
                                             </div>
                                         </div>
                                         <div class="col-6">
-                                            <div class="input-group input-group-sm">
-                                                <span class="input-group-text bg-white small" style="font-size: 0.72rem;">Code X%</span>
-                                                <input type="number" step="any" min="5" max="95" class="form-control" id="numCodeX" value="50">
+                                            <div class="studio-input-group has-prefix">
+                                                <span class="studio-input-addon">Code X%</span>
+                                                <input type="number" step="any" min="5" max="95" class="form-control studio-input" id="numCodeX" value="50">
                                             </div>
                                         </div>
                                         <div class="col-6">
-                                            <div class="input-group input-group-sm">
-                                                <span class="input-group-text bg-white small" style="font-size: 0.72rem;">Code Y%</span>
-                                                <input type="number" step="any" min="5" max="95" class="form-control" id="numCodeY" value="74">
+                                            <div class="studio-input-group has-prefix">
+                                                <span class="studio-input-addon">Code Y%</span>
+                                                <input type="number" step="any" min="5" max="95" class="form-control studio-input" id="numCodeY" value="74">
                                             </div>
                                         </div>
                                     </div>
@@ -748,22 +1098,22 @@ input[type="range"].form-range::-moz-range-thumb {
                             <!-- QR Size & Colors -->
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <label class="form-label small fw-semibold text-dark mb-0">Taille du QR code</label>
-                                    <span class="small font-mono fw-semibold text-primary" id="lblQrSizeVal">35%</span>
+                                    <label class="studio-label mb-0" for="sliderQrSize">Taille du QR code</label>
+                                    <span class="badge bg-primary-subtle text-primary font-mono fw-semibold" id="lblQrSizeVal" style="font-size: 0.72rem;">35%</span>
                                 </div>
                                 <input type="range" class="form-range" id="sliderQrSize" min="15" max="80" value="35">
                             </div>
 
-                            <div class="row g-2 mb-3">
+                            <div class="row g-2.5 mb-3">
                                 <div class="col-6">
-                                    <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Couleur du QR</label>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <input type="color" id="pickerQrFg" class="form-control form-control-color p-0 border-0" value="#000000" style="width: 34px; height: 34px; border-radius: 8px;" title="Couleur des modules QR">
-                                        <span class="small font-mono text-dark" id="lblQrFgHex">#000000</span>
+                                    <label class="studio-label" for="pickerQrFg">Couleur du QR</label>
+                                    <div class="studio-color-capsule">
+                                        <input type="color" id="pickerQrFg" value="#000000" title="Couleur des modules QR">
+                                        <span class="small font-mono fw-semibold text-dark" id="lblQrFgHex">#000000</span>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Fond du QR</label>
+                                    <label class="studio-label" for="selectQrBg">Fond du QR</label>
                                     <select id="selectQrBg" class="form-select studio-input">
                                         <option value="#ffffff" selected>Blanc solide</option>
                                         <option value="transparent">Transparent</option>
@@ -774,42 +1124,44 @@ input[type="range"].form-range::-moz-range-thumb {
                             <hr class="my-3 opacity-10">
 
                             <!-- Code Unique Options -->
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <div class="form-check form-switch mb-0">
-                                    <input class="form-check-input cursor-pointer" type="checkbox" id="chkShowCode" checked>
+                            <div class="d-flex align-items-center justify-content-between mb-2.5">
+                                <div class="form-check form-switch mb-0 d-flex align-items-center gap-2 ps-0">
+                                    <input class="form-check-input cursor-pointer ms-0 mt-0" type="checkbox" id="chkShowCode" checked style="width: 2.25em; height: 1.15em;">
                                     <label class="form-check-label fw-semibold text-dark small cursor-pointer" for="chkShowCode">
                                         Afficher le Code Unique (VP-)
                                     </label>
                                 </div>
+                                <span class="badge bg-light text-secondary border font-mono" style="font-size: 0.68rem;">VP-XXXXXX</span>
                             </div>
 
                             <div id="codeConfigOptions">
-                                <div class="mb-2.5">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <label class="form-label small text-muted mb-0" style="font-size: 0.75rem;">Taille de police du code</label>
-                                        <span class="small text-muted font-mono" id="lblCodeSizeVal">15 pt</span>
-                                    </div>
-                                    <input type="range" class="form-range" id="sliderCodeSize" min="8" max="42" value="15">
-                                </div>
-
-                                <div class="mb-2.5">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <label class="form-label small text-muted mb-0" style="font-size: 0.75rem;">Espacement des lettres</label>
-                                        <span class="small text-muted font-mono" id="lblCodeLetterSpacingVal">1.5 pt</span>
-                                    </div>
-                                    <input type="range" class="form-range" id="sliderCodeLetterSpacing" min="0" max="6" step="0.5" value="1.5">
-                                </div>
-
-                                <div class="row g-2 mb-2">
+                                <div class="row g-2.5 mb-2.5">
                                     <div class="col-6">
-                                        <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Couleur du texte</label>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <input type="color" id="pickerCodeColor" class="form-control form-control-color p-0 border-0" value="#0f172a" style="width: 32px; height: 32px; border-radius: 8px;">
-                                            <span class="small font-mono text-dark" id="lblCodeColorHex">#0f172a</span>
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <label class="studio-label mb-0" for="sliderCodeSize">Taille police</label>
+                                            <span class="small text-primary fw-semibold font-mono" id="lblCodeSizeVal" style="font-size: 0.72rem;">15 pt</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="sliderCodeSize" min="8" max="42" value="15">
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <label class="studio-label mb-0" for="sliderCodeLetterSpacing">Espacement</label>
+                                            <span class="small text-primary fw-semibold font-mono" id="lblCodeLetterSpacingVal" style="font-size: 0.72rem;">1.5 pt</span>
+                                        </div>
+                                        <input type="range" class="form-range" id="sliderCodeLetterSpacing" min="0" max="6" step="0.5" value="1.5">
+                                    </div>
+                                </div>
+
+                                <div class="row g-2.5">
+                                    <div class="col-6">
+                                        <label class="studio-label" for="pickerCodeColor">Couleur du texte</label>
+                                        <div class="studio-color-capsule">
+                                            <input type="color" id="pickerCodeColor" value="#0f172a" title="Couleur du texte du code">
+                                            <span class="small font-mono fw-semibold text-dark" id="lblCodeColorHex">#0f172a</span>
                                         </div>
                                     </div>
                                     <div class="col-6">
-                                        <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Fond du texte</label>
+                                        <label class="studio-label" for="selectCodeBg">Fond du texte</label>
                                         <select id="selectCodeBg" class="form-select studio-input">
                                             <option value="transparent" selected>Transparent</option>
                                             <option value="#ffffff">Pastille blanche</option>
@@ -819,7 +1171,7 @@ input[type="range"].form-range::-moz-range-thumb {
                                         </select>
                                     </div>
                                     <div class="col-6">
-                                        <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Police</label>
+                                        <label class="studio-label" for="selectCodeFontFamily">Police</label>
                                         <select id="selectCodeFontFamily" class="form-select studio-input">
                                             <option value="monospace" selected>Monospace (Tech)</option>
                                             <option value="sans-serif">Sans-Serif (Moderne)</option>
@@ -827,7 +1179,7 @@ input[type="range"].form-range::-moz-range-thumb {
                                         </select>
                                     </div>
                                     <div class="col-6">
-                                        <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Graisse</label>
+                                        <label class="studio-label" for="selectCodeFontWeight">Graisse</label>
                                         <select id="selectCodeFontWeight" class="form-select studio-input">
                                             <option value="bold" selected>Gras (Bold 700)</option>
                                             <option value="600">Semi-Gras (600)</option>
@@ -841,15 +1193,18 @@ input[type="range"].form-range::-moz-range-thumb {
 
                         <!-- Step 4: Quantity, URL & Instant PDF Download Action -->
                         <div class="studio-card p-3.5">
-                            <div class="d-flex align-items-center gap-2 mb-3">
-                                <span class="badge" style="background-color: #f3f0ff; color: #6320ee; font-size: 0.75rem; border-radius: 6px;">4</span>
-                                <h6 class="fw-bold text-dark mb-0" style="font-size: 0.92rem;">Paramètres du lot &amp; Destination</h6>
+                            <div class="d-flex align-items-center justify-content-between gap-2 mb-3 pb-2.5 border-bottom">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="studio-step-badge">4</span>
+                                    <h6 class="fw-bold text-dark mb-0" style="font-size: 0.92rem;">Paramètres du lot &amp; Destination</h6>
+                                </div>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.68rem;">Export PDF HD</span>
                             </div>
 
                             <!-- Quantity Selector -->
                             <div class="mb-3">
-                                <label class="form-label small fw-semibold text-dark mb-1">Nombre de QR codes à générer <span class="text-danger">*</span></label>
-                                <div class="d-flex flex-wrap gap-1.5 mb-2">
+                                <label class="studio-label" for="quantityInput">Nombre de QR codes à générer <span class="text-danger">*</span></label>
+                                <div class="qty-pills-grid mb-2">
                                     <button type="button" class="qty-pill" data-qty="1">1</button>
                                     <button type="button" class="qty-pill active" data-qty="5">5</button>
                                     <button type="button" class="qty-pill" data-qty="10">10</button>
@@ -858,39 +1213,37 @@ input[type="range"].form-range::-moz-range-thumb {
                                     <button type="button" class="qty-pill" data-qty="100">100</button>
                                 </div>
                                 <input type="number" min="1" max="100" name="quantity" id="quantityInput" class="form-control studio-input" value="5" required>
-                                <div class="form-text small" style="font-size: 0.74rem;">Un code unique "VP-XXXXXX" sera assigné à chaque page du PDF.</div>
+                                <div class="form-text small" style="font-size: 0.73rem;">Un code unique "VP-XXXXXX" sera assigné à chaque page du PDF.</div>
                             </div>
 
                             <!-- Label Prefix -->
                             <div class="mb-3">
-                                <label class="form-label small fw-semibold text-dark mb-1">Préfixe du libellé <span class="text-danger">*</span></label>
+                                <label class="studio-label">Préfixe du libellé <span class="text-danger">*</span></label>
                                 <input type="text" name="label_prefix" class="form-control studio-input" value="Plaque Avis Client" placeholder="ex: Chevalet Table, Plaque Avis Google, Carte VIP" required>
                             </div>
 
                             <!-- Target Destination URL -->
                             <div class="mb-3">
-                                <label class="form-label small fw-semibold text-dark mb-1">URL de redirection (Destination) <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light text-muted" style="border-radius: 10px 0 0 10px; border-color: #e2e8f0;"><i class="bi bi-link-45deg"></i></span>
-                                    <input type="text" name="target_url" id="targetUrlInputStudio" class="form-control studio-input" value="https://g.page/r/sample-business/review" placeholder="https://..." required style="border-radius: 0 10px 10px 0;">
+                                <label class="studio-label" for="targetUrlInputStudio">URL de redirection (Destination) <span class="text-danger">*</span></label>
+                                <div class="studio-input-group has-prefix">
+                                    <span class="studio-input-addon"><i class="bi bi-link-45deg fs-6"></i></span>
+                                    <input type="text" name="target_url" id="targetUrlInputStudio" class="form-control studio-input" value="https://g.page/r/sample-business/review" placeholder="https://..." required>
                                 </div>
-                                <div class="form-text small text-muted mt-2">
-                                    Raccourcis :
-                                    <div class="d-inline-flex flex-wrap gap-1 mt-1">
-                                        <span class="quick-url-chip" onclick="setStudioUrl('https://')">https://</span>
-                                        <span class="quick-url-chip" onclick="setStudioUrl('https://g.page/r/')"><i class="bi bi-google text-danger"></i> Avis Google</span>
-                                        <span class="quick-url-chip" onclick="setStudioUrl('https://instagram.com/')"><i class="bi bi-instagram text-primary"></i> Instagram</span>
-                                        <span class="quick-url-chip" onclick="setStudioUrl('https://wa.me/')"><i class="bi bi-whatsapp text-success"></i> WhatsApp</span>
-                                        <span class="quick-url-chip" onclick="setStudioUrl('https://tiktok.com/@')"><i class="bi bi-tiktok text-dark"></i> TikTok</span>
-                                        <span class="quick-url-chip" onclick="setStudioUrl('https://trustpilot.com/review/')"><i class="bi bi-star-fill text-warning"></i> Trustpilot</span>
-                                    </div>
+                                <div class="d-flex flex-wrap align-items-center gap-1.5 mt-2">
+                                    <span class="text-muted fw-semibold me-0.5" style="font-size: 0.71rem;">Raccourcis :</span>
+                                    <span class="quick-url-chip" onclick="setStudioUrl('https://')">https://</span>
+                                    <span class="quick-url-chip" onclick="setStudioUrl('https://g.page/r/')"><i class="bi bi-google text-danger"></i> Avis Google</span>
+                                    <span class="quick-url-chip" onclick="setStudioUrl('https://instagram.com/')"><i class="bi bi-instagram text-primary"></i> Instagram</span>
+                                    <span class="quick-url-chip" onclick="setStudioUrl('https://wa.me/')"><i class="bi bi-whatsapp text-success"></i> WhatsApp</span>
+                                    <span class="quick-url-chip" onclick="setStudioUrl('https://tiktok.com/@')"><i class="bi bi-tiktok text-dark"></i> TikTok</span>
+                                    <span class="quick-url-chip" onclick="setStudioUrl('https://trustpilot.com/review/')"><i class="bi bi-star-fill text-warning"></i> Trustpilot</span>
                                 </div>
                             </div>
 
                             <!-- Client & Style Selection -->
-                            <div class="row g-2 mb-4">
+                            <div class="row g-2.5 mb-3.5">
                                 <div class="col-6">
-                                    <label class="form-label small text-muted mb-1" style="font-size: 0.72rem;">Assigner à un client</label>
+                                    <label class="studio-label">Assigner à un client</label>
                                     <select name="client_id" class="form-select studio-input">
                                         <option value="">Général (Aucun)</option>
                                         @foreach($clients as $client)
@@ -899,7 +1252,7 @@ input[type="range"].form-range::-moz-range-thumb {
                                     </select>
                                 </div>
                                 <div class="col-6">
-                                    <label class="form-label small text-muted mb-1" style="font-size: 0.72rem;">Style de code</label>
+                                    <label class="studio-label">Style de code</label>
                                     <select name="code_style" class="form-select studio-input">
                                         <option value="unique" selected>Aléatoire (VP-XXXXXX)</option>
                                         <option value="sequential">Séquentiel (VP-000001)</option>
@@ -912,7 +1265,7 @@ input[type="range"].form-range::-moz-range-thumb {
                             <div id="studioAlertArea" class="mb-3"></div>
 
                             <!-- SUBMIT BUTTON WITH PURPLE GRADIENT -->
-                            <button type="submit" id="btnSubmitGeneratePdf" form="batchPdfStudioForm" class="btn text-white w-100 fw-bold py-2.5 shadow-sm d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%); border-radius: 12px; font-size: 0.96rem;">
+                            <button type="submit" id="btnSubmitGeneratePdf" form="batchPdfStudioForm" class="btn text-white w-100 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" style="background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%); border-radius: 12px; font-size: 0.94rem; height: 46px;">
                                 <i class="bi bi-file-earmark-pdf-fill fs-5"></i>
                                 <span id="btnSubmitText">Générer &amp; Télécharger le PDF (5 pages)</span>
                             </button>
@@ -933,7 +1286,7 @@ input[type="range"].form-range::-moz-range-thumb {
         <div class="tab-pane fade" id="standard-pane" role="tabpanel">
             <div class="studio-card p-4 mx-auto" style="max-width: 780px;">
                 <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
-                    <div class="rounded-3 d-flex align-items-center justify-content-center text-white shadow-xs" style="width: 44px; height: 44px; background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%);">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center text-white shadow-xs flex-shrink-0" style="width: 44px; height: 44px; background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%);">
                         <i class="bi bi-qr-code fs-4"></i>
                     </div>
                     <div>
@@ -946,7 +1299,7 @@ input[type="range"].form-range::-moz-range-thumb {
                     @csrf
                     <div class="row g-3 mb-4">
                         <div class="col-12 col-md-6">
-                            <label class="form-label fw-semibold small text-dark mb-1">Assigner à un client</label>
+                            <label class="studio-label">Assigner à un client</label>
                             <select name="client_id" class="form-select studio-input">
                                 <option value="">Général (Aucun client)</option>
                                 @foreach($clients as $client)
@@ -955,29 +1308,27 @@ input[type="range"].form-range::-moz-range-thumb {
                             </select>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label class="form-label fw-semibold small text-dark mb-1">Libellé du QR <span class="text-danger">*</span></label>
+                            <label class="studio-label">Libellé du QR <span class="text-danger">*</span></label>
                             <input type="text" name="label" class="form-control studio-input" placeholder="ex: Stand VIP, Réception Hôtel" required>
                         </div>
                         <div class="col-12">
-                            <label class="form-label fw-semibold small text-dark mb-1">URL de destination <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light text-muted" style="border-radius: 10px 0 0 10px; border-color: #e2e8f0;"><i class="bi bi-link-45deg"></i></span>
-                                <input type="text" name="target_url" id="targetUrlInputStandard" class="form-control studio-input" placeholder="https://..." required style="border-radius: 0 10px 10px 0;">
+                            <label class="studio-label" for="targetUrlInputStandard">URL de destination <span class="text-danger">*</span></label>
+                            <div class="studio-input-group has-prefix">
+                                <span class="studio-input-addon"><i class="bi bi-link-45deg fs-6"></i></span>
+                                <input type="text" name="target_url" id="targetUrlInputStandard" class="form-control studio-input" placeholder="https://..." required>
                             </div>
-                            <div class="form-text small text-muted mt-2">
-                                Raccourcis :
-                                <div class="d-inline-flex flex-wrap gap-1 mt-1">
-                                    <span class="quick-url-chip" onclick="setStandardUrl('https://')">https://</span>
-                                    <span class="quick-url-chip" onclick="setStandardUrl('https://g.page/r/')"><i class="bi bi-google text-danger"></i> Avis Google</span>
-                                    <span class="quick-url-chip" onclick="setStandardUrl('https://instagram.com/')"><i class="bi bi-instagram text-primary"></i> Instagram</span>
-                                    <span class="quick-url-chip" onclick="setStandardUrl('https://wa.me/')"><i class="bi bi-whatsapp text-success"></i> WhatsApp</span>
-                                    <span class="quick-url-chip" onclick="setStandardUrl('https://tiktok.com/@')"><i class="bi bi-tiktok text-dark"></i> TikTok</span>
-                                    <span class="quick-url-chip" onclick="setStandardUrl('https://trustpilot.com/review/')"><i class="bi bi-star-fill text-warning"></i> Trustpilot</span>
-                                </div>
+                            <div class="d-flex flex-wrap align-items-center gap-1.5 mt-2">
+                                <span class="text-muted fw-semibold me-0.5" style="font-size: 0.71rem;">Raccourcis :</span>
+                                <span class="quick-url-chip" onclick="setStandardUrl('https://')">https://</span>
+                                <span class="quick-url-chip" onclick="setStandardUrl('https://g.page/r/')"><i class="bi bi-google text-danger"></i> Avis Google</span>
+                                <span class="quick-url-chip" onclick="setStandardUrl('https://instagram.com/')"><i class="bi bi-instagram text-primary"></i> Instagram</span>
+                                <span class="quick-url-chip" onclick="setStandardUrl('https://wa.me/')"><i class="bi bi-whatsapp text-success"></i> WhatsApp</span>
+                                <span class="quick-url-chip" onclick="setStandardUrl('https://tiktok.com/@')"><i class="bi bi-tiktok text-dark"></i> TikTok</span>
+                                <span class="quick-url-chip" onclick="setStandardUrl('https://trustpilot.com/review/')"><i class="bi bi-star-fill text-warning"></i> Trustpilot</span>
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label class="form-label fw-semibold small text-dark mb-1">Gabarit d'impression</label>
+                            <label class="studio-label">Gabarit d'impression</label>
                             <select name="template_type" class="form-select studio-input" required>
                                 <option value="google_review" selected>Avis Google (5 étoiles)</option>
                                 <option value="social_media">Réseaux Sociaux</option>
@@ -985,7 +1336,7 @@ input[type="range"].form-range::-moz-range-thumb {
                             </select>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label class="form-label fw-semibold small text-dark mb-1">Statut initial</label>
+                            <label class="studio-label">Statut initial</label>
                             <select name="status" class="form-select studio-input">
                                 <option value="active" selected>Actif (Routage immédiat)</option>
                                 <option value="inactive">Inactif (En attente)</option>
@@ -993,12 +1344,99 @@ input[type="range"].form-range::-moz-range-thumb {
                         </div>
                     </div>
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('admin.dynamic-qrs.index') }}" class="btn btn-light border px-4" style="border-radius: 10px;">Annuler</a>
-                        <button type="submit" class="btn text-white px-4 fw-semibold shadow-xs" style="background-color: #6320ee; border-radius: 10px; height: 38px;">
-                            <i class="bi bi-check-lg me-1"></i> Créer le QR Code
+                        <a href="{{ route('admin.dynamic-qrs.index') }}" class="btn btn-light border px-4 d-inline-flex align-items-center" style="border-radius: 10px; height: 38px; font-weight: 600; font-size: 0.84rem;">Annuler</a>
+                        <button type="submit" class="btn text-white px-4 fw-semibold shadow-xs d-inline-flex align-items-center gap-1.5" style="background-color: #6320ee; border-radius: 10px; height: 38px; font-size: 0.84rem;">
+                            <i class="bi bi-check-lg"></i>
+                            <span>Créer le QR Code</span>
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- DESIGN LIBRARY MANAGER MODAL (ADD, SEARCH, SELECT & DELETE DESIGNS)       -->
+<!-- ========================================================================= -->
+<div class="modal fade" id="designLibraryModal" tabindex="-1" aria-labelledby="designLibraryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 18px; overflow: hidden;">
+            <div class="modal-header bg-white border-bottom px-4 py-3">
+                <div class="d-flex align-items-center gap-2.5">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center text-white shadow-xs" style="width: 38px; height: 38px; background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%);">
+                        <i class="bi bi-collection-play-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title fw-bold text-dark mb-0" id="designLibraryModalLabel" style="font-size: 1.02rem;">
+                            Bibliothèque de Designs &amp; Gabarits
+                        </h5>
+                        <p class="text-muted small mb-0" style="font-size: 0.75rem;">
+                            Ajoutez vos visuels une seule fois, recherchez-les instantanément et réutilisez-les pour vos lots de QR codes.
+                        </p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+
+            <div class="modal-body p-4" style="background-color: #f8fafc;">
+                <!-- Upload / Add New Design to Library Card -->
+                <div class="bg-white border rounded-4 p-3 mb-3 shadow-xs">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="bi bi-cloud-plus-fill text-primary"></i>
+                        <span class="fw-bold text-dark small">Ajouter un nouveau design à ma bibliothèque</span>
+                    </div>
+                    <form id="formUploadDesignLibrary" class="row g-2 align-items-end">
+                        <div class="col-12 col-md-4">
+                            <label class="studio-label" for="newDesignNameInput">Nom du design (optionnel)</label>
+                            <input type="text" id="newDesignNameInput" class="form-control studio-input" placeholder="ex: Plaque Avis Or, Chevalet Menu VIP...">
+                        </div>
+                        <div class="col-12 col-md-5">
+                            <label class="studio-label" for="newDesignFileInput">Fichier(s) image (PNG, JPG, WebP, SVG) <span class="text-danger">*</span></label>
+                            <input type="file" id="newDesignFileInput" class="form-control studio-input" accept="image/png,image/jpeg,image/webp,image/svg+xml" multiple required style="padding-top: 0.35rem !important;">
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <button type="submit" id="btnUploadDesignToLibrary" class="btn text-white w-100 fw-semibold d-flex align-items-center justify-content-center gap-1.5 shadow-xs" style="background-color: #6320ee; height: 38px; border-radius: 10px; font-size: 0.84rem;">
+                                <i class="bi bi-plus-circle-fill"></i>
+                                <span id="lblUploadDesignBtn">Ajouter à la bibliothèque</span>
+                            </button>
+                        </div>
+                    </form>
+                    <div id="libraryModalAlert" class="mt-2 d-none"></div>
+                </div>
+
+                <!-- Search & Category Filter Bar -->
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                    <div class="position-relative flex-grow-1" style="max-width: 420px;">
+                        <i class="bi bi-search position-absolute top-50 translate-middle-y text-muted" style="left: 12px; font-size: 0.85rem; pointer-events: none;"></i>
+                        <input type="text" id="modalLibrarySearchInput" class="form-control studio-input bg-white" placeholder="Rechercher un design par nom ou format (JPG, PNG, SVG)..." style="padding-left: 2.2rem !important; background-color: #ffffff !important;">
+                    </div>
+                    <div class="d-flex align-items-center gap-1.5">
+                        <button type="button" class="lib-filter-pill active" data-lib-filter="all">
+                            Tous (<span id="countLibAll">{{ count($designLibrary ?? []) }}</span>)
+                        </button>
+                        <button type="button" class="lib-filter-pill" data-lib-filter="custom">
+                            Mes Designs (<span id="countLibCustom">{{ collect($designLibrary ?? [])->where('is_system', false)->count() }}</span>)
+                        </button>
+                        <button type="button" class="lib-filter-pill" data-lib-filter="system">
+                            Système (<span id="countLibSystem">{{ collect($designLibrary ?? [])->where('is_system', true)->count() }}</span>)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Visual Library Grid -->
+                <div class="modal-library-grid" id="modalLibraryGrid">
+                    <!-- Rendered dynamically via JS -->
+                </div>
+            </div>
+
+            <div class="modal-footer bg-white border-top px-4 py-2.5 d-flex justify-content-between align-items-center">
+                <small class="text-muted" style="font-size: 0.75rem;">
+                    <i class="bi bi-info-circle me-1 text-primary"></i>Cliquez sur un design pour l'appliquer immédiatement au Studio sans avoir à le re-téléverser.
+                </small>
+                <button type="button" class="btn btn-light border px-3" data-bs-dismiss="modal" style="height: 36px; border-radius: 9px; font-size: 0.82rem; font-weight: 600;">
+                    Fermer
+                </button>
             </div>
         </div>
     </div>
@@ -1173,42 +1611,399 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // 2. Upload Design / Template File Preview with Dimension Detection
+    // 2. Upload Design / Template File Preview with Dimension Detection & Design Library Engine
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+    const designsStoreUrl = "{{ route('admin.dynamic-qrs.designs.store') }}";
+    let designLibraryState = @json($designLibrary ?? []);
+    let currentLibFilter = 'all';
+    let currentSearchQuery = '';
+    let lastLocalFile = null;
+
+    const btnQuickSaveToLibrary = document.getElementById('btnQuickSaveToLibrary');
+    const inlineLibraryGrid = document.getElementById('inlineLibraryGrid');
+    const modalLibraryGrid = document.getElementById('modalLibraryGrid');
+    const inlineSearchInput = document.getElementById('inlineLibrarySearchInput');
+    const modalSearchInput = document.getElementById('modalLibrarySearchInput');
+    const quickAddFileInput = document.getElementById('quickAddLibraryFileInput');
+
+    function detectImageDimensionsFromSrc(srcUrl) {
+        const tempImg = new Image();
+        tempImg.onload = function() {
+            const natW = tempImg.naturalWidth;
+            const natH = tempImg.naturalHeight;
+            const badge = document.getElementById('imgDetectedDimBadge');
+            if (badge && natW > 0 && natH > 0) {
+                badge.textContent = `${natW} × ${natH} px`;
+                badge.classList.remove('d-none');
+            }
+            const btnAdopt = document.getElementById('btnAdoptImgDimensions');
+            if (btnAdopt && natW > 0 && natH > 0) {
+                btnAdopt.classList.remove('d-none');
+                btnAdopt.onclick = function() {
+                    unitSelect.value = 'px';
+                    unitIndicators.forEach(ind => ind.textContent = 'px');
+                    widthInput.value = natW;
+                    heightInput.value = natH;
+                    document.querySelectorAll('.dimension-preset').forEach(b => b.classList.remove('active'));
+                    updateCanvasAspect();
+                    btnAdopt.classList.add('d-none');
+                };
+            }
+        };
+        tempImg.src = srcUrl;
+    }
+
     function handleImageFile(file) {
         if (!file) return;
+        lastLocalFile = file;
         templateNameDisplay.textContent = 'Gabarit : ' + file.name;
+        if (btnQuickSaveToLibrary) {
+            btnQuickSaveToLibrary.classList.remove('d-none');
+            btnQuickSaveToLibrary.innerHTML = '<i class="bi bi-bookmark-plus-fill me-0.5"></i>Sauvegarder dans la bibliothèque';
+            btnQuickSaveToLibrary.disabled = false;
+        }
         const reader = new FileReader();
         reader.onload = function (event) {
             bgImage.src = event.target.result;
-
-            const tempImg = new Image();
-            tempImg.onload = function() {
-                const natW = tempImg.naturalWidth;
-                const natH = tempImg.naturalHeight;
-                const badge = document.getElementById('imgDetectedDimBadge');
-                if (badge) {
-                    badge.textContent = `${natW} × ${natH} px`;
-                    badge.classList.remove('d-none');
-                }
-                const btnAdopt = document.getElementById('btnAdoptImgDimensions');
-                if (btnAdopt) {
-                    btnAdopt.classList.remove('d-none');
-                    btnAdopt.onclick = function() {
-                        unitSelect.value = 'px';
-                        unitIndicators.forEach(ind => ind.textContent = 'px');
-                        widthInput.value = natW;
-                        heightInput.value = natH;
-                        document.querySelectorAll('.dimension-preset').forEach(b => b.classList.remove('active'));
-                        updateCanvasAspect();
-                        btnAdopt.classList.add('d-none');
-                    };
-                }
-            };
-            tempImg.src = event.target.result;
+            detectImageDimensionsFromSrc(event.target.result);
         };
         reader.readAsDataURL(file);
         document.getElementById('inputExistingTemplateImage').value = '';
+        renderDesignLibrary();
     }
+
+    function applyLibraryDesign(item, closeModal = false) {
+        if (!item) return;
+        lastLocalFile = null;
+        if (btnQuickSaveToLibrary) btnQuickSaveToLibrary.classList.add('d-none');
+        bgImage.src = item.url;
+        templateNameDisplay.textContent = 'Gabarit : ' + item.name;
+        document.getElementById('inputExistingTemplateImage').value = item.file_path;
+        fileInput.value = '';
+        btnBlankCanvas?.classList.remove('btn-primary', 'text-white');
+        btnBlankCanvas?.classList.add('btn-outline-secondary');
+        detectImageDimensionsFromSrc(item.url);
+        renderDesignLibrary();
+        triggerStagePulse();
+
+        if (closeModal) {
+            const modalEl = document.getElementById('designLibraryModal');
+            if (modalEl && window.bootstrap) {
+                const instance = window.bootstrap.Modal.getInstance(modalEl);
+                if (instance) instance.hide();
+            }
+        }
+    }
+
+    function escapeHtml(str) {
+        return String(str || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function updateLibraryCounters() {
+        const total = designLibraryState.length;
+        const customCount = designLibraryState.filter(d => !d.is_system).length;
+        const systemCount = designLibraryState.filter(d => d.is_system).length;
+
+        ['heroLibraryCountBadge', 'step1LibraryCountBadge', 'inlineLibraryCountBadge', 'countLibAll'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = total;
+        });
+        const elCustom = document.getElementById('countLibCustom');
+        if (elCustom) elCustom.textContent = customCount;
+        const elSys = document.getElementById('countLibSystem');
+        if (elSys) elSys.textContent = systemCount;
+    }
+
+    function getFilteredLibraryItems() {
+        const q = currentSearchQuery.trim().toLowerCase();
+        return designLibraryState.filter(item => {
+            if (currentLibFilter === 'custom' && item.is_system) return false;
+            if (currentLibFilter === 'system' && !item.is_system) return false;
+            if (q !== '') {
+                const nameMatch = (item.name || '').toLowerCase().includes(q);
+                const fmtMatch = (item.format || '').toLowerCase().includes(q);
+                return nameMatch || fmtMatch;
+            }
+            return true;
+        });
+    }
+
+    function renderDesignLibrary() {
+        updateLibraryCounters();
+        const activePath = document.getElementById('inputExistingTemplateImage')?.value || '';
+        const filtered = getFilteredLibraryItems();
+
+        // 1. Render Inline Strip Grid
+        if (inlineLibraryGrid) {
+            if (filtered.length === 0) {
+                inlineLibraryGrid.innerHTML = `
+                    <div class="text-center text-muted py-3 px-2" style="grid-column: 1 / -1; font-size: 0.76rem;">
+                        <i class="bi bi-images d-block fs-5 mb-1 opacity-50"></i>
+                        Aucun design trouvé pour cette recherche.
+                    </div>
+                `;
+            } else {
+                inlineLibraryGrid.innerHTML = filtered.map(item => {
+                    const isActive = activePath !== '' && activePath === item.file_path;
+                    const deleteBtnHtml = !item.is_system && item.delete_url
+                        ? `<button type="button" class="design-lib-del-btn" data-del-id="${escapeHtml(item.id)}" title="Supprimer ce design de la bibliothèque">
+                               <i class="bi bi-trash3"></i>
+                           </button>`
+                        : '';
+                    return `
+                        <div class="design-lib-card ${isActive ? 'active' : ''}" data-select-path="${escapeHtml(item.file_path)}" title="Cliquer pour utiliser « ${escapeHtml(item.name)} »">
+                            <div class="design-lib-thumb-wrap">
+                                <span class="design-lib-active-badge"><i class="bi bi-check2"></i>Actif</span>
+                                ${deleteBtnHtml}
+                                <img src="${escapeHtml(item.url)}" alt="${escapeHtml(item.name)}" loading="lazy">
+                            </div>
+                            <div class="design-lib-meta">
+                                <div class="design-lib-title">${escapeHtml(item.name)}</div>
+                                <div class="design-lib-sub">
+                                    <span class="font-mono fw-semibold text-primary">${escapeHtml(item.format || 'IMG')}</span>
+                                    <span>${escapeHtml(item.size_formatted || '')}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // 2. Render Modal Grid
+        if (modalLibraryGrid) {
+            if (filtered.length === 0) {
+                modalLibraryGrid.innerHTML = `
+                    <div class="text-center text-muted py-5 px-3 bg-white rounded-4 border" style="grid-column: 1 / -1;">
+                        <i class="bi bi-collection display-6 d-block mb-2 text-secondary opacity-50"></i>
+                        <div class="fw-bold text-dark small mb-1">Aucun design trouvé</div>
+                        <div class="small text-muted">Importez un nouveau visuel ci-dessus ou modifiez votre recherche.</div>
+                    </div>
+                `;
+            } else {
+                modalLibraryGrid.innerHTML = filtered.map(item => {
+                    const isActive = activePath !== '' && activePath === item.file_path;
+                    const badgeType = item.is_system
+                        ? `<span class="badge bg-light text-secondary border" style="font-size: 0.64rem;">Système</span>`
+                        : `<span class="badge bg-primary-subtle text-primary" style="font-size: 0.64rem;">Mon Design</span>`;
+                    const deleteBtnHtml = !item.is_system && item.delete_url
+                        ? `<button type="button" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center justify-content-center px-2" data-del-id="${escapeHtml(item.id)}" title="Supprimer définitivement" style="height: 30px; border-radius: 7px;">
+                               <i class="bi bi-trash3"></i>
+                           </button>`
+                        : '';
+                    return `
+                        <div class="design-lib-card ${isActive ? 'active' : ''}" data-select-path="${escapeHtml(item.file_path)}">
+                            <div class="design-lib-thumb-wrap" style="aspect-ratio: 1 / 1;">
+                                <span class="design-lib-active-badge"><i class="bi bi-check2-circle"></i>Sélectionné</span>
+                                <img src="${escapeHtml(item.url)}" alt="${escapeHtml(item.name)}" loading="lazy">
+                            </div>
+                            <div class="p-2.5 d-flex flex-column gap-2 flex-grow-1 justify-content-between">
+                                <div>
+                                    <div class="d-flex align-items-center justify-content-between gap-1 mb-1">
+                                        ${badgeType}
+                                        <span class="font-mono text-muted" style="font-size: 0.66rem;">${escapeHtml(item.format)} &bull; ${escapeHtml(item.size_formatted)}</span>
+                                    </div>
+                                    <div class="fw-bold text-dark text-truncate" style="font-size: 0.8rem;" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
+                                </div>
+                                <div class="d-flex align-items-center gap-1.5 pt-1 border-top">
+                                    <button type="button" class="btn btn-sm flex-grow-1 fw-semibold d-inline-flex align-items-center justify-content-center gap-1" data-use-modal-path="${escapeHtml(item.file_path)}" style="height: 30px; border-radius: 7px; font-size: 0.74rem; background: ${isActive ? '#10b981' : '#6320ee'}; color: #fff;">
+                                        <i class="bi ${isActive ? 'bi-check2-all' : 'bi-magic'}"></i>
+                                        <span>${isActive ? 'Actif' : 'Utiliser'}</span>
+                                    </button>
+                                    ${deleteBtnHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+    }
+
+    async function uploadFilesToLibrary(files, customName = '') {
+        if (!files || files.length === 0) return;
+        const formData = new FormData();
+        if (customName) formData.append('name', customName);
+        Array.from(files).forEach(f => formData.append('design_files[]', f));
+
+        const btnUpload = document.getElementById('btnUploadDesignToLibrary');
+        const lblUpload = document.getElementById('lblUploadDesignBtn');
+        const modalAlert = document.getElementById('libraryModalAlert');
+        if (btnUpload) btnUpload.disabled = true;
+        if (lblUpload) lblUpload.textContent = 'Import en cours...';
+
+        try {
+            const response = await fetch(designsStoreUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            });
+            const data = await response.json();
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Erreur lors de l\'ajout à la bibliothèque.');
+            }
+
+            if (Array.isArray(data.library)) {
+                designLibraryState = data.library;
+            } else if (data.design) {
+                designLibraryState.unshift(data.design);
+            }
+
+            if (data.design) {
+                applyLibraryDesign(data.design, false);
+            } else {
+                renderDesignLibrary();
+            }
+
+            if (modalAlert) {
+                modalAlert.className = 'mt-2 alert alert-success py-1.5 px-3 small mb-0 rounded-3 d-flex align-items-center gap-2';
+                modalAlert.innerHTML = `<i class="bi bi-check-circle-fill"></i><span>${escapeHtml(data.message)}</span>`;
+                setTimeout(() => modalAlert.classList.add('d-none'), 4000);
+            }
+        } catch (err) {
+            if (modalAlert) {
+                modalAlert.className = 'mt-2 alert alert-danger py-1.5 px-3 small mb-0 rounded-3 d-flex align-items-center gap-2';
+                modalAlert.innerHTML = `<i class="bi bi-exclamation-triangle-fill"></i><span>${escapeHtml(err.message)}</span>`;
+            } else {
+                alert(err.message);
+            }
+        } finally {
+            if (btnUpload) btnUpload.disabled = false;
+            if (lblUpload) lblUpload.textContent = 'Ajouter à la bibliothèque';
+        }
+    }
+
+    async function deleteLibraryDesignById(id) {
+        const item = designLibraryState.find(d => String(d.id) === String(id));
+        if (!item || item.is_system || !item.delete_url) return;
+
+        if (!confirm(`Voulez-vous vraiment supprimer le design « ${item.name} » de votre bibliothèque ?`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(item.delete_url, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            const data = await response.json();
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Impossible de supprimer ce design.');
+            }
+
+            const wasActive = document.getElementById('inputExistingTemplateImage')?.value === item.file_path;
+            if (Array.isArray(data.library)) {
+                designLibraryState = data.library;
+            } else {
+                designLibraryState = designLibraryState.filter(d => String(d.id) !== String(id));
+            }
+
+            if (wasActive && designLibraryState.length > 0) {
+                applyLibraryDesign(designLibraryState[0], false);
+            } else {
+                renderDesignLibrary();
+            }
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+
+    // Event delegation for Inline & Modal Library Grids
+    [inlineLibraryGrid, modalLibraryGrid].forEach(grid => {
+        if (!grid) return;
+        grid.addEventListener('click', function (e) {
+            const delBtn = e.target.closest('[data-del-id]');
+            if (delBtn) {
+                e.stopPropagation();
+                e.preventDefault();
+                deleteLibraryDesignById(delBtn.getAttribute('data-del-id'));
+                return;
+            }
+
+            const useModalBtn = e.target.closest('[data-use-modal-path]');
+            if (useModalBtn) {
+                e.stopPropagation();
+                const path = useModalBtn.getAttribute('data-use-modal-path');
+                const found = designLibraryState.find(d => d.file_path === path);
+                if (found) applyLibraryDesign(found, true);
+                return;
+            }
+
+            const card = e.target.closest('[data-select-path]');
+            if (card) {
+                const path = card.getAttribute('data-select-path');
+                const found = designLibraryState.find(d => d.file_path === path);
+                const isInsideModal = grid === modalLibraryGrid;
+                if (found) applyLibraryDesign(found, isInsideModal);
+            }
+        });
+    });
+
+    // Live Search Sync (Inline & Modal)
+    inlineSearchInput?.addEventListener('input', function () {
+        currentSearchQuery = this.value;
+        if (modalSearchInput) modalSearchInput.value = this.value;
+        renderDesignLibrary();
+    });
+    modalSearchInput?.addEventListener('input', function () {
+        currentSearchQuery = this.value;
+        if (inlineSearchInput) inlineSearchInput.value = this.value;
+        renderDesignLibrary();
+    });
+
+    // Category Filter Pills in Modal
+    document.querySelectorAll('[data-lib-filter]').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('[data-lib-filter]').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentLibFilter = this.getAttribute('data-lib-filter') || 'all';
+            renderDesignLibrary();
+        });
+    });
+
+    // Modal Form Upload
+    const formUploadDesignLibrary = document.getElementById('formUploadDesignLibrary');
+    formUploadDesignLibrary?.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const fileEl = document.getElementById('newDesignFileInput');
+        const nameEl = document.getElementById('newDesignNameInput');
+        if (!fileEl || !fileEl.files || fileEl.files.length === 0) return;
+        await uploadFilesToLibrary(fileEl.files, nameEl ? nameEl.value : '');
+        fileEl.value = '';
+        if (nameEl) nameEl.value = '';
+    });
+
+    // Quick Add Button in Step 1 Strip
+    quickAddFileInput?.addEventListener('change', async function (e) {
+        if (e.target.files && e.target.files.length > 0) {
+            await uploadFilesToLibrary(e.target.files, '');
+            e.target.value = '';
+        }
+    });
+
+    // Quick Save Current Local File to Library Button
+    btnQuickSaveToLibrary?.addEventListener('click', async function () {
+        if (!lastLocalFile) return;
+        this.disabled = true;
+        this.innerHTML = '<span class="spinner-border spinner-border-sm me-1" style="width: 10px; height: 10px;"></span>Sauvegarde...';
+        await uploadFilesToLibrary([lastLocalFile], '');
+    });
+
+    // Initial render of Design Library
+    renderDesignLibrary();
 
     fileInput.addEventListener('change', function (e) {
         handleImageFile(e.target.files[0]);
@@ -1253,6 +2048,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const btnBlankCanvas = document.getElementById('btnBlankCanvas');
     btnBlankCanvas?.addEventListener('click', function () {
+        lastLocalFile = null;
+        if (btnQuickSaveToLibrary) btnQuickSaveToLibrary.classList.add('d-none');
         bgImage.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="white"/></svg>';
         templateNameDisplay.textContent = 'Gabarit : Canevas Blanc Uni';
         document.getElementById('inputExistingTemplateImage').value = 'none';
@@ -1265,9 +2062,12 @@ document.addEventListener('DOMContentLoaded', function () {
         if (badge) badge.classList.add('d-none');
         const btnAdopt = document.getElementById('btnAdoptImgDimensions');
         if (btnAdopt) btnAdopt.classList.add('d-none');
+        renderDesignLibrary();
     });
 
     btnResetToSample.addEventListener('click', function () {
+        lastLocalFile = null;
+        if (btnQuickSaveToLibrary) btnQuickSaveToLibrary.classList.add('d-none');
         bgImage.src = "{{ asset('images/templates/google_review_plaque.jpg') }}";
         templateNameDisplay.textContent = 'Gabarit : Plaque Avis Google (Prêt à l\'emploi)';
         document.getElementById('inputExistingTemplateImage').value = 'images/templates/google_review_plaque.jpg';
@@ -1278,6 +2078,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (badge) badge.classList.add('d-none');
         const btnAdopt = document.getElementById('btnAdoptImgDimensions');
         if (btnAdopt) btnAdopt.classList.add('d-none');
+        renderDesignLibrary();
 
         // Snap elements perfectly to plaque designated frame
         draggableQr.style.left = '50%';

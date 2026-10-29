@@ -25,4 +25,26 @@ class FileUpload extends Model
             'file_size' => 'integer',
         ];
     }
+
+    public function getUrlAttribute(): string
+    {
+        if (str_starts_with($this->file_path, 'images/') || file_exists(public_path($this->file_path))) {
+            return asset($this->file_path);
+        }
+
+        return asset('storage/'.ltrim($this->file_path, '/'));
+    }
+
+    public function getFormattedSizeAttribute(): string
+    {
+        $bytes = (int) $this->file_size;
+        if ($bytes >= 1048576) {
+            return number_format($bytes / 1048576, 1).' MB';
+        }
+        if ($bytes >= 1024) {
+            return number_format($bytes / 1024, 0).' KB';
+        }
+
+        return $bytes.' B';
+    }
 }
