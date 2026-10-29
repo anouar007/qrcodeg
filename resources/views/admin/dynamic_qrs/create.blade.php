@@ -31,7 +31,7 @@
 }
 @keyframes stagePulseAnim {
     0% { transform: scale(1); }
-    50% { transform: scale(0.992); box-shadow: 0 0 0 3px rgba(99, 32, 238, 0.3); }
+    50% { transform: scale(0.995); }
     100% { transform: scale(1); }
 }
 
@@ -169,7 +169,8 @@
     -webkit-user-drag: none;
 }
 #canvasViewport {
-    box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.08);
+    box-shadow: none !important;
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
     position: relative;
     background: #ffffff;
@@ -179,7 +180,7 @@
     transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1), height 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Figma-Grade Precision Selection System */
+/* Figma-Grade Precision Selection System (Zero Shadow Flat Design) */
 .stage-element-wrapper {
     touch-action: none;
     user-select: none;
@@ -194,14 +195,14 @@
 .cad-selection-box {
     border: 1.5px solid #6320ee;
     border-radius: 4px;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8), 0 4px 18px rgba(99, 32, 238, 0.2);
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: none !important;
+    transition: border-color 0.15s ease;
 }
 .cad-selection-box:hover,
 .stage-element-wrapper:focus .cad-selection-box,
 .stage-element-wrapper.is-dragging .cad-selection-box {
     border-color: #4f46e5;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.95), 0 6px 22px rgba(79, 70, 229, 0.32);
+    box-shadow: none !important;
 }
 
 /* Floating Clean Label Tag - FLOATS COMPLETELY OUTSIDE, NEVER TOUCHES MODULES */
@@ -216,10 +217,11 @@
     font-weight: 600;
     padding: 1.5px 7px;
     border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     letter-spacing: 0.4px;
     pointer-events: none;
     white-space: nowrap;
-    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.25);
+    box-shadow: none !important;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -234,7 +236,7 @@
     background: #ffffff;
     border: 1.5px solid #6320ee;
     border-radius: 2px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    box-shadow: none !important;
     pointer-events: none;
     z-index: 20;
 }
@@ -252,14 +254,14 @@
     background: #6320ee;
     border: 2px solid #ffffff;
     border-radius: 3px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    box-shadow: none !important;
     cursor: nwse-resize !important;
     touch-action: none !important;
     z-index: 30;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease;
 }
 .cad-resize-node i {
     font-size: 8px;
@@ -270,7 +272,7 @@
 .cad-resize-node.is-resizing {
     transform: scale(1.35);
     background-color: #4338ca;
-    box-shadow: 0 0 12px rgba(99, 32, 238, 0.7);
+    box-shadow: none !important;
 }
 
 /* Code unique selection box */
@@ -279,13 +281,14 @@
     border-radius: 4px;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
+    box-shadow: none !important;
     transition: all 0.15s ease;
 }
 #codeVisualContainer:hover,
 #draggableCode:focus #codeVisualContainer,
 #draggableCode.is-dragging #codeVisualContainer {
     border-color: #6320ee;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8), 0 3px 12px rgba(99, 32, 238, 0.15);
+    box-shadow: none !important;
 }
 
 /* Clean Preview Mode (Toggle to hide all inspector boxes/nodes) */
@@ -306,7 +309,7 @@
 /* Alignment Guide Lines */
 #guideLineV, #guideLineH {
     border-color: #6320ee !important;
-    box-shadow: 0 0 10px rgba(99, 32, 238, 0.95);
+    box-shadow: none !important;
 }
 
 /* Presets & Pill Buttons */
