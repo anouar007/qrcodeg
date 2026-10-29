@@ -184,14 +184,14 @@ class DynamicQrCodeService
 
         // Coordinates & sizes (percentages 0 - 100)
         $qrX = (float) ($designConfig['qr_x'] ?? 50);
-        $qrY = (float) ($designConfig['qr_y'] ?? 50);
+        $qrY = (float) ($designConfig['qr_y'] ?? 47.5);
         $qrSizePct = (float) ($designConfig['qr_size'] ?? 35);
         $qrFg = $designConfig['qr_fg'] ?? '#000000';
         $qrBg = $designConfig['qr_bg'] ?? '#ffffff';
 
         $showCode = ! empty($designConfig['show_code']);
         $codeX = (float) ($designConfig['code_x'] ?? 50);
-        $codeY = (float) ($designConfig['code_y'] ?? 80);
+        $codeY = (float) ($designConfig['code_y'] ?? 74);
         $stageH = max(50, (float) ($designConfig['stage_height'] ?? 460));
         $stageW = max(50, (float) ($designConfig['stage_width'] ?? 460));
 

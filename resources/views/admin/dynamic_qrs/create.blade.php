@@ -440,14 +440,14 @@ input[type="range"].form-range::-moz-range-thumb {
 
                 <!-- Hidden inputs for coordinates & style passed to Dompdf -->
                 <input type="hidden" name="qr_x" id="inputQrX" value="50">
-                <input type="hidden" name="qr_y" id="inputQrY" value="48">
-                <input type="hidden" name="qr_size" id="inputQrSize" value="38">
+                <input type="hidden" name="qr_y" id="inputQrY" value="47.5">
+                <input type="hidden" name="qr_size" id="inputQrSize" value="35">
                 <input type="hidden" name="qr_fg" id="inputQrFg" value="#000000">
                 <input type="hidden" name="qr_bg" id="inputQrBg" value="#ffffff">
 
                 <input type="hidden" name="show_code" id="inputShowCode" value="1">
                 <input type="hidden" name="code_x" id="inputCodeX" value="50">
-                <input type="hidden" name="code_y" id="inputCodeY" value="78">
+                <input type="hidden" name="code_y" id="inputCodeY" value="74">
                 <input type="hidden" name="code_font_size" id="inputCodeFontSize" value="15">
                 <input type="hidden" name="code_color" id="inputCodeColor" value="#0f172a">
                 <input type="hidden" name="code_bg" id="inputCodeBg" value="transparent">
@@ -493,9 +493,9 @@ input[type="range"].form-range::-moz-range-thumb {
                                 </div>
                             </div>
 
-                            <!-- Custom Inputs: Unit, Width, Height -->
-                            <div class="row g-2 align-items-center mb-3">
-                                <div class="col-4 col-sm-3">
+                            <!-- Custom Inputs: Unit, Width, Height Perfectly Baseline Aligned -->
+                            <div class="row g-2 align-items-end mb-3">
+                                <div class="col-6 col-sm-3">
                                     <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Unité</label>
                                     <select name="canvas_unit" id="canvasUnitSelect" class="form-select studio-input">
                                         <option value="px" selected>Pixels (px)</option>
@@ -503,21 +503,22 @@ input[type="range"].form-range::-moz-range-thumb {
                                         <option value="mm">Millimètres (mm)</option>
                                     </select>
                                 </div>
-                                <div class="col-4 col-sm-4">
+                                <div class="col-6 col-sm-4">
                                     <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Largeur (Width)</label>
                                     <div class="input-group">
                                         <input type="number" step="any" min="1" name="canvas_width" id="canvasWidthInput" class="form-control studio-input" value="300" required style="border-radius: 10px 0 0 10px;">
-                                        <span class="input-group-text unit-indicator small bg-light text-muted" style="border-radius: 0 10px 10px 0; border-color: #e2e8f0;">px</span>
+                                        <span class="input-group-text unit-indicator small bg-light text-muted" style="border-radius: 0 10px 10px 0; border-color: #e2e8f0; height: 38px;">px</span>
                                     </div>
                                 </div>
-                                <div class="col-4 col-sm-4">
+                                <div class="col-9 col-sm-4">
                                     <label class="form-label small text-muted mb-1" style="font-size: 0.75rem;">Hauteur (Height)</label>
                                     <div class="input-group">
                                         <input type="number" step="any" min="1" name="canvas_height" id="canvasHeightInput" class="form-control studio-input" value="300" required style="border-radius: 10px 0 0 10px;">
-                                        <span class="input-group-text unit-indicator small bg-light text-muted" style="border-radius: 0 10px 10px 0; border-color: #e2e8f0;">px</span>
+                                        <span class="input-group-text unit-indicator small bg-light text-muted" style="border-radius: 0 10px 10px 0; border-color: #e2e8f0; height: 38px;">px</span>
                                     </div>
                                 </div>
-                                <div class="col-12 col-sm-1 d-flex align-items-end pt-1">
+                                <div class="col-3 col-sm-1">
+                                    <label class="form-label small text-muted mb-1 d-none d-sm-block" style="font-size: 0.75rem; visibility: hidden;">Inverser</label>
                                     <button type="button" class="btn btn-light border w-100 d-flex align-items-center justify-content-center" id="btnSwapDimensions" title="Inverser orientation (Paysage / Portrait)" style="height: 38px; border-radius: 10px;">
                                         <i class="bi bi-arrow-left-right"></i>
                                     </button>
@@ -568,31 +569,36 @@ input[type="range"].form-range::-moz-range-thumb {
                                     <span class="fw-bold text-dark small">Atelier Interactif (Glisser-Déposer &amp; Alignement Pro)</span>
                                 </div>
                                 <!-- Pro Alignment Toolbar -->
-                                <div class="d-flex flex-wrap align-items-center gap-1">
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <button type="button" class="btn btn-light border py-1 px-2" id="btnCenterQrH" title="Centrer QR horizontalement" style="border-radius: 6px 0 0 6px; font-size: 0.74rem;">
-                                            <i class="bi bi-align-center me-1"></i>QR H
+                                <div class="d-flex flex-wrap align-items-center gap-1.5">
+                                    <div class="btn-group btn-group-sm" role="group" aria-label="Alignement QR">
+                                        <button type="button" class="btn btn-light border py-1 px-2.5 d-flex align-items-center gap-1" id="btnCenterQrH" title="Centrer QR horizontalement (X: 50%)" style="border-radius: 8px 0 0 8px; font-size: 0.75rem; height: 32px;">
+                                            <i class="bi bi-align-center text-primary"></i>
+                                            <span>QR H</span>
                                         </button>
-                                        <button type="button" class="btn btn-light border py-1 px-2" id="btnCenterQrV" title="Centrer QR verticalement" style="border-radius: 0; font-size: 0.74rem;">
-                                            <i class="bi bi-align-middle me-1"></i>QR V
+                                        <button type="button" class="btn btn-light border py-1 px-2.5 d-flex align-items-center gap-1" id="btnCenterQrV" title="Centrer QR verticalement au milieu (Y: 50%)" style="border-radius: 0; font-size: 0.75rem; height: 32px;">
+                                            <i class="bi bi-align-middle text-primary"></i>
+                                            <span>QR V</span>
                                         </button>
-                                        <button type="button" class="btn btn-light border py-1 px-2" id="btnCenterQrBoth" title="Centrer QR au milieu total" style="border-radius: 0 6px 6px 0; font-size: 0.74rem;">
-                                            <i class="bi bi-bullseye me-1"></i>Total
-                                        </button>
-                                    </div>
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <button type="button" class="btn btn-light border py-1 px-2" id="btnCenterCodeH" title="Centrer Code horizontalement" style="border-radius: 6px 0 0 6px; font-size: 0.74rem;">
-                                            <i class="bi bi-text-center me-1"></i>Code H
-                                        </button>
-                                        <button type="button" class="btn btn-light border py-1 px-2" id="btnCenterCodeV" title="Centrer Code verticalement" style="border-radius: 0 6px 6px 0; font-size: 0.74rem;">
-                                            <i class="bi bi-align-middle me-1"></i>Code V
+                                        <button type="button" class="btn btn-light border py-1 px-2.5 d-flex align-items-center gap-1" id="btnCenterQrBoth" title="Centrer QR au milieu total (50% / 50%)" style="border-radius: 0 8px 8px 0; font-size: 0.75rem; height: 32px;">
+                                            <i class="bi bi-bullseye text-primary"></i>
+                                            <span>Milieu</span>
                                         </button>
                                     </div>
-                                    <button type="button" class="btn btn-sm py-1 px-2.5 fw-semibold d-flex align-items-center gap-1 shadow-xs" id="btnAlignEverything" title="Aligner tout parfaitement au centre avec espacement optique" style="background: #f3f0ff; color: #6320ee; border: 1px solid #ddd6fe; border-radius: 6px; font-size: 0.74rem;">
+                                    <div class="btn-group btn-group-sm" role="group" aria-label="Alignement Code">
+                                        <button type="button" class="btn btn-light border py-1 px-2.5 d-flex align-items-center gap-1" id="btnCenterCodeH" title="Centrer Code horizontalement (X: 50%)" style="border-radius: 8px 0 0 8px; font-size: 0.75rem; height: 32px;">
+                                            <i class="bi bi-text-center text-primary"></i>
+                                            <span>Code H</span>
+                                        </button>
+                                        <button type="button" class="btn btn-light border py-1 px-2.5 d-flex align-items-center gap-1" id="btnCenterCodeV" title="Centrer Code verticalement (Y: 50%)" style="border-radius: 0 8px 8px 0; font-size: 0.75rem; height: 32px;">
+                                            <i class="bi bi-align-middle text-primary"></i>
+                                            <span>Code V</span>
+                                        </button>
+                                    </div>
+                                    <button type="button" class="btn btn-sm py-1 px-2.5 fw-semibold d-flex align-items-center gap-1.5 shadow-xs" id="btnAlignEverything" title="Alignement optique parfait selon le cadre de la plaque" style="background: #f3f0ff; color: #6320ee; border: 1px solid #ddd6fe; border-radius: 8px; font-size: 0.75rem; height: 32px;">
                                         <i class="bi bi-stars"></i>
                                         <span>Aligner Tout</span>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 fw-semibold d-flex align-items-center gap-1 shadow-xs" id="btnToggleCleanPreview" title="Masquer / Afficher les repères pour voir le rendu final pur" style="border-radius: 6px; font-size: 0.74rem;">
+                                    <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 fw-semibold d-flex align-items-center gap-1.5 shadow-xs" id="btnToggleCleanPreview" title="Masquer / Afficher les repères pour voir le rendu final pur" style="border-radius: 8px; font-size: 0.75rem; height: 32px;">
                                         <i class="bi bi-eye" id="iconCleanPreview"></i>
                                         <span id="lblCleanPreviewText">Aperçu Net</span>
                                     </button>
@@ -616,10 +622,10 @@ input[type="range"].form-range::-moz-range-thumb {
                                     <div id="guideLineV" class="position-absolute top-0 bottom-0" style="left: 50%; width: 1px; border-left: 1.5px dashed #6320ee; display: none; z-index: 8; pointer-events: none;"></div>
                                     <div id="guideLineH" class="position-absolute start-0 end-0" style="top: 50%; height: 1px; border-top: 1.5px dashed #6320ee; display: none; z-index: 8; pointer-events: none;"></div>
 
-                                    <!-- Movable QR Code Box (1:1 Ratio) -->
+                                    <!-- Movable QR Code Box (1:1 Ratio) Aligned to Plaque Golden Frame -->
                                     <div id="draggableQr" class="position-absolute cursor-grab d-flex align-items-center justify-content-center stage-element-wrapper" 
                                          tabindex="0" role="region" aria-label="Zone QR interactive" title="Zone QR (Glisser pour déplacer • Flèches du clavier pour micro-ajustement)"
-                                         style="z-index: 10; left: 50%; top: 48%; width: 38%; aspect-ratio: 1 / 1; height: auto; transform: translate(-50%, -50%); touch-action: none;">
+                                         style="z-index: 10; left: 50%; top: 47.5%; width: 35%; aspect-ratio: 1 / 1; height: auto; transform: translate(-50%, -50%); touch-action: none;">
                                         <div class="qr-content-wrapper position-relative w-100 h-100 d-flex align-items-center justify-content-center p-0 cad-selection-box" 
                                              id="qrVisualContainer" style="background: #ffffff; aspect-ratio: 1 / 1; pointer-events: auto;">
                                             
@@ -627,7 +633,7 @@ input[type="range"].form-range::-moz-range-thumb {
                                             <div class="cad-floating-tag" id="tagQrLabel">
                                                 <i class="bi bi-qr-code"></i>
                                                 <span>QR Code</span>
-                                                <span class="opacity-75 font-mono" id="tagQrSizePct">38%</span>
+                                                <span class="opacity-75 font-mono" id="tagQrSizePct">35%</span>
                                             </div>
 
                                             <div id="qrSvgWrapper" class="w-100 h-100 d-flex align-items-center justify-content-center" style="pointer-events: none; overflow: hidden; border-radius: 2px;">
@@ -650,10 +656,10 @@ input[type="range"].form-range::-moz-range-thumb {
                                         </div>
                                     </div>
 
-                                    <!-- Movable Unique Code Box -->
+                                    <!-- Movable Unique Code Box Aligned Below Frame -->
                                     <div id="draggableCode" class="position-absolute cursor-grab stage-element-wrapper" 
                                          tabindex="0" role="region" aria-label="Zone Code Unique interactive" title="Zone Code Unique (Glisser pour déplacer • Flèches du clavier pour micro-ajustement)"
-                                         style="z-index: 12; left: 50%; top: 78%; transform: translate(-50%, -50%); touch-action: none; pointer-events: auto;">
+                                         style="z-index: 12; left: 50%; top: 74%; transform: translate(-50%, -50%); touch-action: none; pointer-events: auto;">
                                         <div id="codeVisualContainer" class="px-2.5 py-1 rounded-2 border d-flex align-items-center justify-content-center position-relative" 
                                              style="background: transparent; pointer-events: auto;">
                                             
@@ -677,16 +683,16 @@ input[type="range"].form-range::-moz-range-thumb {
                                 <div class="d-flex align-items-center gap-3">
                                     <div>
                                         <i class="bi bi-crosshair me-1 text-primary"></i>
-                                        <span>QR: <strong id="lblQrCoords" class="text-dark">X: 50% | Y: 48% | Taille: 38%</strong></span>
+                                        <span>QR: <strong id="lblQrCoords" class="text-dark">X: 50% | Y: 47.5% | Taille: 35%</strong></span>
                                     </div>
                                     <span class="text-secondary opacity-50">&bull;</span>
                                     <div>
                                         <i class="bi bi-type me-1 text-primary"></i>
-                                        <span>Code: <strong id="lblCodeCoords" class="text-dark">X: 50% | Y: 78% | Police: 15pt</strong></span>
+                                        <span>Code: <strong id="lblCodeCoords" class="text-dark">X: 50% | Y: 74% | Police: 15pt</strong></span>
                                     </div>
                                 </div>
                                 <div class="text-muted" style="font-size: 0.72rem;">
-                                    <i class="bi bi-magnet text-primary me-1"></i>Magnétisme 50% actif
+                                    <i class="bi bi-magnet text-primary me-1"></i>Magnétisme &amp; alignement actif
                                 </div>
                             </div>
                         </div>
@@ -720,7 +726,7 @@ input[type="range"].form-range::-moz-range-thumb {
                                         <div class="col-6">
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-text bg-white small" style="font-size: 0.72rem;">QR Y%</span>
-                                                <input type="number" step="any" min="5" max="95" class="form-control" id="numQrY" value="48">
+                                                <input type="number" step="any" min="5" max="95" class="form-control" id="numQrY" value="47.5">
                                             </div>
                                         </div>
                                         <div class="col-6">
@@ -732,7 +738,7 @@ input[type="range"].form-range::-moz-range-thumb {
                                         <div class="col-6">
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-text bg-white small" style="font-size: 0.72rem;">Code Y%</span>
-                                                <input type="number" step="any" min="5" max="95" class="form-control" id="numCodeY" value="78">
+                                                <input type="number" step="any" min="5" max="95" class="form-control" id="numCodeY" value="74">
                                             </div>
                                         </div>
                                     </div>
@@ -743,9 +749,9 @@ input[type="range"].form-range::-moz-range-thumb {
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <label class="form-label small fw-semibold text-dark mb-0">Taille du QR code</label>
-                                    <span class="small font-mono fw-semibold text-primary" id="lblQrSizeVal">38%</span>
+                                    <span class="small font-mono fw-semibold text-primary" id="lblQrSizeVal">35%</span>
                                 </div>
-                                <input type="range" class="form-range" id="sliderQrSize" min="15" max="80" value="38">
+                                <input type="range" class="form-range" id="sliderQrSize" min="15" max="80" value="35">
                             </div>
 
                             <div class="row g-2 mb-3">
@@ -1272,6 +1278,26 @@ document.addEventListener('DOMContentLoaded', function () {
         if (badge) badge.classList.add('d-none');
         const btnAdopt = document.getElementById('btnAdoptImgDimensions');
         if (btnAdopt) btnAdopt.classList.add('d-none');
+
+        // Snap elements perfectly to plaque designated frame
+        draggableQr.style.left = '50%';
+        draggableQr.style.top = '47.5%';
+        draggableQr.style.width = '35%';
+        inputQrX.value = '50';
+        inputQrY.value = '47.5';
+        inputQrSize.value = '35';
+        sliderQrSize.value = '35';
+        lblQrSizeVal.textContent = '35%';
+        const tagQr = document.getElementById('tagQrSizePct');
+        if (tagQr) tagQr.textContent = '35%';
+
+        draggableCode.style.left = '50%';
+        draggableCode.style.top = '74%';
+        inputCodeX.value = '50';
+        inputCodeY.value = '74';
+
+        updateCoordLabels();
+        triggerStagePulse();
     });
 
     // 3. Precision Drag & Drop Engine with Magnetic Snap
@@ -1329,8 +1355,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (guideLineV) guideLineV.style.display = 'none';
             }
 
+            // Magnetic snap to vertical center (50%) or frame optical center (47.5%)
             if (Math.abs(newTopPct - 50) < 1.8) {
                 newTopPct = 50.0;
+                if (guideLineH) guideLineH.style.display = 'block';
+            } else if (element === draggableQr && Math.abs(newTopPct - 47.5) < 1.4) {
+                newTopPct = 47.5;
                 if (guideLineH) guideLineH.style.display = 'block';
             } else {
                 if (guideLineH) guideLineH.style.display = 'none';
@@ -1653,14 +1683,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     btnAlignEverything?.addEventListener('click', function () {
         draggableQr.style.left = '50%';
-        draggableQr.style.top = '46%';
+        draggableQr.style.top = '47.5%';
+        draggableQr.style.width = '35%';
         inputQrX.value = '50';
-        inputQrY.value = '46';
+        inputQrY.value = '47.5';
+        inputQrSize.value = '35';
+        sliderQrSize.value = '35';
+        lblQrSizeVal.textContent = '35%';
+        const tagQr = document.getElementById('tagQrSizePct');
+        if (tagQr) tagQr.textContent = '35%';
 
         draggableCode.style.left = '50%';
-        draggableCode.style.top = '78%';
+        draggableCode.style.top = '74%';
         inputCodeX.value = '50';
-        inputCodeY.value = '78';
+        inputCodeY.value = '74';
+
+        if (numQrX) numQrX.value = '50.0';
+        if (numQrY) numQrY.value = '47.5';
+        if (numCodeX) numCodeX.value = '50.0';
+        if (numCodeY) numCodeY.value = '74.0';
 
         updateCoordLabels();
         triggerStagePulse();
