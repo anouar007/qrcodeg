@@ -22,7 +22,6 @@
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <!-- Chart.js -->
     <script src="{{ asset('vendor/chartjs/chart.umd.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 
     @stack('styles')
 </head>
@@ -119,10 +118,15 @@
     <div class="main-content">
         <!-- Sticky Glassmorphic Topbar -->
         <header class="top-navbar">
-            <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2">
                 <!-- Mobile Hamburger Toggle -->
                 <button class="btn btn-sm btn-light border d-lg-none rounded-3" id="mobileSidebarToggle" aria-label="Toggle Navigation">
                     <i class="bi bi-list fs-5"></i>
+                </button>
+
+                <!-- Desktop Sidebar Collapse Toggle -->
+                <button class="btn btn-sm btn-light border d-none d-lg-inline-flex align-items-center justify-content-center rounded-3 text-secondary" id="desktopSidebarToggle" style="width: 34px; height: 34px; padding: 0;" title="Réduire / Agrandir le menu">
+                    <i class="bi bi-chevron-left" id="sidebarCollapseIcon" style="font-size: 0.85rem;"></i>
                 </button>
             </div>
 
@@ -288,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <!-- Floating Headset Support Button (Matching Screenshot) -->
-<a href="javascript:void(0)" class="floating-support-btn shadow-lg" title="Support" onclick="alert('Support client YNS NFC actif : zriktoneyounes@gmail.com');">
+<a href="javascript:void(0)" class="floating-support-btn shadow-lg d-none" title="Support" onclick="alert('Support client YNS NFC actif : zriktoneyounes@gmail.com');">
     <i class="bi bi-headset fs-5"></i>
 </a>
 

@@ -149,6 +149,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth:web')->group(function (
 
     // Dynamic QR Codes Engine (VP- Identifier & Target Management)
     Route::middleware('permission:view_qr')->group(function () {
+        Route::get('dynamic-qrs/export', [DynamicQrCodeController::class, 'exportCsv'])->name('dynamic-qrs.export');
+        Route::post('dynamic-qrs/bulk-action', [DynamicQrCodeController::class, 'bulkAction'])->name('dynamic-qrs.bulk-action');
         Route::post('dynamic-qrs/bulk', [DynamicQrCodeController::class, 'bulkStore'])->name('dynamic-qrs.bulk');
         Route::post('dynamic-qrs/generate-pdf', [DynamicQrCodeController::class, 'generatePdfBatch'])->name('dynamic-qrs.generate-pdf');
         Route::put('dynamic-qrs/{dynamicQr}/target', [DynamicQrCodeController::class, 'updateTarget'])->name('dynamic-qrs.target');

@@ -74,7 +74,11 @@ class DynamicQrCodeController extends Controller
         }
 
         if ($request->filled('client_id')) {
-            $query->where('client_id', $request->client_id);
+            if ($request->client_id === 'unassigned') {
+                $query->whereNull('client_id');
+            } else {
+                $query->where('client_id', $request->client_id);
+            }
         }
 
         if ($request->filled('template_type')) {
@@ -98,14 +102,122 @@ class DynamicQrCodeController extends Controller
         $qrCodes = $query->paginate(20)->withQueryString();
         $clients = Client::orderBy('name')->get();
 
+        $totalQrs = DynamicQrCode::count();
+        $totalScans = (int) DynamicQrCode::sum('scans_count');
+        $activeQrs = DynamicQrCode::where('status', 'active')->count();
+        $inactiveQrs = DynamicQrCode::where('status', '!=', 'active')->count();
+        $assignedQrs = DynamicQrCode::whereNotNull('client_id')->count();
+
         $metrics = [
-            'total' => DynamicQrCode::count(),
-            'scans' => (int) DynamicQrCode::sum('scans_count'),
-            'active' => DynamicQrCode::where('status', 'active')->count(),
-            'inactive' => DynamicQrCode::where('status', '!=', 'active')->count(),
+            'total' => $totalQrs,
+            'scans' => $totalScans,
+            'active' => $activeQrs,
+            'inactive' => $inactiveQrs,
+            'assigned' => $assignedQrs,
+            'avg_scans' => $totalQrs > 0 ? round($totalScans / $totalQrs, 1) : 0,
+            'active_rate' => $totalQrs > 0 ? round(($activeQrs / $totalQrs) * 100) : 0,
         ];
 
         return view('admin.dynamic_qrs.index', compact('qrCodes', 'clients', 'metrics'));
+    }
+
+    /**
+     * Export Dynamic QR Codes list to CSV format
+     */
+    public function exportCsv(Request $request): Response
+    {
+        $query = DynamicQrCode::with('client');
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('code', 'like', "%{$search}%")
+                    ->orWhere('label', 'like', "%{$search}%")
+                    ->orWhere('target_url', 'like', "%{$search}%")
+                    ->orWhereHas('client', fn ($cq) => $cq->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        if ($request->filled('client_id')) {
+            if ($request->client_id === 'unassigned') {
+                $query->whereNull('client_id');
+            } else {
+                $query->where('client_id', $request->client_id);
+            }
+        }
+
+        if ($request->filled('template_type')) {
+            $query->where('template_type', $request->template_type);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $qrs = $query->latest()->get();
+
+        $csv = "Code,Libelle,Client,Destination_URL,Url_Permanente,Gabarit,Scans,Statut,Date_Creation\n";
+        foreach ($qrs as $qr) {
+            $client = str_replace('"', '""', $qr->client?->name ?? 'Non assigné');
+            $label = str_replace('"', '""', $qr->label ?? '');
+            $target = str_replace('"', '""', $qr->target_url ?? '');
+            $encoded = $qr->encoded_url;
+            $csv .= "\"{$qr->code}\",\"{$label}\",\"{$client}\",\"{$target}\",\"{$encoded}\",\"{$qr->template_type}\",{$qr->scans_count},\"{$qr->status}\",\"{$qr->created_at}\"\n";
+        }
+
+        return response($csv, 200, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="qr_dynamiques_'.date('Ymd_His').'.csv"',
+        ]);
+    }
+
+    /**
+     * Execute bulk operations on selected Dynamic QR Codes (activate, deactivate, assign_client, update_target, delete)
+     */
+    public function bulkAction(Request $request): JsonResponse|RedirectResponse
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:dynamic_qr_codes,id',
+            'action' => 'required|in:activate,deactivate,assign_client,update_target,delete',
+            'client_id' => 'nullable|exists:clients,id',
+            'target_url' => 'nullable|string|max:1000',
+        ]);
+
+        $ids = $validated['ids'];
+        $action = $validated['action'];
+        $count = count($ids);
+
+        DB::transaction(function () use ($ids, $action, $validated) {
+            $query = DynamicQrCode::whereIn('id', $ids);
+
+            match ($action) {
+                'activate' => $query->update(['status' => 'active']),
+                'deactivate' => $query->update(['status' => 'inactive']),
+                'assign_client' => $query->update(['client_id' => $validated['client_id'] ?? null]),
+                'update_target' => ! empty($validated['target_url']) ? $query->update(['target_url' => trim($validated['target_url'])]) : null,
+                'delete' => $query->delete(),
+            };
+        });
+
+        $message = match ($action) {
+            'activate' => "{$count} QR code(s) activé(s) avec succès.",
+            'deactivate' => "{$count} QR code(s) suspendu(s) avec succès.",
+            'assign_client' => "{$count} QR code(s) assigné(s) avec succès.",
+            'update_target' => "URL cible mise à jour pour {$count} QR code(s).",
+            'delete' => "{$count} QR code(s) supprimé(s).",
+        };
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'count' => $count,
+                'action' => $action,
+            ]);
+        }
+
+        return redirect()->route('admin.dynamic-qrs.index')->with('success', $message);
     }
 
     /**
@@ -128,7 +240,7 @@ class DynamicQrCodeController extends Controller
             'client_id' => 'nullable|exists:clients,id',
             'label' => 'required|string|max:150',
             'target_url' => 'required|string|max:1000',
-            'template_type' => 'required|in:google_review,social_media,menu',
+            'template_type' => 'required|in:google_review,social_media,menu,custom',
             'code' => [
                 'nullable',
                 'string',
@@ -381,7 +493,7 @@ class DynamicQrCodeController extends Controller
             'client_id' => 'nullable|exists:clients,id',
             'label' => 'required|string|max:150',
             'target_url' => 'required|string|max:1000',
-            'template_type' => 'required|in:google_review,social_media,menu',
+            'template_type' => 'required|in:google_review,social_media,menu,custom',
             'status' => 'required|in:active,inactive,archived',
         ]);
 

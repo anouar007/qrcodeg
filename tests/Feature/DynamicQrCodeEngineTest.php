@@ -531,4 +531,69 @@ class DynamicQrCodeEngineTest extends TestCase
         $pngResponse->assertHeader('content-type', 'image/png');
         $this->assertEquals('inline', $pngResponse->headers->get('content-disposition'));
     }
+
+    /**
+     * 16. Test Dynamic QR index page renders pro interface, CSV export and bulk actions
+     */
+    public function test_index_pro_interface_csv_export_and_bulk_actions(): void
+    {
+        $qr1 = DynamicQrCode::create([
+            'client_id' => $this->client->id,
+            'code' => 'VP-PRO001',
+            'label' => 'Pro Reception Stand',
+            'target_url' => 'https://example.com/pro1',
+            'template_type' => 'google_review',
+            'status' => 'active',
+        ]);
+
+        $qr2 = DynamicQrCode::create([
+            'client_id' => null,
+            'code' => 'VP-PRO002',
+            'label' => 'Unassigned Stand',
+            'target_url' => 'https://example.com/pro2',
+            'template_type' => 'menu',
+            'status' => 'active',
+        ]);
+
+        // Index renders with pro elements
+        $indexRes = $this->actingAs($this->admin, 'web')
+            ->get(route('admin.dynamic-qrs.index'));
+
+        $indexRes->assertStatus(200);
+        $indexRes->assertSee('VP-PRO001');
+        $indexRes->assertSee('VP-PRO002');
+        $indexRes->assertSee('dynBulkActionBar', false);
+        $indexRes->assertSee('qrLightboxModal', false);
+
+        // CSV Export
+        $csvRes = $this->actingAs($this->admin, 'web')
+            ->get(route('admin.dynamic-qrs.export'));
+
+        $csvRes->assertStatus(200);
+        $this->assertStringContainsString('VP-PRO001', $csvRes->getContent());
+        $this->assertStringContainsString('Pro Reception Stand', $csvRes->getContent());
+
+        // Bulk Action: Deactivate both
+        $bulkRes = $this->actingAs($this->admin, 'web')
+            ->postJson(route('admin.dynamic-qrs.bulk-action'), [
+                'ids' => [$qr1->id, $qr2->id],
+                'action' => 'deactivate',
+            ]);
+
+        $bulkRes->assertStatus(200)->assertJson(['success' => true, 'count' => 2]);
+        $this->assertEquals('inactive', $qr1->fresh()->status);
+        $this->assertEquals('inactive', $qr2->fresh()->status);
+
+        // Bulk Action: Update Target URL
+        $bulkTargetRes = $this->actingAs($this->admin, 'web')
+            ->postJson(route('admin.dynamic-qrs.bulk-action'), [
+                'ids' => [$qr1->id, $qr2->id],
+                'action' => 'update_target',
+                'target_url' => 'https://example.com/unified-campaign',
+            ]);
+
+        $bulkTargetRes->assertStatus(200)->assertJson(['success' => true]);
+        $this->assertEquals('https://example.com/unified-campaign', $qr1->fresh()->target_url);
+        $this->assertEquals('https://example.com/unified-campaign', $qr2->fresh()->target_url);
+    }
 }

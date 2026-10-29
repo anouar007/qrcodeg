@@ -5,17 +5,23 @@
 @push('styles')
 <style>
 /* ==========================================================================
-   DYNAMIC QR ENGINE DESIGN SYSTEM (YNS NFC / NEO-SAAS)
+   DYNAMIC QR ENGINE PRO DESIGN SYSTEM (YNS NFC / NEO-SAAS ENTERPRISE)
    ========================================================================== */
 :root {
     --dyn-primary: #6320ee;
     --dyn-primary-hover: #5015d8;
     --dyn-primary-light: #f3f0ff;
     --dyn-primary-border: #ddd6fe;
-    --dyn-primary-glow: rgba(99, 32, 238, 0.15);
+    --dyn-primary-glow: rgba(99, 32, 238, 0.14);
     --dyn-success: #10b981;
     --dyn-success-light: #ecfdf5;
     --dyn-success-border: #a7f3d0;
+    --dyn-slate-900: #0f172a;
+    --dyn-slate-700: #334155;
+    --dyn-slate-500: #64748b;
+    --dyn-slate-200: #e2e8f0;
+    --dyn-slate-100: #f1f5f9;
+    --dyn-slate-50: #f8fafc;
 }
 
 /* Radar pulse beacon */
@@ -40,30 +46,91 @@
     100% { transform: scale(2.2); opacity: 0; }
 }
 
+/* Executive Hero Banner */
+.dyn-hero-card {
+    background: linear-gradient(135deg, #ffffff 0%, #faf8ff 65%, #f3f0ff 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 1.35rem 1.6rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 18px -4px rgba(15, 23, 42, 0.04);
+}
+.dyn-hero-card::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(99, 32, 238, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+}
+
 /* Monospace VP- Code Badge */
 .vp-code-badge {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     font-family: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
     font-size: 0.78rem;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
     padding: 0.28rem 0.65rem;
     border-radius: 8px;
-    background: #f3f0ff;
-    color: #6320ee;
-    border: 1px solid #ddd6fe;
+    background: #f3f0ff !important;
+    color: #6320ee !important;
+    border: 1px solid #ddd6fe !important;
+    box-shadow: none !important;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     text-decoration: none;
-    line-height: 1.2;
+    line-height: 1.25;
 }
 .vp-code-badge:hover {
-    background: #ede9fe;
-    color: #4f46e5;
-    border-color: #c4b5fd;
+    background: #ede9fe !important;
+    color: #4f46e5 !important;
+    border-color: #c4b5fd !important;
     transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(99, 32, 238, 0.15);
+    box-shadow: 0 4px 10px rgba(99, 32, 238, 0.14) !important;
+}
+
+/* Interactive Mini QR Thumbnail in Table Row */
+.row-qr-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+.row-qr-thumb:hover {
+    border-color: #6320ee;
+    transform: scale(1.06);
+    box-shadow: 0 6px 14px rgba(99, 32, 238, 0.18);
+}
+.row-qr-thumb .zoom-badge {
+    position: absolute;
+    inset: 0;
+    border-radius: 9px;
+    background: rgba(99, 32, 238, 0.8);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    font-size: 0.9rem;
+}
+.row-qr-thumb:hover .zoom-badge {
+    opacity: 1;
 }
 
 /* KPI Stat Cards */
@@ -71,47 +138,96 @@
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 16px;
-    padding: 1.25rem 1.35rem;
+    padding: 1.2rem 1.35rem;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     position: relative;
     overflow: hidden;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 .kpi-stat-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 12px 26px -6px rgba(15, 23, 42, 0.08);
     border-color: #cbd5e1;
 }
 .kpi-icon-box {
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     flex-shrink: 0;
 }
+.kpi-progress-track {
+    height: 4px;
+    background: #f1f5f9;
+    border-radius: 99px;
+    overflow: hidden;
+    margin-top: 0.7rem;
+}
+.kpi-progress-bar {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.5s ease;
+}
 
-/* Filter Bar Form Controls */
+/* Command & Filter Bar */
 .filter-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
 }
 .filter-input {
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
-    font-size: 0.84rem;
-    height: 38px;
-    border-radius: 10px;
+    background-color: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    font-size: 0.84rem !important;
+    height: 38px !important;
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
+    border-radius: 10px !important;
     transition: all 0.2s ease;
 }
 .filter-input:focus {
-    background-color: #ffffff;
-    border-color: #6320ee;
-    box-shadow: 0 0 0 3px rgba(99, 32, 238, 0.12);
+    background-color: #ffffff !important;
+    border-color: #6320ee !important;
+    box-shadow: 0 0 0 3px rgba(99, 32, 238, 0.12) !important;
+}
+
+/* Quick Status Filter Tabs */
+.quick-status-pills {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #f1f5f9;
+    padding: 3px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+}
+.quick-status-pill {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #64748b;
+    padding: 0.32rem 0.75rem;
+    border-radius: 7px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+.quick-status-pill:hover {
+    color: #0f172a;
+}
+.quick-status-pill.active {
+    background: #ffffff;
+    color: #6320ee;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
 }
 
 /* Segmented View Switcher Capsule */
@@ -120,6 +236,7 @@
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     padding: 3px;
+    height: 38px;
     display: inline-flex;
     align-items: center;
     gap: 2px;
@@ -129,7 +246,9 @@
     background: transparent;
     color: #64748b;
     font-size: 0.85rem;
-    padding: 0.35rem 0.65rem;
+    height: 30px;
+    width: 34px;
+    padding: 0;
     border-radius: 7px;
     display: inline-flex;
     align-items: center;
@@ -147,96 +266,173 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-/* Table Card & Responsive Overflow Protection */
+/* Table Card & Zero-Horizontal-Scroll Fluid Layout */
 .dyn-table-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 16px;
-    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05);
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04);
     overflow: visible !important;
 }
 .dyn-table-responsive {
-    overflow-x: auto;
+    overflow: visible !important;
     min-height: 260px;
     border-radius: 16px;
 }
 .dyn-table {
     margin-bottom: 0;
     vertical-align: middle;
+    width: 100%;
+    table-layout: fixed;
 }
 .dyn-table thead th {
     background-color: #f8fafc;
     color: #64748b;
     font-weight: 700;
-    font-size: 0.72rem;
-    letter-spacing: 0.5px;
+    font-size: 0.7rem;
+    letter-spacing: 0.4px;
     text-transform: uppercase;
-    padding: 0.95rem 1rem;
+    padding: 0.85rem 0.65rem;
     border-bottom: 1px solid #e2e8f0;
     white-space: nowrap;
+    vertical-align: middle;
 }
 .dyn-table tbody td {
-    padding: 0.95rem 1rem;
+    padding: 0.8rem 0.65rem;
     border-bottom: 1px solid #f1f5f9;
     background-color: #ffffff;
+    vertical-align: middle;
     transition: background-color 0.15s ease;
+    min-width: 0;
 }
 .dyn-table tbody tr:hover td {
     background-color: #fafbfc;
+}
+.dyn-table tbody tr.row-selected td {
+    background-color: #f8f5ff !important;
 }
 .dyn-table tbody tr:last-child td {
     border-bottom: none;
 }
 
-/* Action Icon Buttons Dock */
-.dyn-action-btn {
-    width: 32px;
-    height: 32px;
-    padding: 0;
+/* Custom Checkbox */
+.dyn-check {
+    width: 17px !important;
+    height: 17px !important;
+    margin-top: 0 !important;
+    border-radius: 5px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    cursor: pointer;
+    vertical-align: middle;
+}
+.dyn-check:checked {
+    background-color: #6320ee !important;
+    border-color: #6320ee !important;
+}
+
+/* Small Copy Icon Buttons */
+.dyn-mini-copy-btn {
+    width: 24px;
+    height: 24px;
+    padding: 0 !important;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    color: #94a3b8;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
-    font-size: 0.85rem;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+.dyn-mini-copy-btn:hover {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #6320ee;
+    transform: none !important;
+}
+
+/* Target URL Pill Box in Row */
+.target-url-capsule {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.28rem 0.35rem 0.28rem 0.6rem;
+    width: 100%;
+    min-width: 0;
+    transition: all 0.15s ease;
+}
+.target-url-capsule:hover {
+    border-color: #cbd5e1;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+.target-edit-pill-btn {
     border: 1px solid #e2e8f0;
     background: #ffffff;
     color: #475569;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    cursor: pointer;
     transition: all 0.15s ease;
-    text-decoration: none;
+    flex-shrink: 0;
 }
-.dyn-action-btn:hover {
-    border-color: #cbd5e1;
-    color: #0f172a;
-    background: #f8fafc;
-    transform: translateY(-1px);
-}
-.dyn-action-btn.btn-redirect:hover {
-    color: #0284c7;
-    border-color: #bae6fd;
-    background: #f0f9ff;
-}
-.dyn-action-btn.btn-pdf:hover {
-    color: #6320ee;
-    border-color: #ddd6fe;
+.target-edit-pill-btn:hover {
+    border-color: #c4b5fd;
     background: #f3f0ff;
-}
-.dyn-action-btn.btn-delete:hover {
-    color: #ef4444;
-    border-color: #fecaca;
-    background: #fef2f2;
+    color: #6320ee;
 }
 
-/* Custom Dropdown Menu Styling */
+/* Action Dropdown Trigger & Menu Styling */
+.dyn-actions-trigger {
+    height: 34px;
+    padding: 0 0.75rem !important;
+    border-radius: 9px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #334155;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+.dyn-actions-trigger:hover,
+.dyn-actions-trigger[aria-expanded="true"] {
+    border-color: #c4b5fd;
+    background: #f3f0ff;
+    color: #6320ee;
+    transform: none !important;
+    box-shadow: 0 2px 8px rgba(99, 32, 238, 0.12);
+}
+.dyn-actions-trigger::after {
+    display: none !important;
+}
+
 .dyn-dropdown-menu {
     z-index: 1065 !important;
-    min-width: 260px;
-    padding: 0.5rem;
-    border-radius: 12px;
+    min-width: 265px;
+    padding: 0.45rem;
+    border-radius: 13px;
     border: 1px solid #e2e8f0;
-    box-shadow: 0 18px 38px -6px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    background: #ffffff;
+    box-shadow: 0 20px 42px -8px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(15, 23, 42, 0.04);
 }
 .dyn-dropdown-menu .dropdown-header {
-    font-size: 0.7rem;
+    font-size: 0.67rem;
     font-weight: 700;
     color: #94a3b8;
     text-transform: uppercase;
@@ -244,16 +440,33 @@
     padding: 0.4rem 0.75rem 0.2rem;
 }
 .dyn-dropdown-menu .dropdown-item {
-    font-size: 0.82rem;
+    font-size: 0.81rem;
     padding: 0.45rem 0.75rem;
-    border-radius: 7px;
+    border-radius: 8px;
     color: #334155;
     font-weight: 500;
     transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+}
+.dyn-dropdown-menu .dropdown-item i {
+    font-size: 0.92rem;
+    width: 18px;
+    text-align: center;
 }
 .dyn-dropdown-menu .dropdown-item:hover {
     background-color: #f3f0ff;
     color: #6320ee;
+    transform: translateX(2px);
+}
+.dyn-dropdown-menu .dropdown-item.dropdown-item-danger {
+    color: #dc2626;
+}
+.dyn-dropdown-menu .dropdown-item.dropdown-item-danger:hover {
+    background-color: #fef2f2;
+    color: #b91c1c;
 }
 
 /* Grid Card Item */
@@ -280,11 +493,11 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    min-height: 160px;
+    min-height: 165px;
 }
 .qr-thumb-box {
-    width: 105px;
-    height: 105px;
+    width: 108px;
+    height: 108px;
     background: #ffffff;
     border-radius: 14px;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
@@ -293,10 +506,12 @@
     align-items: center;
     justify-content: center;
     border: 1px solid #e2e8f0;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
 }
 .dynamic-qr-grid-card:hover .qr-thumb-box {
-    transform: scale(1.04);
+    transform: scale(1.05);
+    border-color: #c4b5fd;
 }
 
 /* URL Quick Chips in Modal */
@@ -326,9 +541,37 @@
     border: none;
     background: transparent;
     padding: 0;
+    display: inline-flex;
+    align-items: center;
 }
 .status-pill-toggle:hover {
     transform: scale(1.05);
+}
+
+/* Floating Bulk Selection Action Bar */
+.dyn-bulk-action-bar {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    z-index: 1080;
+    background: #0f172a;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 0.65rem 1.15rem;
+    box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+.dyn-bulk-action-bar.active {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
 }
 
 /* Instant Toast Notification */
@@ -364,43 +607,56 @@
 
 @section('content')
 <div class="container-fluid px-0">
-    <!-- Top Header -->
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-        <div>
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="status-dot-radar"></span>
-                <span class="text-uppercase tracking-wider font-mono text-muted" style="font-size: 0.72rem; font-weight: 700;">
-                    Dynamic Telemetry Core &bull; 302 Instant Router
-                </span>
+    <!-- Executive Hero Header -->
+    <div class="dyn-hero-card mb-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="status-dot-radar"></span>
+                    <span class="text-uppercase font-mono text-muted" style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;">
+                        Dynamic Telemetry Core &bull; 302 Instant Router &bull; Vector Print Engine
+                    </span>
+                </div>
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                    <span class="d-inline-flex align-items-center justify-content-center rounded-3 text-white shadow-sm" style="width: 38px; height: 38px; background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%); font-size: 1.1rem;">
+                        <i class="bi bi-qr-code-scan"></i>
+                    </span>
+                    <h1 class="h3 fw-extrabold text-dark mb-0" style="letter-spacing: -0.02em;">Dynamic QR Engine</h1>
+                    <span class="badge rounded-pill bg-white text-dark border font-mono fw-semibold shadow-xs" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
+                        {{ number_format($qrCodes->total()) }} codes
+                    </span>
+                </div>
+                <p class="text-muted small mb-0">
+                    Identifiants permanents <span class="vp-code-badge py-0 px-2" style="font-size: 0.74rem;">VP-XXXXXX</span>. Modifiez la destination en 1 clic sans jamais réimprimer vos plaques ou cartes.
+                </p>
             </div>
-            <h1 class="h3 fw-bold text-dark mb-1 d-flex align-items-center gap-2">
-                <span class="d-inline-flex align-items-center justify-content-center rounded-3 text-white shadow-xs" style="width: 38px; height: 38px; background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%); font-size: 1.15rem;">
-                    <i class="bi bi-qr-code"></i>
-                </span>
-                <span>Dynamic QR Engine</span>
-            </h1>
-            <p class="text-muted small mb-0">
-                Identifiants permanents <span class="vp-code-badge py-0 px-2" style="font-size: 0.76rem;">VP-XXXXXX</span>. Modifiez l'URL de redirection en temps réel sans réimprimer vos supports.
-            </p>
-        </div>
-        <div class="d-flex flex-wrap align-items-center gap-2">
-            <!-- Single QR Quick Modal Trigger -->
-            <button type="button" class="btn btn-outline-primary d-inline-flex align-items-center gap-2 shadow-xs" data-bs-toggle="modal" data-bs-target="#singleCreateModal" style="border-radius: 10px; font-weight: 600; padding: 0.55rem 1rem;">
-                <i class="bi bi-plus-circle"></i>
-                <span>Nouveau QR</span>
-            </button>
 
-            <!-- Bulk Modal Trigger -->
-            <button type="button" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 shadow-xs" data-bs-toggle="modal" data-bs-target="#bulkGenerateModal" style="border-radius: 10px; font-weight: 600; padding: 0.55rem 1rem;">
-                <i class="bi bi-collection text-primary"></i>
-                <span>Génération par Lot</span>
-            </button>
+            <!-- Primary Action Suite -->
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <!-- Export CSV Button -->
+                <a href="{{ route('admin.dynamic-qrs.export', request()->query()) }}" class="btn btn-light bg-white border d-inline-flex align-items-center gap-2 shadow-xs" style="border-radius: 10px; font-weight: 600; font-size: 0.85rem; height: 40px; padding: 0 0.95rem; color: #334155;" title="Exporter la sélection en CSV">
+                    <i class="bi bi-download text-secondary"></i>
+                    <span>Export CSV</span>
+                </a>
 
-            <!-- Studio Gabarit Button -->
-            <a href="{{ route('admin.dynamic-qrs.create') }}" class="btn text-white d-inline-flex align-items-center gap-2 shadow-sm" style="background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%); border-radius: 10px; font-weight: 600; padding: 0.55rem 1.25rem;">
-                <i class="bi bi-palette2"></i>
-                <span>Studio Gabarit &amp; PDF</span>
-            </a>
+                <!-- Single QR Quick Modal Trigger -->
+                <button type="button" class="btn btn-light bg-white border border-primary-subtle text-primary d-inline-flex align-items-center gap-2 shadow-xs" data-bs-toggle="modal" data-bs-target="#singleCreateModal" style="border-radius: 10px; font-weight: 600; font-size: 0.85rem; height: 40px; padding: 0 1rem;">
+                    <i class="bi bi-plus-circle-fill"></i>
+                    <span>Nouveau QR</span>
+                </button>
+
+                <!-- Bulk Modal Trigger -->
+                <button type="button" class="btn btn-light bg-white border d-inline-flex align-items-center gap-2 shadow-xs" data-bs-toggle="modal" data-bs-target="#bulkGenerateModal" style="border-radius: 10px; font-weight: 600; font-size: 0.85rem; height: 40px; padding: 0 1rem; color: #1e293b;">
+                    <i class="bi bi-layers-fill text-primary"></i>
+                    <span>Génération par Lot</span>
+                </button>
+
+                <!-- Studio Gabarit Button -->
+                <a href="{{ route('admin.dynamic-qrs.create') }}" class="btn text-white d-inline-flex align-items-center gap-2 shadow-sm border-0" style="background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%); border-radius: 10px; font-weight: 600; font-size: 0.85rem; height: 40px; padding: 0 1.2rem;">
+                    <i class="bi bi-palette2"></i>
+                    <span>Studio Gabarit &amp; PDF</span>
+                </a>
+            </div>
         </div>
     </div>
 
@@ -408,82 +664,138 @@
     <div class="row g-3 mb-4">
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="kpi-stat-card shadow-xs">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <span class="text-muted small fw-semibold text-uppercase font-mono" style="font-size: 0.72rem;">Total QR Dynamiques</span>
-                    <div class="kpi-icon-box" style="background: #f3f0ff; color: #6320ee;">
-                        <i class="bi bi-qr-code"></i>
+                <div>
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="text-muted small fw-bold text-uppercase font-mono" style="font-size: 0.7rem; letter-spacing: 0.4px;">Total QR Dynamiques</span>
+                        <div class="kpi-icon-box" style="background: #f3f0ff; color: #6320ee;">
+                            <i class="bi bi-qr-code"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-baseline justify-content-between">
+                        <div class="fs-3 fw-extrabold text-dark font-mono">{{ number_format($metrics['total']) }}</div>
+                        <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle font-mono" style="font-size: 0.7rem;">
+                            {{ number_format($metrics['assigned'] ?? 0) }} assignés
+                        </span>
                     </div>
                 </div>
-                <div class="fs-3 fw-extrabold text-dark font-mono mb-1">{{ number_format($metrics['total']) }}</div>
-                <div class="small text-muted d-flex align-items-center gap-2" style="font-size: 0.76rem;">
-                    <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle font-mono">VP- Trackers</span>
-                    <span>Enregistrés en base</span>
+                <div class="kpi-progress-track">
+                    <div class="kpi-progress-bar" style="width: {{ $metrics['total'] > 0 ? min(100, max(12, round((($metrics['assigned'] ?? 0) / $metrics['total']) * 100))) : 0 }}%; background: #6320ee;"></div>
                 </div>
             </div>
         </div>
+
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="kpi-stat-card shadow-xs">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <span class="text-muted small fw-semibold text-uppercase font-mono" style="font-size: 0.72rem;">Scans Cumulés</span>
-                    <div class="kpi-icon-box" style="background: #ecfdf5; color: #10b981;">
-                        <i class="bi bi-broadcast"></i>
+                <div>
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="text-muted small fw-bold text-uppercase font-mono" style="font-size: 0.7rem; letter-spacing: 0.4px;">Scans Cumulés</span>
+                        <div class="kpi-icon-box" style="background: #ecfdf5; color: #10b981;">
+                            <i class="bi bi-broadcast"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-baseline justify-content-between">
+                        <div class="fs-3 fw-extrabold text-dark font-mono">{{ number_format($metrics['scans']) }}</div>
+                        <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle font-mono" style="font-size: 0.7rem;">
+                            ~{{ $metrics['avg_scans'] ?? 0 }} / code
+                        </span>
                     </div>
                 </div>
-                <div class="fs-3 fw-extrabold text-dark font-mono mb-1">{{ number_format($metrics['scans']) }}</div>
-                <div class="small text-muted d-flex align-items-center gap-2" style="font-size: 0.76rem;">
-                    <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle font-mono">Télémétrie Live</span>
-                    <span>Redirections effectuées</span>
+                <div class="kpi-progress-track">
+                    <div class="kpi-progress-bar" style="width: {{ $metrics['scans'] > 0 ? 85 : 8 }}%; background: #10b981;"></div>
                 </div>
             </div>
         </div>
+
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="kpi-stat-card shadow-xs">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <span class="text-muted small fw-semibold text-uppercase font-mono" style="font-size: 0.72rem;">Codes Actifs</span>
-                    <div class="kpi-icon-box" style="background: #e0f2fe; color: #0284c7;">
-                        <i class="bi bi-check-circle-fill"></i>
+                <div>
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="text-muted small fw-bold text-uppercase font-mono" style="font-size: 0.7rem; letter-spacing: 0.4px;">Codes Actifs (En Ligne)</span>
+                        <div class="kpi-icon-box" style="background: #e0f2fe; color: #0284c7;">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-baseline justify-content-between">
+                        <div class="fs-3 fw-extrabold text-dark font-mono">{{ number_format($metrics['active']) }}</div>
+                        <span class="badge rounded-pill bg-info-subtle text-info-emphasis border border-info-subtle font-mono" style="font-size: 0.7rem;">
+                            {{ $metrics['active_rate'] ?? 0 }}% actifs
+                        </span>
                     </div>
                 </div>
-                <div class="fs-3 fw-extrabold text-dark font-mono mb-1">{{ number_format($metrics['active']) }}</div>
-                <div class="small text-muted d-flex align-items-center gap-2" style="font-size: 0.76rem;">
-                    <span class="badge rounded-pill bg-info-subtle text-info border border-info-subtle font-mono">En Ligne</span>
-                    <span>Routage actif</span>
+                <div class="kpi-progress-track">
+                    <div class="kpi-progress-bar" style="width: {{ $metrics['active_rate'] ?? 0 }}%; background: #0284c7;"></div>
                 </div>
             </div>
         </div>
+
         <div class="col-12 col-sm-6 col-xl-3">
             <div class="kpi-stat-card shadow-xs">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <span class="text-muted small fw-semibold text-uppercase font-mono" style="font-size: 0.72rem;">Inactifs / Archivés</span>
-                    <div class="kpi-icon-box" style="background: #f8fafc; color: #64748b;">
-                        <i class="bi bi-pause-circle"></i>
+                <div>
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="text-muted small fw-bold text-uppercase font-mono" style="font-size: 0.7rem; letter-spacing: 0.4px;">Inactifs / Archivés</span>
+                        <div class="kpi-icon-box" style="background: #f8fafc; color: #64748b;">
+                            <i class="bi bi-pause-circle"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-baseline justify-content-between">
+                        <div class="fs-3 fw-extrabold text-dark font-mono">{{ number_format($metrics['inactive']) }}</div>
+                        <span class="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary-subtle font-mono" style="font-size: 0.7rem;">
+                            En pause
+                        </span>
                     </div>
                 </div>
-                <div class="fs-3 fw-extrabold text-dark font-mono mb-1">{{ number_format($metrics['inactive']) }}</div>
-                <div class="small text-muted d-flex align-items-center gap-2" style="font-size: 0.76rem;">
-                    <span class="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary-subtle font-mono">Suspendus</span>
-                    <span>Pause temporaire</span>
+                <div class="kpi-progress-track">
+                    <div class="kpi-progress-bar" style="width: {{ $metrics['total'] > 0 ? round(($metrics['inactive'] / $metrics['total']) * 100) : 0 }}%; background: #94a3b8;"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Search, Filters & View Toggle Bar -->
+    <!-- Command Bar: Quick Status Tabs + Search, Filters & View Toggle -->
     <div class="filter-card p-3 mb-4">
-        <form method="GET" action="{{ route('admin.dynamic-qrs.index') }}" class="row g-2 align-items-center">
+        <!-- Top Row: Quick Status Filter Pills & Helper Hint -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pb-3 mb-3 border-bottom" style="border-color: #f1f5f9 !important;">
+            <div class="quick-status-pills">
+                <a href="{{ route('admin.dynamic-qrs.index', array_filter(array_merge(request()->query(), ['status' => null, 'page' => null]))) }}"
+                   class="quick-status-pill {{ !request('status') ? 'active' : '' }}">
+                    <span>Tous</span>
+                    <span class="badge rounded-pill bg-light text-secondary border font-mono" style="font-size: 0.68rem;">{{ $metrics['total'] }}</span>
+                </a>
+                <a href="{{ route('admin.dynamic-qrs.index', array_merge(request()->query(), ['status' => 'active', 'page' => null])) }}"
+                   class="quick-status-pill {{ request('status') === 'active' ? 'active' : '' }}">
+                    <span class="d-inline-block rounded-circle bg-success" style="width: 6px; height: 6px;"></span>
+                    <span>Actifs</span>
+                    <span class="badge rounded-pill bg-light text-secondary border font-mono" style="font-size: 0.68rem;">{{ $metrics['active'] }}</span>
+                </a>
+                <a href="{{ route('admin.dynamic-qrs.index', array_merge(request()->query(), ['status' => 'inactive', 'page' => null])) }}"
+                   class="quick-status-pill {{ request('status') === 'inactive' ? 'active' : '' }}">
+                    <span class="d-inline-block rounded-circle bg-secondary" style="width: 6px; height: 6px;"></span>
+                    <span>Inactifs</span>
+                    <span class="badge rounded-pill bg-light text-secondary border font-mono" style="font-size: 0.68rem;">{{ $metrics['inactive'] }}</span>
+                </a>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <span class="text-muted d-none d-lg-inline-flex align-items-center gap-1" style="font-size: 0.75rem;">
+                    <i class="bi bi-lightning-charge-fill text-warning"></i>
+                    <span>Cliquez sur une miniature QR pour l'aperçu HD ou sur « Éditer » pour router l'URL en direct</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Bottom Row: Filter Form -->
+        <form method="GET" action="{{ route('admin.dynamic-qrs.index') }}" class="row g-2 align-items-center" id="dynFilterForm">
             <!-- Search Box -->
             <div class="col-12 col-md-4 col-xl-3">
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px; border-color: #e2e8f0;">
-                        <i class="bi bi-search"></i>
-                    </span>
-                    <input type="text" name="search" value="{{ request('search') }}" class="form-control filter-input border-start-0" placeholder="Code VP-, libellé ou URL..." style="border-radius: 0 10px 10px 0;">
+                <div class="position-relative">
+                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="font-size: 0.84rem; pointer-events: none;"></i>
+                    <input type="text" name="search" id="dynSearchInput" value="{{ request('search') }}" class="form-control filter-input" placeholder="Code VP-, libellé, client ou URL..." style="padding-left: 2.25rem !important;">
                 </div>
             </div>
 
             <!-- Template Filter -->
             <div class="col-6 col-md-3 col-xl-2">
-                <select name="template_type" class="form-select filter-input">
+                <select name="template_type" class="form-select filter-input" onchange="this.form.submit()">
                     <option value="">Tous les gabarits</option>
                     <option value="google_review" {{ request('template_type') === 'google_review' ? 'selected' : '' }}>Avis Google</option>
                     <option value="social_media" {{ request('template_type') === 'social_media' ? 'selected' : '' }}>Réseaux Sociaux</option>
@@ -494,10 +806,11 @@
 
             <!-- Client Filter -->
             <div class="col-6 col-md-3 col-xl-2">
-                <select name="client_id" class="form-select filter-input">
+                <select name="client_id" class="form-select filter-input" onchange="this.form.submit()">
                     <option value="">Tous les clients</option>
+                    <option value="unassigned" {{ request('client_id') === 'unassigned' ? 'selected' : '' }}>— Non assignés —</option>
                     @foreach($clients as $client)
-                        <option value="{{ $client->id }}" {{ request('client_id') == $client->id ? 'selected' : '' }}>
+                        <option value="{{ $client->id }}" {{ (string) request('client_id') === (string) $client->id ? 'selected' : '' }}>
                             {{ $client->name }} {{ $client->project_name ? "({$client->project_name})" : '' }}
                         </option>
                     @endforeach
@@ -506,7 +819,7 @@
 
             <!-- Status Filter -->
             <div class="col-6 col-md-2 col-xl-1">
-                <select name="status" class="form-select filter-input">
+                <select name="status" class="form-select filter-input" onchange="this.form.submit()">
                     <option value="">Statut</option>
                     <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Actif</option>
                     <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactif</option>
@@ -516,7 +829,7 @@
 
             <!-- Sort Dropdown -->
             <div class="col-6 col-md-3 col-xl-2">
-                <select name="sort" class="form-select filter-input">
+                <select name="sort" class="form-select filter-input" onchange="this.form.submit()">
                     <option value="latest" {{ request('sort') === 'latest' ? 'selected' : '' }}>Plus récents</option>
                     <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Plus anciens</option>
                     <option value="scans_high" {{ request('sort') === 'scans_high' ? 'selected' : '' }}>Plus scannés</option>
@@ -526,15 +839,15 @@
                 </select>
             </div>
 
-            <!-- Submit & Reset Buttons & View Switcher -->
+            <!-- Submit, Reset & View Switcher -->
             <div class="col-12 col-md-auto col-xl-2 d-flex align-items-center justify-content-end gap-2 ms-auto">
-                <button type="submit" class="btn btn-sm text-white px-3 d-inline-flex align-items-center gap-1.5 shadow-xs" style="background-color: #6320ee; height: 38px; border-radius: 10px; font-weight: 600;" title="Appliquer les filtres">
+                <button type="submit" class="btn btn-sm text-white px-3 d-inline-flex align-items-center gap-1 shadow-xs border-0" style="background-color: #6320ee; height: 38px; border-radius: 10px; font-weight: 600;" title="Appliquer les filtres">
                     <i class="bi bi-funnel"></i>
                     <span>Filtrer</span>
                 </button>
 
                 @if(request()->hasAny(['search', 'template_type', 'client_id', 'status', 'sort']))
-                    <a href="{{ route('admin.dynamic-qrs.index') }}" class="btn btn-sm btn-light border d-inline-flex align-items-center justify-content-center" title="Réinitialiser les filtres" style="height: 38px; width: 38px; border-radius: 10px;">
+                    <a href="{{ route('admin.dynamic-qrs.index') }}" class="btn btn-sm btn-light border d-inline-flex align-items-center justify-content-center" title="Réinitialiser les filtres" style="height: 38px; width: 38px; padding: 0; border-radius: 10px;">
                         <i class="bi bi-x-lg"></i>
                     </a>
                 @endif
@@ -560,60 +873,98 @@
             <table class="table dyn-table">
                 <thead>
                     <tr>
-                        <th class="ps-4" style="width: 170px;">Code VP-</th>
-                        <th style="min-width: 180px;">Libellé &amp; Client</th>
-                        <th style="min-width: 250px;">Destination Active (URL)</th>
-                        <th style="min-width: 150px;">Gabarit Support</th>
-                        <th class="text-center" style="width: 110px;">Scans</th>
-                        <th style="width: 110px;">Statut</th>
-                        <th class="text-end pe-4" style="width: 190px;">Actions</th>
+                        <th class="ps-3" style="width: 40px;">
+                            <input type="checkbox" class="form-check-input dyn-check" id="selectAllQrs" title="Tout sélectionner">
+                        </th>
+                        <th style="width: 195px;">QR &amp; Code VP-</th>
+                        <th style="width: 19%;">Libellé &amp; Client</th>
+                        <th>Destination Active (302)</th>
+                        <th style="width: 130px;">Gabarit</th>
+                        <th class="text-center" style="width: 90px;">Scans</th>
+                        <th style="width: 90px;">Statut</th>
+                        <th class="text-end pe-3" style="width: 108px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($qrCodes as $qr)
-                        <tr id="tableRowQr{{ $qr->id }}">
-                            <!-- Code VP- -->
-                            <td class="ps-4">
-                                <div class="d-flex align-items-center gap-1.5">
-                                    <a href="{{ route('admin.dynamic-qrs.show', $qr) }}" class="text-decoration-none">
-                                        <span class="vp-code-badge">{{ $qr->code }}</span>
-                                    </a>
-                                    <button type="button" class="btn btn-sm btn-link text-muted p-0 copy-btn" data-code="{{ $qr->code }}" title="Copier le code">
-                                        <i class="bi bi-clipboard" style="font-size: 0.8rem;"></i>
-                                    </button>
-                                </div>
-                                <div class="text-muted font-mono mt-1" style="font-size: 0.68rem;">
-                                    /qr/{{ $qr->code }}
+                        @php
+                            $lastScan = $qr->scanLogs->sortByDesc('scanned_at')->first();
+                        @endphp
+                        <tr id="tableRowQr{{ $qr->id }}" data-qr-id="{{ $qr->id }}">
+                            <!-- Multi-select Checkbox -->
+                            <td class="ps-3">
+                                <input type="checkbox" class="form-check-input dyn-check qr-row-checkbox" value="{{ $qr->id }}" data-code="{{ $qr->code }}">
+                            </td>
+
+                            <!-- Live Mini QR Thumbnail + Code VP- -->
+                            <td>
+                                <div class="d-flex align-items-center gap-2 min-w-0">
+                                    <div class="row-qr-thumb qr-lightbox-trigger"
+                                         data-id="{{ $qr->id }}"
+                                         data-code="{{ $qr->code }}"
+                                         data-label="{{ $qr->label }}"
+                                         data-target="{{ $qr->target_url }}"
+                                         data-encoded="{{ $qr->encoded_url }}"
+                                         data-svg-url="{{ route('admin.dynamic-qrs.svg', [$qr, 'inline' => 1, 'size' => 320]) }}"
+                                         data-png-download="{{ route('admin.dynamic-qrs.png', [$qr, 'size' => 1000]) }}"
+                                         data-svg-download="{{ route('admin.dynamic-qrs.svg', [$qr, 'size' => 1000]) }}"
+                                         data-pdf-download="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => $qr->template_type, 'dimension' => '85x55']) }}"
+                                         title="Aperçu HD & Téléchargement rapide">
+                                        <img src="{{ route('admin.dynamic-qrs.svg', [$qr, 'inline' => 1, 'size' => 90]) }}"
+                                             alt="{{ $qr->code }}"
+                                             loading="lazy"
+                                             class="w-100 h-100 object-fit-contain">
+                                        <span class="zoom-badge"><i class="bi bi-arrows-angle-expand"></i></span>
+                                    </div>
+
+                                    <div class="min-w-0">
+                                        <div class="d-flex align-items-center gap-1">
+                                            <a href="{{ route('admin.dynamic-qrs.show', $qr) }}" class="text-decoration-none">
+                                                <span class="vp-code-badge">{{ $qr->code }}</span>
+                                            </a>
+                                            <button type="button" class="dyn-mini-copy-btn copy-btn" data-code="{{ $qr->code }}" title="Copier le code {{ $qr->code }}">
+                                                <i class="bi bi-clipboard" style="font-size: 0.75rem;"></i>
+                                            </button>
+                                            <button type="button" class="dyn-mini-copy-btn copy-url-btn" data-url="{{ $qr->encoded_url }}" title="Copier le lien permanent {{ $qr->encoded_url }}">
+                                                <i class="bi bi-link-45deg" style="font-size: 0.9rem;"></i>
+                                            </button>
+                                        </div>
+                                        <div class="text-muted font-mono mt-1 text-truncate" style="font-size: 0.66rem;">
+                                            /qr/{{ $qr->code }}
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
 
                             <!-- Label & Client -->
                             <td>
-                                <div class="fw-bold text-dark text-truncate" style="font-size: 0.88rem; max-width: 220px;" title="{{ $qr->label }}">{{ $qr->label }}</div>
+                                <a href="{{ route('admin.dynamic-qrs.show', $qr) }}" class="fw-bold text-dark text-decoration-none d-block text-truncate" style="font-size: 0.86rem;" title="{{ $qr->label }}">
+                                    {{ $qr->label }}
+                                </a>
                                 @if($qr->client)
-                                    <a href="{{ route('admin.clients.show', $qr->client) }}" class="small text-muted text-decoration-none d-inline-flex align-items-center gap-1 mt-0.5">
-                                        <i class="bi bi-building text-primary" style="font-size: 0.75rem;"></i>
-                                        <span class="text-truncate" style="max-width: 180px;">{{ $qr->client->name }}</span>
+                                    <a href="{{ route('admin.clients.show', $qr->client) }}" class="small text-muted text-decoration-none d-flex align-items-center gap-1 mt-1 min-w-0">
+                                        <i class="bi bi-building text-primary flex-shrink-0" style="font-size: 0.72rem;"></i>
+                                        <span class="text-truncate">{{ $qr->client->name }}</span>
                                     </a>
                                 @else
-                                    <span class="small text-muted fst-italic mt-0.5 d-inline-block" style="font-size: 0.75rem;">Non assigné</span>
+                                    <span class="small text-muted fst-italic mt-1 d-block text-truncate" style="font-size: 0.72rem;">Non assigné</span>
                                 @endif
                             </td>
 
                             <!-- Target Destination with Instant In-Place Editor -->
                             <td>
-                                <div class="d-flex align-items-center gap-2">
-                                    <a href="{{ $qr->target_url }}" target="_blank" id="qrTargetLink{{ $qr->id }}" class="small text-truncate d-inline-block text-decoration-none text-secondary font-mono" style="max-width: 260px;" title="{{ $qr->target_url }}">
-                                        <i class="bi bi-box-arrow-up-right me-1 text-primary small"></i><span class="target-text">{{ $qr->target_url }}</span>
+                                <div class="target-url-capsule">
+                                    <a href="{{ $qr->target_url }}" target="_blank" id="qrTargetLink{{ $qr->id }}" class="small text-truncate d-block text-decoration-none text-secondary font-mono min-w-0 flex-grow-1" style="font-size: 0.75rem;" title="{{ $qr->target_url }}">
+                                        <i class="bi bi-box-arrow-up-right me-1 text-primary"></i><span class="target-text">{{ $qr->target_url }}</span>
                                     </a>
-                                    <button type="button" 
-                                            class="btn btn-sm btn-outline-secondary py-0.5 px-2 rounded-2 edit-target-btn flex-shrink-0" 
-                                            style="font-size: 0.72rem; line-height: 1.4;"
-                                            data-id="{{ $qr->id }}" 
-                                            data-code="{{ $qr->code }}" 
+                                    <button type="button"
+                                            class="target-edit-pill-btn edit-target-btn"
+                                            data-id="{{ $qr->id }}"
+                                            data-code="{{ $qr->code }}"
                                             data-target="{{ $qr->target_url }}"
                                             title="Modifier la destination instantanément">
-                                        <i class="bi bi-pencil-square"></i> Éditer
+                                        <i class="bi bi-pencil-square text-primary"></i>
+                                        <span>Éditer</span>
                                     </button>
                                 </div>
                             </td>
@@ -621,35 +972,40 @@
                             <!-- Template Type -->
                             <td>
                                 @if($qr->template_type === 'google_review')
-                                    <span class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle fw-semibold" style="font-size: 0.74rem;">
+                                    <span class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle fw-semibold" style="font-size: 0.73rem;">
                                         <i class="bi bi-star-fill text-warning me-1"></i> Avis Google
                                     </span>
                                 @elseif($qr->template_type === 'social_media')
-                                    <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle fw-semibold" style="font-size: 0.74rem;">
+                                    <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle fw-semibold" style="font-size: 0.73rem;">
                                         <i class="bi bi-share-fill me-1"></i> Réseaux Sociaux
                                     </span>
                                 @elseif($qr->template_type === 'menu')
-                                    <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis border border-warning-subtle fw-semibold" style="font-size: 0.74rem;">
+                                    <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis border border-warning-subtle fw-semibold" style="font-size: 0.73rem;">
                                         <i class="bi bi-cup-hot-fill me-1"></i> Menu Digital
                                     </span>
                                 @else
-                                    <span class="badge rounded-pill bg-light text-dark border fw-semibold" style="font-size: 0.74rem;">
-                                        <i class="bi bi-palette me-1"></i> {{ ucfirst(str_replace('_', ' ', $qr->template_type)) }}
+                                    <span class="badge rounded-pill bg-light text-dark border fw-semibold" style="font-size: 0.73rem;">
+                                        <i class="bi bi-palette me-1 text-primary"></i> {{ ucfirst(str_replace('_', ' ', $qr->template_type)) }}
                                     </span>
                                 @endif
                             </td>
 
-                            <!-- Scans Count -->
+                            <!-- Scans Count & Last Scan Telemetry -->
                             <td class="text-center">
-                                <span class="badge bg-light text-dark border font-mono fw-bold px-2.5 py-1" style="font-size: 0.8rem;">
-                                    <i class="bi bi-eye text-primary me-1"></i>{{ number_format($qr->scans_count) }}
+                                <span class="badge bg-light text-dark border font-mono fw-bold px-2 py-1" style="font-size: 0.8rem;">
+                                    <i class="bi bi-broadcast text-success me-1"></i>{{ number_format($qr->scans_count) }}
                                 </span>
+                                @if($lastScan && $lastScan->scanned_at)
+                                    <div class="text-muted font-mono mt-1" style="font-size: 0.65rem;" title="Dernier scan : {{ $lastScan->scanned_at->format('d/m/Y H:i') }}">
+                                        {{ $lastScan->scanned_at->diffForHumans(null, true, true) }}
+                                    </div>
+                                @endif
                             </td>
 
                             <!-- Interactive Status Toggle -->
                             <td>
-                                <button type="button" 
-                                        class="status-pill-toggle toggle-status-btn" 
+                                <button type="button"
+                                        class="status-pill-toggle toggle-status-btn"
                                         data-id="{{ $qr->id }}"
                                         data-status="{{ $qr->status }}"
                                         title="Cliquer pour basculer Actif / Inactif">
@@ -665,82 +1021,137 @@
                                 </button>
                             </td>
 
-                            <!-- Actions Dock (Clean Individual Buttons + Fixed Strategy Dropdown) -->
-                            <td class="text-end pe-4">
-                                <div class="d-inline-flex align-items-center justify-content-end gap-1.5">
-                                    <!-- Test Redirect 302 -->
-                                    <a href="{{ route('qr.redirect', ['code' => $qr->code]) }}" target="_blank" class="dyn-action-btn btn-redirect" title="Tester le scan 302">
-                                        <i class="bi bi-box-arrow-up-right"></i>
-                                    </a>
-
-                                    <!-- PDF Printable Card Dropdown with Fixed Strategy to Prevent Clipping -->
-                                    <div class="dropdown">
-                                        <button type="button" class="dyn-action-btn btn-pdf" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' aria-expanded="false" title="Exporter PDF / SVG">
-                                            <i class="bi bi-file-earmark-pdf"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end dyn-dropdown-menu">
-                                            <li class="dropdown-header">Cartes d'impression standard</li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => 'google_review', 'dimension' => '85x55']) }}">
-                                                    <i class="bi bi-star-fill text-warning"></i> Carte Avis Google (85×55mm)
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => 'social_media', 'dimension' => '85x55']) }}">
-                                                    <i class="bi bi-share-fill text-primary"></i> Carte Réseaux Sociaux (85×55mm)
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => 'menu', 'dimension' => '85x55']) }}">
-                                                    <i class="bi bi-cup-hot-fill text-warning"></i> Carte Menu Digital (85×55mm)
-                                                </a>
-                                            </li>
-                                            <li><hr class="dropdown-divider my-1"></li>
-                                            <li class="dropdown-header">Format Chevalet &amp; Plaque</li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => $qr->template_type, 'dimension' => 'a6']) }}">
-                                                    <i class="bi bi-printer text-success"></i> Plaque A6 (105×148mm)
-                                                </a>
-                                            </li>
-                                            <li><hr class="dropdown-divider my-1"></li>
-                                            <li class="dropdown-header">Fichiers Bruts Vectoriels</li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('admin.dynamic-qrs.svg', $qr) }}">
-                                                    <i class="bi bi-filetype-svg text-primary"></i> Télécharger SVG Vectoriel
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('admin.dynamic-qrs.png', $qr) }}">
-                                                    <i class="bi bi-filetype-png text-info"></i> Télécharger PNG Haute Résolution
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                    <!-- Details & Edit -->
-                                    <a href="{{ route('admin.dynamic-qrs.show', $qr) }}" class="dyn-action-btn" title="Détails &amp; Télémétrie">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="{{ route('admin.dynamic-qrs.edit', $qr) }}" class="dyn-action-btn" title="Configuration complète">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <button type="button" class="dyn-action-btn btn-delete delete-qr-btn" data-id="{{ $qr->id }}" data-code="{{ $qr->code }}" data-label="{{ $qr->label }}" title="Supprimer">
-                                        <i class="bi bi-trash"></i>
+                            <!-- Unified Actions Dropdown -->
+                            <td class="text-end pe-3">
+                                <div class="dropdown d-inline-block">
+                                    <button type="button"
+                                            class="dyn-actions-trigger"
+                                            data-bs-toggle="dropdown"
+                                            data-bs-popper-config='{"strategy":"fixed"}'
+                                            aria-expanded="false">
+                                        <span>Actions</span>
+                                        <i class="bi bi-three-dots-vertical text-muted" style="font-size: 0.82rem;"></i>
                                     </button>
+                                    <ul class="dropdown-menu dropdown-menu-end dyn-dropdown-menu">
+                                        <li class="dropdown-header">Gestion &amp; Routage</li>
+                                        <li>
+                                            <button type="button"
+                                                    class="dropdown-item qr-lightbox-trigger"
+                                                    data-id="{{ $qr->id }}"
+                                                    data-code="{{ $qr->code }}"
+                                                    data-label="{{ $qr->label }}"
+                                                    data-target="{{ $qr->target_url }}"
+                                                    data-encoded="{{ $qr->encoded_url }}"
+                                                    data-svg-url="{{ route('admin.dynamic-qrs.svg', [$qr, 'inline' => 1, 'size' => 320]) }}"
+                                                    data-png-download="{{ route('admin.dynamic-qrs.png', [$qr, 'size' => 1000]) }}"
+                                                    data-svg-download="{{ route('admin.dynamic-qrs.svg', [$qr, 'size' => 1000]) }}"
+                                                    data-pdf-download="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => $qr->template_type, 'dimension' => '85x55']) }}">
+                                                <i class="bi bi-qr-code-scan text-primary"></i>
+                                                <span>Aperçu QR Grand Format</span>
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button"
+                                                    class="dropdown-item edit-target-btn"
+                                                    data-id="{{ $qr->id }}"
+                                                    data-code="{{ $qr->code }}"
+                                                    data-target="{{ $qr->target_url }}">
+                                                <i class="bi bi-lightning-charge-fill text-warning"></i>
+                                                <span>Modifier l'URL cible (302)</span>
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('qr.redirect', ['code' => $qr->code]) }}" target="_blank">
+                                                <i class="bi bi-box-arrow-up-right text-info"></i>
+                                                <span>Tester la redirection live</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('admin.dynamic-qrs.show', $qr) }}">
+                                                <i class="bi bi-eye text-secondary"></i>
+                                                <span>Détails &amp; Télémétrie</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('admin.dynamic-qrs.edit', $qr) }}">
+                                                <i class="bi bi-pencil text-secondary"></i>
+                                                <span>Configuration complète</span>
+                                            </a>
+                                        </li>
+
+                                        <li><hr class="dropdown-divider my-1"></li>
+                                        <li class="dropdown-header">Cartes PDF Prêtes à Imprimer</li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => 'google_review', 'dimension' => '85x55']) }}">
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                                <span>Carte Avis Google (85×55mm)</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => 'social_media', 'dimension' => '85x55']) }}">
+                                                <i class="bi bi-share-fill text-primary"></i>
+                                                <span>Carte Réseaux Sociaux (85×55mm)</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => 'menu', 'dimension' => '85x55']) }}">
+                                                <i class="bi bi-cup-hot-fill text-warning"></i>
+                                                <span>Carte Menu Digital (85×55mm)</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => $qr->template_type, 'dimension' => 'a6']) }}">
+                                                <i class="bi bi-printer text-success"></i>
+                                                <span>Plaque A6 (105×148mm)</span>
+                                            </a>
+                                        </li>
+
+                                        <li><hr class="dropdown-divider my-1"></li>
+                                        <li class="dropdown-header">Fichiers Bruts Haute Définition</li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('admin.dynamic-qrs.svg', $qr) }}">
+                                                <i class="bi bi-filetype-svg text-primary"></i>
+                                                <span>Télécharger SVG Vectoriel</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('admin.dynamic-qrs.png', $qr) }}">
+                                                <i class="bi bi-filetype-png text-info"></i>
+                                                <span>Télécharger PNG HD</span>
+                                            </a>
+                                        </li>
+
+                                        <li><hr class="dropdown-divider my-1"></li>
+                                        <li>
+                                            <button type="button"
+                                                    class="dropdown-item dropdown-item-danger delete-qr-btn"
+                                                    data-id="{{ $qr->id }}"
+                                                    data-code="{{ $qr->code }}"
+                                                    data-label="{{ $qr->label }}">
+                                                <i class="bi bi-trash"></i>
+                                                <span>Supprimer ce QR code</span>
+                                            </button>
+                                        </li>
+                                    </ul>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center py-5 text-muted">
-                                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light mb-3" style="width: 64px; height: 64px;">
-                                    <i class="bi bi-qr-code text-muted fs-2"></i>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light mb-3" style="width: 68px; height: 68px;">
+                                    <i class="bi bi-qr-code-scan text-muted fs-2"></i>
                                 </div>
                                 <h6 class="fw-bold text-dark mb-1">Aucun QR Code Dynamique Trouvé</h6>
                                 <p class="small text-muted mb-3">Créez votre premier code unitaire ou lancez un lot avec gabarit studio.</p>
-                                <button type="button" class="btn btn-sm text-white px-3" data-bs-toggle="modal" data-bs-target="#singleCreateModal" style="background-color: #6320ee; border-radius: 8px;">
-                                    <i class="bi bi-plus-lg me-1"></i> Créer un QR Code
-                                </button>
+                                <div class="d-inline-flex gap-2">
+                                    <button type="button" class="btn btn-sm text-white px-3" data-bs-toggle="modal" data-bs-target="#singleCreateModal" style="background-color: #6320ee; border-radius: 8px;">
+                                        <i class="bi bi-plus-lg me-1"></i> Créer un QR Code
+                                    </button>
+                                    <a href="{{ route('admin.dynamic-qrs.create') }}" class="btn btn-sm btn-outline-secondary px-3" style="border-radius: 8px;">
+                                        <i class="bi bi-palette2 me-1"></i> Ouvrir le Studio
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     @endforelse
@@ -769,48 +1180,66 @@
                 <div class="dynamic-qr-grid-card shadow-xs">
                     <!-- Stage Thumb with Live Sharp SVG Thumbnail -->
                     <div class="dynamic-qr-stage-thumb">
-                        <div class="position-absolute top-0 start-0 m-3">
+                        <div class="position-absolute top-0 start-0 m-3 d-flex align-items-center gap-1">
                             <span class="vp-code-badge">{{ $qr->code }}</span>
+                            <button type="button" class="dyn-mini-copy-btn bg-white border shadow-xs copy-btn" data-code="{{ $qr->code }}" title="Copier le code">
+                                <i class="bi bi-clipboard" style="font-size: 0.72rem;"></i>
+                            </button>
                         </div>
                         <div class="position-absolute top-0 end-0 m-3">
                             <span class="badge rounded-pill bg-white text-dark border font-mono fw-bold shadow-xs">
-                                <i class="bi bi-eye text-primary me-1"></i>{{ number_format($qr->scans_count) }}
+                                <i class="bi bi-broadcast text-success me-1"></i>{{ number_format($qr->scans_count) }}
                             </span>
                         </div>
 
-                        <!-- Lazy Sharp SVG Thumbnail -->
-                        <div class="qr-thumb-box">
-                            <img src="{{ route('admin.dynamic-qrs.svg', [$qr, 'inline' => 1, 'size' => 140]) }}" 
-                                 alt="{{ $qr->code }}" 
-                                 loading="lazy" 
+                        <!-- Lazy Sharp SVG Thumbnail (Click to open Lightbox) -->
+                        <div class="qr-thumb-box qr-lightbox-trigger"
+                             data-id="{{ $qr->id }}"
+                             data-code="{{ $qr->code }}"
+                             data-label="{{ $qr->label }}"
+                             data-target="{{ $qr->target_url }}"
+                             data-encoded="{{ $qr->encoded_url }}"
+                             data-svg-url="{{ route('admin.dynamic-qrs.svg', [$qr, 'inline' => 1, 'size' => 320]) }}"
+                             data-png-download="{{ route('admin.dynamic-qrs.png', [$qr, 'size' => 1000]) }}"
+                             data-svg-download="{{ route('admin.dynamic-qrs.svg', [$qr, 'size' => 1000]) }}"
+                             data-pdf-download="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => $qr->template_type, 'dimension' => '85x55']) }}"
+                             title="Cliquer pour agrandir">
+                            <img src="{{ route('admin.dynamic-qrs.svg', [$qr, 'inline' => 1, 'size' => 140]) }}"
+                                 alt="{{ $qr->code }}"
+                                 loading="lazy"
                                  class="w-100 h-100 object-fit-contain">
                         </div>
                     </div>
 
                     <!-- Card Body -->
                     <div class="card-body p-3 flex-grow-1 d-flex flex-column">
-                        <div class="d-flex align-items-center justify-content-between gap-2 mb-1.5">
+                        <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
                             <h6 class="fw-bold text-dark mb-0 text-truncate" title="{{ $qr->label }}">{{ $qr->label }}</h6>
-                            <button type="button" 
-                                    class="status-pill-toggle toggle-status-btn" 
+                            <button type="button"
+                                    class="status-pill-toggle toggle-status-btn"
                                     data-id="{{ $qr->id }}"
                                     data-status="{{ $qr->status }}"
                                     title="Basculer le statut">
                                 @if($qr->status === 'active')
-                                    <span class="badge bg-success-subtle text-success border border-success-subtle small py-0.5 px-2" id="statusBadgeGrid{{ $qr->id }}">Actif</span>
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle small py-1 px-2" id="statusBadgeGrid{{ $qr->id }}">Actif</span>
                                 @else
-                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle small py-0.5 px-2" id="statusBadgeGrid{{ $qr->id }}">Inactif</span>
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle small py-1 px-2" id="statusBadgeGrid{{ $qr->id }}">Inactif</span>
                                 @endif
                             </button>
                         </div>
 
-                        <!-- Client -->
-                        <div class="small text-muted mb-2 text-truncate">
-                            @if($qr->client)
-                                <i class="bi bi-building text-primary me-1"></i>{{ $qr->client->name }}
-                            @else
-                                <i class="bi bi-dash text-muted me-1"></i>Non assigné
-                            @endif
+                        <!-- Client & Template -->
+                        <div class="d-flex align-items-center justify-content-between small text-muted mb-3">
+                            <span class="text-truncate" style="max-width: 170px;">
+                                @if($qr->client)
+                                    <i class="bi bi-building text-primary me-1"></i>{{ $qr->client->name }}
+                                @else
+                                    <i class="bi bi-dash text-muted me-1"></i>Non assigné
+                                @endif
+                            </span>
+                            <span class="badge bg-light text-secondary border font-mono" style="font-size: 0.68rem;">
+                                {{ ucfirst(str_replace('_', ' ', $qr->template_type)) }}
+                            </span>
                         </div>
 
                         <!-- Target URL box with quick edit -->
@@ -818,41 +1247,117 @@
                             <div class="min-w-0 text-truncate font-mono small text-muted" style="font-size: 0.74rem;" id="qrTargetGridText{{ $qr->id }}">
                                 <i class="bi bi-link-45deg text-primary me-1"></i><span class="target-text">{{ $qr->target_url }}</span>
                             </div>
-                            <button type="button" 
-                                    class="btn btn-sm btn-light border py-0.5 px-1.5 rounded-2 edit-target-btn flex-shrink-0" 
-                                    style="font-size: 0.72rem;"
-                                    data-id="{{ $qr->id }}" 
-                                    data-code="{{ $qr->code }}" 
+                            <button type="button"
+                                    class="target-edit-pill-btn edit-target-btn"
+                                    data-id="{{ $qr->id }}"
+                                    data-code="{{ $qr->code }}"
                                     data-target="{{ $qr->target_url }}"
                                     title="Changer l'URL">
-                                <i class="bi bi-pencil"></i>
+                                <i class="bi bi-pencil-square text-primary"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Card Footer Actions Dock -->
+                    <!-- Card Footer Unified Actions Dropdown -->
                     <div class="card-footer bg-white border-top p-2.5 px-3 d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center gap-1.5">
-                            <a href="{{ route('qr.redirect', ['code' => $qr->code]) }}" target="_blank" class="dyn-action-btn btn-redirect" title="Tester scan 302">
-                                <i class="bi bi-box-arrow-up-right"></i>
-                            </a>
-                            <a href="{{ route('admin.dynamic-qrs.svg', $qr) }}" class="dyn-action-btn" title="Télécharger SVG">
-                                <i class="bi bi-filetype-svg"></i>
-                            </a>
-                            <a href="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => $qr->template_type, 'dimension' => '85x55']) }}" class="dyn-action-btn btn-pdf" title="Télécharger PDF">
-                                <i class="bi bi-file-earmark-pdf"></i>
-                            </a>
-                        </div>
-                        <div class="d-flex align-items-center gap-1.5">
-                            <a href="{{ route('admin.dynamic-qrs.show', $qr) }}" class="dyn-action-btn" title="Consulter">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a href="{{ route('admin.dynamic-qrs.edit', $qr) }}" class="dyn-action-btn" title="Modifier">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <button type="button" class="dyn-action-btn btn-delete delete-qr-btn" data-id="{{ $qr->id }}" data-code="{{ $qr->code }}" data-label="{{ $qr->label }}" title="Supprimer">
-                                <i class="bi bi-trash"></i>
+                        <span class="text-muted font-mono" style="font-size: 0.72rem;">
+                            <i class="bi bi-clock me-1"></i>{{ $qr->created_at?->format('d/m/Y') }}
+                        </span>
+                        <div class="dropdown">
+                            <button type="button"
+                                    class="dyn-actions-trigger"
+                                    data-bs-toggle="dropdown"
+                                    data-bs-popper-config='{"strategy":"fixed"}'
+                                    aria-expanded="false">
+                                <span>Actions</span>
+                                <i class="bi bi-three-dots-vertical text-muted" style="font-size: 0.82rem;"></i>
                             </button>
+                            <ul class="dropdown-menu dropdown-menu-end dyn-dropdown-menu">
+                                <li class="dropdown-header">Gestion &amp; Routage</li>
+                                <li>
+                                    <button type="button"
+                                            class="dropdown-item qr-lightbox-trigger"
+                                            data-id="{{ $qr->id }}"
+                                            data-code="{{ $qr->code }}"
+                                            data-label="{{ $qr->label }}"
+                                            data-target="{{ $qr->target_url }}"
+                                            data-encoded="{{ $qr->encoded_url }}"
+                                            data-svg-url="{{ route('admin.dynamic-qrs.svg', [$qr, 'inline' => 1, 'size' => 320]) }}"
+                                            data-png-download="{{ route('admin.dynamic-qrs.png', [$qr, 'size' => 1000]) }}"
+                                            data-svg-download="{{ route('admin.dynamic-qrs.svg', [$qr, 'size' => 1000]) }}"
+                                            data-pdf-download="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => $qr->template_type, 'dimension' => '85x55']) }}">
+                                        <i class="bi bi-qr-code-scan text-primary"></i>
+                                        <span>Aperçu QR Grand Format</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button type="button"
+                                            class="dropdown-item edit-target-btn"
+                                            data-id="{{ $qr->id }}"
+                                            data-code="{{ $qr->code }}"
+                                            data-target="{{ $qr->target_url }}">
+                                        <i class="bi bi-lightning-charge-fill text-warning"></i>
+                                        <span>Modifier l'URL cible (302)</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('qr.redirect', ['code' => $qr->code]) }}" target="_blank">
+                                        <i class="bi bi-box-arrow-up-right text-info"></i>
+                                        <span>Tester la redirection live</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('admin.dynamic-qrs.show', $qr) }}">
+                                        <i class="bi bi-eye text-secondary"></i>
+                                        <span>Détails &amp; Télémétrie</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('admin.dynamic-qrs.edit', $qr) }}">
+                                        <i class="bi bi-pencil text-secondary"></i>
+                                        <span>Configuration complète</span>
+                                    </a>
+                                </li>
+
+                                <li><hr class="dropdown-divider my-1"></li>
+                                <li class="dropdown-header">Exports &amp; Impression</li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => $qr->template_type, 'dimension' => '85x55']) }}">
+                                        <i class="bi bi-file-earmark-pdf text-danger"></i>
+                                        <span>Carte PDF (85×55mm)</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('admin.dynamic-qrs.pdf', ['dynamicQr' => $qr->id, 'template' => $qr->template_type, 'dimension' => 'a6']) }}">
+                                        <i class="bi bi-printer text-success"></i>
+                                        <span>Plaque A6 (105×148mm)</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('admin.dynamic-qrs.svg', $qr) }}">
+                                        <i class="bi bi-filetype-svg text-primary"></i>
+                                        <span>Télécharger SVG Vectoriel</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('admin.dynamic-qrs.png', $qr) }}">
+                                        <i class="bi bi-filetype-png text-info"></i>
+                                        <span>Télécharger PNG HD</span>
+                                    </a>
+                                </li>
+
+                                <li><hr class="dropdown-divider my-1"></li>
+                                <li>
+                                    <button type="button"
+                                            class="dropdown-item dropdown-item-danger delete-qr-btn"
+                                            data-id="{{ $qr->id }}"
+                                            data-code="{{ $qr->code }}"
+                                            data-label="{{ $qr->label }}">
+                                        <i class="bi bi-trash"></i>
+                                        <span>Supprimer ce QR code</span>
+                                    </button>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -862,6 +1367,96 @@
                 <p class="text-muted">Aucun QR code trouvé dans la sélection.</p>
             </div>
         @endforelse
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- FLOATING BULK SELECTION COMMAND BAR                                       -->
+<!-- ========================================================================= -->
+<div class="dyn-bulk-action-bar" id="dynBulkActionBar">
+    <div class="d-flex align-items-center gap-2 pe-2 border-end border-secondary">
+        <span class="badge rounded-pill text-white font-mono" style="background-color: #6320ee;" id="bulkSelectedCount">0</span>
+        <span class="small fw-semibold">sélectionné(s)</span>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <button type="button" class="btn btn-sm btn-outline-light py-1 px-2 d-inline-flex align-items-center gap-1" style="font-size: 0.78rem; border-radius: 8px;" onclick="submitBulkAction('activate')">
+            <i class="bi bi-check-circle text-success"></i> Activer
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-light py-1 px-2 d-inline-flex align-items-center gap-1" style="font-size: 0.78rem; border-radius: 8px;" onclick="submitBulkAction('deactivate')">
+            <i class="bi bi-pause-circle text-warning"></i> Suspendre
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-light py-1 px-2 d-inline-flex align-items-center gap-1" style="font-size: 0.78rem; border-radius: 8px;" data-bs-toggle="modal" data-bs-target="#bulkTargetModal">
+            <i class="bi bi-lightning-charge text-info"></i> Changer l'URL
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-light py-1 px-2 d-inline-flex align-items-center gap-1" style="font-size: 0.78rem; border-radius: 8px;" data-bs-toggle="modal" data-bs-target="#bulkAssignClientModal">
+            <i class="bi bi-building"></i> Assigner Client
+        </button>
+        <button type="button" class="btn btn-sm btn-danger py-1 px-2 d-inline-flex align-items-center gap-1" style="font-size: 0.78rem; border-radius: 8px;" onclick="confirmBulkDelete()">
+            <i class="bi bi-trash"></i> Supprimer
+        </button>
+    </div>
+
+    <button type="button" class="btn btn-sm btn-link text-secondary p-0 ms-1" id="btnClearBulkSelection" title="Désélectionner tout">
+        <i class="bi bi-x-lg"></i>
+    </button>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODAL: QUICK QR LIGHTBOX PREVIEW & DOWNLOAD                               -->
+<!-- ========================================================================= -->
+<div class="modal fade" id="qrLightboxModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header border-bottom py-3 px-4 bg-light bg-opacity-75">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="vp-code-badge" id="lightboxCodeBadge">VP-XXXXXX</span>
+                    <h6 class="modal-title fw-bold text-dark mb-0 text-truncate" style="max-width: 210px;" id="lightboxLabelText">Aperçu QR</h6>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <div class="p-3 bg-white border rounded-4 shadow-xs d-inline-flex align-items-center justify-content-center mb-3" style="width: 240px; height: 240px;">
+                    <img src="" id="lightboxSvgImg" alt="QR Preview" class="w-100 h-100 object-fit-contain">
+                </div>
+
+                <!-- Encoded Permanent Link -->
+                <div class="mb-2 text-start">
+                    <label class="form-label small fw-bold text-muted mb-1" style="font-size: 0.7rem; text-transform: uppercase;">Lien Permanent Encodé (302)</label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" id="lightboxEncodedInput" class="form-control bg-light font-mono small" readonly style="border-radius: 8px 0 0 8px;">
+                        <button type="button" class="btn btn-outline-secondary" id="lightboxCopyEncodedBtn" style="border-radius: 0 8px 8px 0;">
+                            <i class="bi bi-clipboard"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Current Target Destination -->
+                <div class="mb-3 text-start">
+                    <label class="form-label small fw-bold text-muted mb-1" style="font-size: 0.7rem; text-transform: uppercase;">Destination Active</label>
+                    <div class="p-2 rounded-3 bg-light border font-mono small text-truncate text-secondary" id="lightboxTargetText"></div>
+                </div>
+
+                <!-- Direct Download Buttons -->
+                <div class="d-grid gap-2">
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <a href="#" id="lightboxSvgDownload" class="btn btn-sm btn-outline-primary w-100 fw-semibold py-2" style="border-radius: 9px;">
+                                <i class="bi bi-filetype-svg me-1"></i> Vector SVG
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="#" id="lightboxPngDownload" class="btn btn-sm btn-outline-info w-100 fw-semibold py-2" style="border-radius: 9px;">
+                                <i class="bi bi-filetype-png me-1"></i> PNG HD
+                            </a>
+                        </div>
+                    </div>
+                    <a href="#" id="lightboxPdfDownload" class="btn btn-sm text-white w-100 fw-semibold py-2 shadow-xs border-0" style="background-color: #6320ee; border-radius: 9px;">
+                        <i class="bi bi-file-earmark-pdf me-1"></i> Télécharger la Carte PDF Prête à Imprimer
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -892,9 +1487,9 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold small text-dark mb-1">Destination par défaut (URL) <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light text-muted" style="border-radius: 10px 0 0 10px; border-color: #e2e8f0;"><i class="bi bi-globe"></i></span>
-                            <input type="text" name="target_url" class="form-control filter-input" placeholder="https://..." required style="border-radius: 0 10px 10px 0;">
+                        <div class="position-relative">
+                            <i class="bi bi-globe position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="pointer-events: none;"></i>
+                            <input type="text" name="target_url" class="form-control filter-input" placeholder="https://..." required style="padding-left: 2.25rem !important;">
                         </div>
                         <div class="form-text small text-muted mt-1">Vous pourrez la changer à tout moment en 1 clic.</div>
                     </div>
@@ -927,7 +1522,7 @@
                 </div>
                 <div class="modal-footer border-top bg-light p-3">
                     <button type="button" class="btn btn-sm btn-light border" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-sm text-white px-4 fw-semibold shadow-sm" style="background-color: #6320ee; border-radius: 8px;">
+                    <button type="submit" class="btn btn-sm text-white px-4 fw-semibold shadow-sm border-0" style="background-color: #6320ee; border-radius: 8px;">
                         <i class="bi bi-check-lg me-1"></i> Créer le QR Code
                     </button>
                 </div>
@@ -969,9 +1564,9 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold small text-dark mb-1">Nouvelle URL de destination <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light text-muted" style="border-radius: 10px 0 0 10px; border-color: #e2e8f0;"><i class="bi bi-globe"></i></span>
-                            <input type="text" name="target_url" id="modalTargetUrlInput" class="form-control filter-input" placeholder="https://..." required style="border-radius: 0 10px 10px 0;">
+                        <div class="position-relative">
+                            <i class="bi bi-globe position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style="pointer-events: none;"></i>
+                            <input type="text" name="target_url" id="modalTargetUrlInput" class="form-control filter-input" placeholder="https://..." required style="padding-left: 2.25rem !important;">
                         </div>
                         <div class="form-text small text-muted mt-2">
                             Raccourcis rapides :
@@ -987,7 +1582,7 @@
                 </div>
                 <div class="modal-footer border-top bg-light p-3">
                     <button type="button" class="btn btn-sm btn-light border" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" id="targetSubmitBtn" class="btn btn-sm text-white px-3 fw-semibold shadow-sm" style="background-color: #6320ee; border-radius: 8px;">
+                    <button type="submit" id="targetSubmitBtn" class="btn btn-sm text-white px-3 fw-semibold shadow-sm border-0" style="background-color: #6320ee; border-radius: 8px;">
                         <i class="bi bi-check-lg me-1" id="targetSubmitIcon"></i>
                         <span id="targetSubmitText">Mettre à jour immédiatement</span>
                     </button>
@@ -1068,7 +1663,7 @@
                 </div>
                 <div class="modal-footer border-top bg-light p-3">
                     <button type="button" class="btn btn-sm btn-light border" data-bs-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-sm text-white px-4 shadow-sm fw-semibold" style="background-color: #6320ee; border-radius: 8px;">
+                    <button type="submit" class="btn btn-sm text-white px-4 shadow-sm fw-semibold border-0" style="background-color: #6320ee; border-radius: 8px;">
                         <i class="bi bi-magic me-1"></i> Générer le lot
                     </button>
                 </div>
@@ -1078,7 +1673,57 @@
 </div>
 
 <!-- ========================================================================= -->
-<!-- 6. MODAL: UNIFIED DELETE CONFIRMATION                                     -->
+<!-- 6. MODAL: BULK TARGET UPDATE & BULK CLIENT ASSIGN                         -->
+<!-- ========================================================================= -->
+<div class="modal fade" id="bulkTargetModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header border-bottom py-3 px-4 bg-light">
+                <h6 class="modal-title fw-bold text-dark mb-0"><i class="bi bi-lightning-charge-fill text-warning me-1"></i> Changer l'URL des QR sélectionnés</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <label class="form-label fw-semibold small text-dark mb-1">Nouvelle URL de destination commune</label>
+                <input type="text" id="bulkTargetUrlInput" class="form-control filter-input" placeholder="https://...">
+            </div>
+            <div class="modal-footer border-top bg-light p-3">
+                <button type="button" class="btn btn-sm btn-light border" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-sm text-white px-3 fw-semibold border-0" style="background-color: #6320ee; border-radius: 8px;" onclick="submitBulkTarget()">
+                    Appliquer à la sélection
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="bulkAssignClientModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header border-bottom py-3 px-4 bg-light">
+                <h6 class="modal-title fw-bold text-dark mb-0"><i class="bi bi-building text-primary me-1"></i> Assigner les QR sélectionnés à un client</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <label class="form-label fw-semibold small text-dark mb-1">Choisir le client</label>
+                <select id="bulkClientIdSelect" class="form-select filter-input">
+                    <option value="">— Retirer l'assignation (Pool général) —</option>
+                    @foreach($clients as $client)
+                        <option value="{{ $client->id }}">{{ $client->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="modal-footer border-top bg-light p-3">
+                <button type="button" class="btn btn-sm btn-light border" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-sm text-white px-3 fw-semibold border-0" style="background-color: #6320ee; border-radius: 8px;" onclick="submitBulkClientAssign()">
+                    Assigner
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- 7. MODAL: UNIFIED DELETE CONFIRMATION                                     -->
 <!-- ========================================================================= -->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
@@ -1191,22 +1836,23 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    // Update table row
                     const tableLink = document.getElementById(`qrTargetLink${activeEditQrId}`);
                     if (tableLink) {
                         tableLink.href = data.target_url;
+                        tableLink.title = data.target_url;
                         const textSpan = tableLink.querySelector('.target-text');
                         if (textSpan) textSpan.textContent = data.target_url;
                     }
-                    // Update grid card
                     const gridTarget = document.getElementById(`qrTargetGridText${activeEditQrId}`);
                     if (gridTarget) {
                         const textSpan = gridTarget.querySelector('.target-text');
                         if (textSpan) textSpan.textContent = data.target_url;
                     }
-                    // Update edit buttons data attributes
                     document.querySelectorAll(`.edit-target-btn[data-id="${activeEditQrId}"]`).forEach(btn => {
                         btn.setAttribute('data-target', data.target_url);
+                    });
+                    document.querySelectorAll(`.qr-lightbox-trigger[data-id="${activeEditQrId}"]`).forEach(el => {
+                        el.setAttribute('data-target', data.target_url);
                     });
 
                     if (targetModal) targetModal.hide();
@@ -1216,7 +1862,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
             .catch(() => {
-                // Fallback to traditional form submission
                 targetForm.submit();
             })
             .finally(() => {
@@ -1232,7 +1877,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.toggle-status-btn').forEach(btn => {
         btn.addEventListener('click', function () {
             const qrId = this.getAttribute('data-id');
-            const currentStatus = this.getAttribute('data-status');
 
             fetch(`/admin/dynamic-qrs/${qrId}/toggle-status`, {
                 method: 'POST',
@@ -1249,25 +1893,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     const newStatus = data.status;
                     const isActive = (newStatus === 'active');
 
-                    // Update Table Badge
                     const tableBadge = document.getElementById(`statusBadgeTable${qrId}`);
                     if (tableBadge) {
-                        tableBadge.className = isActive 
+                        tableBadge.className = isActive
                             ? 'badge rounded-pill bg-success-subtle text-success border border-success-subtle fw-semibold'
                             : 'badge rounded-pill bg-secondary-subtle text-secondary border border-secondary-subtle fw-semibold';
                         tableBadge.innerHTML = `<span class="d-inline-block rounded-circle ${isActive ? 'bg-success' : 'bg-secondary'} me-1" style="width: 6px; height: 6px;"></span>${isActive ? 'Actif' : 'Inactif'}`;
                     }
 
-                    // Update Grid Badge
                     const gridBadge = document.getElementById(`statusBadgeGrid${qrId}`);
                     if (gridBadge) {
                         gridBadge.className = isActive
-                            ? 'badge bg-success-subtle text-success border border-success-subtle small py-0.5 px-2'
-                            : 'badge bg-secondary-subtle text-secondary border border-secondary-subtle small py-0.5 px-2';
+                            ? 'badge bg-success-subtle text-success border border-success-subtle small py-1 px-2'
+                            : 'badge bg-secondary-subtle text-secondary border border-secondary-subtle small py-1 px-2';
                         gridBadge.textContent = isActive ? 'Actif' : 'Inactif';
                     }
 
-                    // Update buttons data-status
                     document.querySelectorAll(`.toggle-status-btn[data-id="${qrId}"]`).forEach(b => {
                         b.setAttribute('data-status', newStatus);
                     });
@@ -1281,7 +1922,138 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // 3. Unified Delete Modal
+    // 3. QR Lightbox Preview Modal
+    const lightboxModalEl = document.getElementById('qrLightboxModal');
+    const lightboxModal = lightboxModalEl ? new bootstrap.Modal(lightboxModalEl) : null;
+    const lightboxCodeBadge = document.getElementById('lightboxCodeBadge');
+    const lightboxLabelText = document.getElementById('lightboxLabelText');
+    const lightboxSvgImg = document.getElementById('lightboxSvgImg');
+    const lightboxEncodedInput = document.getElementById('lightboxEncodedInput');
+    const lightboxTargetText = document.getElementById('lightboxTargetText');
+    const lightboxSvgDownload = document.getElementById('lightboxSvgDownload');
+    const lightboxPngDownload = document.getElementById('lightboxPngDownload');
+    const lightboxPdfDownload = document.getElementById('lightboxPdfDownload');
+    const lightboxCopyEncodedBtn = document.getElementById('lightboxCopyEncodedBtn');
+
+    document.querySelectorAll('.qr-lightbox-trigger').forEach(trigger => {
+        trigger.addEventListener('click', function () {
+            if (!lightboxModal) return;
+            lightboxCodeBadge.textContent = this.getAttribute('data-code') || '';
+            lightboxLabelText.textContent = this.getAttribute('data-label') || '';
+            lightboxSvgImg.src = this.getAttribute('data-svg-url') || '';
+            lightboxEncodedInput.value = this.getAttribute('data-encoded') || '';
+            lightboxTargetText.textContent = this.getAttribute('data-target') || '';
+            lightboxSvgDownload.href = this.getAttribute('data-svg-download') || '#';
+            lightboxPngDownload.href = this.getAttribute('data-png-download') || '#';
+            lightboxPdfDownload.href = this.getAttribute('data-pdf-download') || '#';
+            lightboxModal.show();
+        });
+    });
+
+    if (lightboxCopyEncodedBtn && lightboxEncodedInput) {
+        lightboxCopyEncodedBtn.addEventListener('click', function () {
+            navigator.clipboard.writeText(lightboxEncodedInput.value).then(() => {
+                showToast('Lien permanent copié !');
+            });
+        });
+    }
+
+    // 4. Multi-Select Bulk Action Bar Logic
+    const selectAllCheckbox = document.getElementById('selectAllQrs');
+    const rowCheckboxes = document.querySelectorAll('.qr-row-checkbox');
+    const bulkActionBar = document.getElementById('dynBulkActionBar');
+    const bulkSelectedCount = document.getElementById('bulkSelectedCount');
+    const btnClearBulk = document.getElementById('btnClearBulkSelection');
+
+    function getSelectedIds() {
+        return Array.from(rowCheckboxes).filter(cb => cb.checked).map(cb => parseInt(cb.value, 10));
+    }
+
+    function updateBulkBarUI() {
+        const selectedIds = getSelectedIds();
+        rowCheckboxes.forEach(cb => {
+            const row = cb.closest('tr');
+            if (row) {
+                row.classList.toggle('row-selected', cb.checked);
+            }
+        });
+        if (bulkSelectedCount) bulkSelectedCount.textContent = selectedIds.length;
+        if (bulkActionBar) {
+            bulkActionBar.classList.toggle('active', selectedIds.length > 0);
+        }
+        if (selectAllCheckbox && rowCheckboxes.length > 0) {
+            selectAllCheckbox.checked = selectedIds.length === rowCheckboxes.length;
+            selectAllCheckbox.indeterminate = selectedIds.length > 0 && selectedIds.length < rowCheckboxes.length;
+        }
+    }
+
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function () {
+            rowCheckboxes.forEach(cb => { cb.checked = selectAllCheckbox.checked; });
+            updateBulkBarUI();
+        });
+    }
+
+    rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateBulkBarUI);
+    });
+
+    if (btnClearBulk) {
+        btnClearBulk.addEventListener('click', function () {
+            rowCheckboxes.forEach(cb => { cb.checked = false; });
+            if (selectAllCheckbox) selectAllCheckbox.checked = false;
+            updateBulkBarUI();
+        });
+    }
+
+    window.submitBulkAction = function (action, extraPayload = {}) {
+        const ids = getSelectedIds();
+        if (ids.length === 0) return;
+
+        fetch(`{{ route('admin.dynamic-qrs.bulk-action') }}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(Object.assign({ ids: ids, action: action }, extraPayload))
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.message);
+                setTimeout(() => window.location.reload(), 650);
+            } else {
+                alert(data.message || 'Erreur lors de l\'action groupée.');
+            }
+        })
+        .catch(() => {
+            alert('Erreur réseau.');
+        });
+    };
+
+    window.submitBulkTarget = function () {
+        const url = document.getElementById('bulkTargetUrlInput')?.value.trim();
+        if (!url) return alert('Veuillez saisir une URL valide.');
+        submitBulkAction('update_target', { target_url: url });
+    };
+
+    window.submitBulkClientAssign = function () {
+        const clientId = document.getElementById('bulkClientIdSelect')?.value || null;
+        submitBulkAction('assign_client', { client_id: clientId });
+    };
+
+    window.confirmBulkDelete = function () {
+        const ids = getSelectedIds();
+        if (ids.length === 0) return;
+        if (confirm(`Confirmez-vous la suppression définitive des ${ids.length} QR codes sélectionnés ?`)) {
+            submitBulkAction('delete');
+        }
+    };
+
+    // 5. Unified Delete Modal
     const deleteModalEl = document.getElementById('deleteConfirmModal');
     const deleteModal = deleteModalEl ? new bootstrap.Modal(deleteModalEl) : null;
     const deleteForm = document.getElementById('deleteConfirmForm');
@@ -1301,7 +2073,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // 4. Copy to clipboard helper with animated checkmark
+    // 6. Copy to clipboard helpers (Code & Encoded URL)
     document.querySelectorAll('.copy-btn').forEach(btn => {
         btn.addEventListener('click', function () {
             const code = this.getAttribute('data-code');
@@ -1311,18 +2083,30 @@ document.addEventListener('DOMContentLoaded', function () {
                 const icon = this.querySelector('i');
                 if (icon) {
                     icon.className = 'bi bi-check2 text-success';
-                    setTimeout(() => {
-                        icon.className = 'bi bi-clipboard';
-                    }, 1500);
+                    setTimeout(() => { icon.className = 'bi bi-clipboard'; }, 1500);
                 }
                 showToast(`Code copié : ${code}`);
-            }).catch(() => {
-                prompt('Copier le code :', code);
             });
         });
     });
 
-    // 5. Segmented View Switcher (Table vs Grid)
+    document.querySelectorAll('.copy-url-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const url = this.getAttribute('data-url');
+            if (!url) return;
+
+            navigator.clipboard.writeText(url).then(() => {
+                const icon = this.querySelector('i');
+                if (icon) {
+                    icon.className = 'bi bi-check2 text-success';
+                    setTimeout(() => { icon.className = 'bi bi-link-45deg'; }, 1500);
+                }
+                showToast(`Lien permanent copié : ${url}`);
+            });
+        });
+    });
+
+    // 7. Segmented View Switcher (Table vs Grid)
     const btnTable = document.getElementById('btnViewTable');
     const btnGrid = document.getElementById('btnViewGrid');
     const tableView = document.getElementById('dynamicQrsTableView');
