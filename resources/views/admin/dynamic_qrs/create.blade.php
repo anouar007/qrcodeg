@@ -352,29 +352,6 @@
     box-shadow: none !important;
 }
 
-/* Floating Clean Label Tag - FLOATS COMPLETELY OUTSIDE, NEVER TOUCHES MODULES */
-.cad-floating-tag {
-    position: absolute;
-    top: -24px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #0f172a;
-    color: #ffffff;
-    font-size: 0.62rem;
-    font-weight: 600;
-    padding: 1.5px 7px;
-    border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    letter-spacing: 0.4px;
-    pointer-events: none;
-    white-space: nowrap;
-    box-shadow: none !important;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    z-index: 25;
-}
-
 /* 4 Corner Figma Anchor Nodes */
 .cad-node {
     position: absolute;
@@ -447,7 +424,6 @@
     border-color: transparent !important;
     box-shadow: none !important;
 }
-#canvasViewport.clean-preview-mode .cad-floating-tag,
 #canvasViewport.clean-preview-mode .cad-node,
 #canvasViewport.clean-preview-mode .cad-resize-node {
     display: none !important;
@@ -979,13 +955,6 @@ input[type="range"].form-range::-moz-range-thumb {
                                          style="z-index: 10; left: 50%; top: 47.5%; width: 35%; aspect-ratio: 1 / 1; height: auto; transform: translate(-50%, -50%); touch-action: none;">
                                         <div class="qr-content-wrapper position-relative w-100 h-100 d-flex align-items-center justify-content-center p-0 cad-selection-box" 
                                              id="qrVisualContainer" style="background: #ffffff; aspect-ratio: 1 / 1; pointer-events: auto;">
-                                            
-                                            <!-- Floating Clean Label Tag - FLOATS COMPLETELY OUTSIDE, NEVER OVERLAPS -->
-                                            <div class="cad-floating-tag" id="tagQrLabel">
-                                                <i class="bi bi-qr-code"></i>
-                                                <span>QR Code</span>
-                                                <span class="opacity-75 font-mono" id="tagQrSizePct">35%</span>
-                                            </div>
 
                                             <div id="qrSvgWrapper" class="w-100 h-100 d-flex align-items-center justify-content-center" style="pointer-events: none; overflow: hidden; border-radius: 2px;">
                                                 @if(!empty($sampleQrSvg))
@@ -1013,14 +982,6 @@ input[type="range"].form-range::-moz-range-thumb {
                                          style="z-index: 12; left: 50%; top: 74%; transform: translate(-50%, -50%); touch-action: none; pointer-events: auto;">
                                         <div id="codeVisualContainer" class="px-2.5 py-1 rounded-2 border d-flex align-items-center justify-content-center position-relative" 
                                              style="background: transparent; pointer-events: auto;">
-                                            
-                                            <!-- Floating Clean Label Tag - Outside, Never Overlaps Content -->
-                                            <div class="cad-floating-tag" id="tagCodeLabel" style="top: -22px;">
-                                                <i class="bi bi-tag-fill"></i>
-                                                <span>Code Unique</span>
-                                                <span class="opacity-75 font-mono" id="tagCodeSizePt">15pt</span>
-                                            </div>
-
                                             <span id="codeDisplayText" class="font-mono fw-bold" style="font-size: 15px; color: #0f172a; letter-spacing: 1.5px; pointer-events: none;">
                                                 VP-984210
                                             </span>
@@ -1138,17 +1099,23 @@ input[type="range"].form-range::-moz-range-thumb {
                                 <div class="row g-2.5 mb-2.5">
                                     <div class="col-6">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <label class="studio-label mb-0" for="sliderCodeSize">Taille police</label>
-                                            <span class="small text-primary fw-semibold font-mono" id="lblCodeSizeVal" style="font-size: 0.72rem;">15 pt</span>
+                                            <label class="studio-label mb-0" for="numCodeSizeInput">Taille du code</label>
+                                            <div class="d-inline-flex align-items-center gap-1 bg-white border rounded-2 px-1.5 py-0.5 shadow-2xs" style="height: 26px;">
+                                                <input type="number" id="numCodeSizeInput" class="form-control border-0 p-0 text-end fw-bold font-mono text-primary bg-transparent shadow-none" min="4" max="120" step="0.5" value="15" style="width: 44px; height: 22px; font-size: 0.78rem;" title="Saisir la taille exacte du code unique (pt)">
+                                                <span class="text-muted fw-semibold font-mono" id="lblCodeSizeVal" style="font-size: 0.68rem;">pt</span>
+                                            </div>
                                         </div>
-                                        <input type="range" class="form-range" id="sliderCodeSize" min="8" max="42" value="15">
+                                        <input type="range" class="form-range" id="sliderCodeSize" min="4" max="72" step="0.5" value="15">
                                     </div>
                                     <div class="col-6">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <label class="studio-label mb-0" for="sliderCodeLetterSpacing">Espacement</label>
-                                            <span class="small text-primary fw-semibold font-mono" id="lblCodeLetterSpacingVal" style="font-size: 0.72rem;">1.5 pt</span>
+                                            <label class="studio-label mb-0" for="numCodeLetterSpacingInput">Espacement</label>
+                                            <div class="d-inline-flex align-items-center gap-1 bg-white border rounded-2 px-1.5 py-0.5 shadow-2xs" style="height: 26px;">
+                                                <input type="number" id="numCodeLetterSpacingInput" class="form-control border-0 p-0 text-end fw-bold font-mono text-primary bg-transparent shadow-none" min="0" max="20" step="0.5" value="1.5" style="width: 40px; height: 22px; font-size: 0.78rem;" title="Saisir l'espacement des lettres (pt)">
+                                                <span class="text-muted fw-semibold font-mono" id="lblCodeLetterSpacingVal" style="font-size: 0.68rem;">pt</span>
+                                            </div>
                                         </div>
-                                        <input type="range" class="form-range" id="sliderCodeLetterSpacing" min="0" max="6" step="0.5" value="1.5">
+                                        <input type="range" class="form-range" id="sliderCodeLetterSpacing" min="0" max="10" step="0.5" value="1.5">
                                     </div>
                                 </div>
 
@@ -2346,14 +2313,36 @@ document.addEventListener('DOMContentLoaded', function () {
         inputShowCode.value = checked ? '1' : '0';
     });
 
-    sliderCodeSize.addEventListener('input', function () {
-        const val = this.value;
-        lblCodeSizeVal.textContent = val + ' pt';
-        const tagCodeSize = document.getElementById('tagCodeSizePt');
-        if (tagCodeSize) tagCodeSize.textContent = val + 'pt';
+    const numCodeSizeInput = document.getElementById('numCodeSizeInput');
+
+    function applyCodeFontSize(rawVal, sourceEl) {
+        const parsed = parseFloat(rawVal);
+        if (isNaN(parsed)) return;
+        const val = Math.max(4, Math.min(120, parsed));
+        if (sourceEl !== sliderCodeSize && sliderCodeSize) {
+            sliderCodeSize.value = Math.min(72, val);
+        }
+        if (sourceEl !== numCodeSizeInput && numCodeSizeInput) {
+            numCodeSizeInput.value = val;
+        }
         codeText.style.fontSize = val + 'px';
         inputCodeFontSize.value = val;
         updateCoordLabels();
+    }
+
+    sliderCodeSize.addEventListener('input', function () {
+        applyCodeFontSize(this.value, sliderCodeSize);
+    });
+
+    numCodeSizeInput?.addEventListener('input', function () {
+        applyCodeFontSize(this.value, numCodeSizeInput);
+    });
+
+    numCodeSizeInput?.addEventListener('blur', function () {
+        const parsed = parseFloat(this.value);
+        const safeVal = isNaN(parsed) ? 15 : Math.max(4, Math.min(120, parsed));
+        this.value = safeVal;
+        applyCodeFontSize(safeVal, numCodeSizeInput);
     });
 
     pickerCodeColor.addEventListener('input', function () {
@@ -2370,14 +2359,29 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     const sliderCodeLetterSpacing = document.getElementById('sliderCodeLetterSpacing');
-    const lblCodeLetterSpacingVal = document.getElementById('lblCodeLetterSpacingVal');
+    const numCodeLetterSpacingInput = document.getElementById('numCodeLetterSpacingInput');
     const inputCodeLetterSpacing = document.getElementById('inputCodeLetterSpacing');
 
-    sliderCodeLetterSpacing?.addEventListener('input', function () {
-        const val = this.value;
-        lblCodeLetterSpacingVal.textContent = val + ' pt';
+    function applyCodeLetterSpacing(rawVal, sourceEl) {
+        const parsed = parseFloat(rawVal);
+        if (isNaN(parsed)) return;
+        const val = Math.max(0, Math.min(20, parsed));
+        if (sourceEl !== sliderCodeLetterSpacing && sliderCodeLetterSpacing) {
+            sliderCodeLetterSpacing.value = Math.min(10, val);
+        }
+        if (sourceEl !== numCodeLetterSpacingInput && numCodeLetterSpacingInput) {
+            numCodeLetterSpacingInput.value = val;
+        }
         codeText.style.letterSpacing = val + 'px';
         inputCodeLetterSpacing.value = val;
+    }
+
+    sliderCodeLetterSpacing?.addEventListener('input', function () {
+        applyCodeLetterSpacing(this.value, sliderCodeLetterSpacing);
+    });
+
+    numCodeLetterSpacingInput?.addEventListener('input', function () {
+        applyCodeLetterSpacing(this.value, numCodeLetterSpacingInput);
     });
 
     if (selectCodeFontFamily) {

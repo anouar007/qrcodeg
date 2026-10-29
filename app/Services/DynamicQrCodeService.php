@@ -18,18 +18,29 @@ class DynamicQrCodeService
     public function renderSvg(DynamicQrCode $qr, int $size = 300, string $fgHex = '#000000', string $bgHex = '#ffffff'): string
     {
         [$fgR, $fgG, $fgB] = $this->hexToRgb($fgHex);
-        [$bgR, $bgG, $bgB] = $this->hexToRgb($bgHex);
+        $isTransparent = (strtolower(trim($bgHex)) === 'transparent' || trim($bgHex) === '');
 
         $url = $qr->encoded_url;
 
         $qrGenerator = QrCode::format('svg')
             ->size($size)
             ->color($fgR, $fgG, $fgB)
-            ->backgroundColor($bgR, $bgG, $bgB)
             ->errorCorrection('H')
             ->margin(1);
 
-        return @$qrGenerator->generate($url);
+        if (! $isTransparent) {
+            [$bgR, $bgG, $bgB] = $this->hexToRgb($bgHex);
+            $qrGenerator->backgroundColor($bgR, $bgG, $bgB);
+        }
+
+        $svg = (string) @$qrGenerator->generate($url);
+
+        if ($isTransparent) {
+            // Remove the solid background <rect> emitted by BaconQrCode/SimpleQrCode so SVG background is 100% transparent in PDF and browsers
+            $svg = preg_replace('/<rect\b[^>]*x="0"\s+y="0"[^>]*\/>/i', '', $svg, 1) ?? $svg;
+        }
+
+        return $svg;
     }
 
     /**

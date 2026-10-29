@@ -670,4 +670,58 @@ class DynamicQrCodeEngineTest extends TestCase
 
         $this->assertNull(FileUpload::find($uploadModel->id));
     }
+
+    /**
+     * 18. Test transparent QR background in SVG/PDF, unique code numeric size input, and removal of floating tags
+     */
+    public function test_transparent_qr_background_and_code_size_input(): void
+    {
+        $createRes = $this->actingAs($this->admin, 'web')
+            ->get(route('admin.dynamic-qrs.create'));
+
+        $createRes->assertStatus(200);
+        $createRes->assertSee('id="numCodeSizeInput"', false);
+        $createRes->assertDontSee('cad-floating-tag', false);
+
+        $qr = DynamicQrCode::create([
+            'client_id' => $this->client->id,
+            'code' => 'VP-TRANSP',
+            'label' => 'Transparent QR Test',
+            'target_url' => 'https://example.com/transparent',
+            'template_type' => 'custom',
+            'status' => 'active',
+        ]);
+
+        $service = app(DynamicQrCodeService::class);
+        $svg = $service->renderSvg($qr, 300, '#000000', 'transparent');
+
+        $this->assertStringContainsString('<svg', $svg);
+        $this->assertStringNotContainsString('<rect x="0" y="0"', $svg);
+
+        $pdfRes = $this->actingAs($this->admin, 'web')
+            ->post(route('admin.dynamic-qrs.generate-pdf'), [
+                'client_id' => $this->client->id,
+                'quantity' => 1,
+                'label_prefix' => 'Transparent Batch',
+                'target_url' => 'https://example.com/transparent-batch',
+                'canvas_unit' => 'px',
+                'canvas_width' => 400,
+                'canvas_height' => 400,
+                'qr_x' => 50,
+                'qr_y' => 47.5,
+                'qr_size' => 35,
+                'qr_fg' => '#000000',
+                'qr_bg' => 'transparent',
+                'show_code' => '1',
+                'code_x' => 50,
+                'code_y' => 74,
+                'code_font_size' => 18.5,
+            ]);
+
+        $pdfRes->assertStatus(200);
+        $batchQr = DynamicQrCode::where('label', 'Transparent Batch')->first();
+        $this->assertNotNull($batchQr);
+        $this->assertEquals('transparent', $batchQr->design_config['qr_bg']);
+        $this->assertEquals(18.5, $batchQr->design_config['code_font_size']);
+    }
 }

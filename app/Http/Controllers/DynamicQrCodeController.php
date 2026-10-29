@@ -585,7 +585,7 @@ class DynamicQrCodeController extends Controller
             'show_code' => 'nullable',
             'code_x' => 'nullable|numeric|min:0|max:100',
             'code_y' => 'nullable|numeric|min:0|max:100',
-            'code_font_size' => 'nullable|numeric|min:6|max:120',
+            'code_font_size' => 'nullable|numeric|min:4|max:120',
             'code_color' => 'nullable|string|max:10',
             'code_bg' => 'nullable|string|max:20',
             'code_font_weight' => 'nullable|in:bold,normal,600,700,800',
