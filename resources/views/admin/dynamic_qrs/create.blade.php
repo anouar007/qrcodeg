@@ -179,41 +179,128 @@
     transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1), height 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Movable Elements */
-#draggableQr, #draggableCode {
+/* Figma-Grade Precision Selection System */
+.stage-element-wrapper {
     touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: outline 0.15s ease;
 }
-#qrVisualContainer {
-    border: 2px dashed #6320ee;
-    box-shadow: 0 8px 24px rgba(99, 32, 238, 0.25), 0 2px 6px rgba(0, 0, 0, 0.12);
-    transition: box-shadow 0.15s ease, border-color 0.15s ease;
-}
-#qrVisualContainer:hover {
-    box-shadow: 0 12px 28px rgba(99, 32, 238, 0.4), 0 4px 10px rgba(0, 0, 0, 0.15);
-    border-color: #4f46e5;
-}
-#codeVisualContainer {
-    border: 1.5px dashed #6320ee;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
-    transition: box-shadow 0.15s ease;
-}
-#codeVisualContainer:hover {
-    box-shadow: 0 6px 18px rgba(99, 32, 238, 0.25);
+.stage-element-wrapper:focus-visible {
+    outline: none !important;
 }
 
-/* Resize Handle */
-.resize-handle {
+/* Crisp hairline selection bounding box */
+.cad-selection-box {
+    border: 1.5px solid #6320ee;
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8), 0 4px 18px rgba(99, 32, 238, 0.2);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.cad-selection-box:hover,
+.stage-element-wrapper:focus .cad-selection-box,
+.stage-element-wrapper.is-dragging .cad-selection-box {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.95), 0 6px 22px rgba(79, 70, 229, 0.32);
+}
+
+/* Floating Clean Label Tag - FLOATS COMPLETELY OUTSIDE, NEVER TOUCHES MODULES */
+.cad-floating-tag {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 0.62rem;
+    font-weight: 600;
+    padding: 1.5px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.4px;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.25);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 25;
+}
+
+/* 4 Corner Figma Anchor Nodes */
+.cad-node {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    background: #ffffff;
+    border: 1.5px solid #6320ee;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+    z-index: 20;
+}
+.cad-node-tl { top: -4.5px; left: -4.5px; }
+.cad-node-tr { top: -4.5px; right: -4.5px; }
+.cad-node-bl { bottom: -4.5px; left: -4.5px; }
+
+/* Refined NWSE Corner Resize Handle (Sits on Vertex Outside Modules) */
+.cad-resize-node {
+    position: absolute;
+    bottom: -6.5px;
+    right: -6.5px;
+    width: 14px;
+    height: 14px;
+    background: #6320ee;
+    border: 2px solid #ffffff;
+    border-radius: 3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
     cursor: nwse-resize !important;
     touch-action: none !important;
-    transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, box-shadow 0.15s ease;
 }
-.resize-handle:hover,
-.resize-handle.is-resizing {
-    transform: scale(1.25);
-    background-color: #4f46e5 !important;
-    box-shadow: 0 0 14px rgba(99, 32, 238, 0.8) !important;
+.cad-resize-node i {
+    font-size: 8px;
+    color: #ffffff;
+    pointer-events: none;
+}
+.cad-resize-node:hover,
+.cad-resize-node.is-resizing {
+    transform: scale(1.35);
+    background-color: #4338ca;
+    box-shadow: 0 0 12px rgba(99, 32, 238, 0.7);
+}
+
+/* Code unique selection box */
+#codeVisualContainer {
+    border: 1px dashed rgba(99, 32, 238, 0.55);
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: all 0.15s ease;
+}
+#codeVisualContainer:hover,
+#draggableCode:focus #codeVisualContainer,
+#draggableCode.is-dragging #codeVisualContainer {
+    border-color: #6320ee;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8), 0 3px 12px rgba(99, 32, 238, 0.15);
+}
+
+/* Clean Preview Mode (Toggle to hide all inspector boxes/nodes) */
+#canvasViewport.clean-preview-mode .cad-selection-box {
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+#canvasViewport.clean-preview-mode #codeVisualContainer {
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+#canvasViewport.clean-preview-mode .cad-floating-tag,
+#canvasViewport.clean-preview-mode .cad-node,
+#canvasViewport.clean-preview-mode .cad-resize-node {
+    display: none !important;
 }
 
 /* Alignment Guide Lines */
@@ -502,6 +589,10 @@ input[type="range"].form-range::-moz-range-thumb {
                                         <i class="bi bi-stars"></i>
                                         <span>Aligner Tout</span>
                                     </button>
+                                    <button type="button" class="btn btn-sm btn-light border py-1 px-2.5 fw-semibold d-flex align-items-center gap-1 shadow-xs" id="btnToggleCleanPreview" title="Masquer / Afficher les repères pour voir le rendu final pur" style="border-radius: 6px; font-size: 0.74rem;">
+                                        <i class="bi bi-eye" id="iconCleanPreview"></i>
+                                        <span id="lblCleanPreviewText">Aperçu Net</span>
+                                    </button>
                                 </div>
                             </div>
 
@@ -523,12 +614,20 @@ input[type="range"].form-range::-moz-range-thumb {
                                     <div id="guideLineH" class="position-absolute start-0 end-0" style="top: 50%; height: 1px; border-top: 1.5px dashed #6320ee; display: none; z-index: 8; pointer-events: none;"></div>
 
                                     <!-- Movable QR Code Box (1:1 Ratio) -->
-                                    <div id="draggableQr" class="position-absolute cursor-grab d-flex align-items-center justify-content-center" 
+                                    <div id="draggableQr" class="position-absolute cursor-grab d-flex align-items-center justify-content-center stage-element-wrapper" 
                                          tabindex="0" role="region" aria-label="Zone QR interactive" title="Zone QR (Glisser pour déplacer • Flèches du clavier pour micro-ajustement)"
                                          style="z-index: 10; left: 50%; top: 48%; width: 38%; aspect-ratio: 1 / 1; height: auto; transform: translate(-50%, -50%); touch-action: none;">
-                                        <div class="qr-content-wrapper position-relative w-100 h-100 d-flex align-items-center justify-content-center p-0 rounded-2" 
-                                             id="qrVisualContainer" style="background: #ffffff; aspect-ratio: 1 / 1; pointer-events: auto; overflow: hidden;">
-                                            <div id="qrSvgWrapper" class="w-100 h-100 d-flex align-items-center justify-content-center" style="pointer-events: none;">
+                                        <div class="qr-content-wrapper position-relative w-100 h-100 d-flex align-items-center justify-content-center p-0 cad-selection-box" 
+                                             id="qrVisualContainer" style="background: #ffffff; aspect-ratio: 1 / 1; pointer-events: auto;">
+                                            
+                                            <!-- Floating Clean Label Tag - FLOATS COMPLETELY OUTSIDE, NEVER OVERLAPS -->
+                                            <div class="cad-floating-tag" id="tagQrLabel">
+                                                <i class="bi bi-qr-code"></i>
+                                                <span>QR Code</span>
+                                                <span class="opacity-75 font-mono" id="tagQrSizePct">38%</span>
+                                            </div>
+
+                                            <div id="qrSvgWrapper" class="w-100 h-100 d-flex align-items-center justify-content-center" style="pointer-events: none; overflow: hidden; border-radius: 2px;">
                                                 @if(!empty($sampleQrSvg))
                                                     {!! $sampleQrSvg !!}
                                                 @else
@@ -536,34 +635,34 @@ input[type="range"].form-range::-moz-range-thumb {
                                                 @endif
                                             </div>
 
-                                            <!-- CAD 4-Corner Anchors for Pro Appearance -->
-                                            <div class="position-absolute top-0 start-0 bg-white border border-primary rounded-circle" style="width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; pointer-events: none;"></div>
-                                            <div class="position-absolute top-0 end-0 bg-white border border-primary rounded-circle" style="width: 7px; height: 7px; margin: -3.5px -3.5px 0 0; pointer-events: none;"></div>
-                                            <div class="position-absolute bottom-0 start-0 bg-white border border-primary rounded-circle" style="width: 7px; height: 7px; margin: 0 0 -3.5px -3.5px; pointer-events: none;"></div>
+                                            <!-- CAD 4-Corner Anchors (Figma Style, Sits Outside) -->
+                                            <div class="cad-node cad-node-tl"></div>
+                                            <div class="cad-node cad-node-tr"></div>
+                                            <div class="cad-node cad-node-bl"></div>
 
-                                            <!-- Drag Handle Indicator Pill -->
-                                            <span class="position-absolute top-0 start-50 translate-middle badge bg-primary text-white shadow-xs" style="font-size: 0.6rem; padding: 2px 7px; letter-spacing: 0.5px; pointer-events: none;">
-                                                <i class="bi bi-arrows-move"></i> QR
-                                            </span>
-
-                                            <!-- Large, Highly Grabbable Resize Handle -->
-                                            <div id="qrResizeHandle" class="resize-handle position-absolute bottom-0 end-0 bg-primary text-white rounded-circle shadow-sm" style="width: 24px; height: 24px; margin: -10px -10px 0 0; cursor: nwse-resize; z-index: 30; display: flex; align-items: center; justify-content: center; pointer-events: auto;" title="Glisser pour redimensionner">
-                                                <i class="bi bi-arrows-angle-expand" style="font-size: 11px; pointer-events: none;"></i>
+                                            <!-- Refined Corner Resize Handle (Sits on Vertex Outside Modules) -->
+                                            <div id="qrResizeHandle" class="cad-resize-node" title="Glisser pour redimensionner">
+                                                <i class="bi bi-arrows-angle-expand"></i>
                                             </div>
                                         </div>
                                     </div>
 
                                     <!-- Movable Unique Code Box -->
-                                    <div id="draggableCode" class="position-absolute cursor-grab" 
+                                    <div id="draggableCode" class="position-absolute cursor-grab stage-element-wrapper" 
                                          tabindex="0" role="region" aria-label="Zone Code Unique interactive" title="Zone Code Unique (Glisser pour déplacer • Flèches du clavier pour micro-ajustement)"
                                          style="z-index: 12; left: 50%; top: 78%; transform: translate(-50%, -50%); touch-action: none; pointer-events: auto;">
-                                        <div id="codeVisualContainer" class="px-2.5 py-1 rounded-2 border d-flex align-items-center justify-content-center" 
-                                             style="background: transparent; border-color: rgba(99, 32, 238, 0.5) !important; border-style: dashed !important; pointer-events: auto;">
+                                        <div id="codeVisualContainer" class="px-2.5 py-1 rounded-2 border d-flex align-items-center justify-content-center position-relative" 
+                                             style="background: transparent; pointer-events: auto;">
+                                            
+                                            <!-- Floating Clean Label Tag - Outside, Never Overlaps Content -->
+                                            <div class="cad-floating-tag" id="tagCodeLabel" style="top: -22px;">
+                                                <i class="bi bi-tag-fill"></i>
+                                                <span>Code Unique</span>
+                                                <span class="opacity-75 font-mono" id="tagCodeSizePt">15pt</span>
+                                            </div>
+
                                             <span id="codeDisplayText" class="font-mono fw-bold" style="font-size: 15px; color: #0f172a; letter-spacing: 1.5px; pointer-events: none;">
                                                 VP-984210
-                                            </span>
-                                            <span class="position-absolute top-0 start-50 translate-middle badge bg-dark text-white shadow-xs" style="font-size: 0.58rem; padding: 1.5px 6px; pointer-events: none;">
-                                                <i class="bi bi-tag-fill me-0.5"></i> Code Unique
                                             </span>
                                         </div>
                                     </div>
@@ -1284,6 +1383,8 @@ document.addEventListener('DOMContentLoaded', function () {
     sliderQrSize.addEventListener('input', function () {
         const val = this.value;
         lblQrSizeVal.textContent = val + '%';
+        const tagQrSize = document.getElementById('tagQrSizePct');
+        if (tagQrSize) tagQrSize.textContent = val + '%';
         draggableQr.style.width = val + '%';
         draggableQr.style.aspectRatio = '1 / 1';
         draggableQr.style.height = 'auto';
@@ -1414,6 +1515,8 @@ document.addEventListener('DOMContentLoaded', function () {
     sliderCodeSize.addEventListener('input', function () {
         const val = this.value;
         lblCodeSizeVal.textContent = val + ' pt';
+        const tagCodeSize = document.getElementById('tagCodeSizePt');
+        if (tagCodeSize) tagCodeSize.textContent = val + 'pt';
         codeText.style.fontSize = val + 'px';
         inputCodeFontSize.value = val;
         updateCoordLabels();
@@ -1557,6 +1660,28 @@ document.addEventListener('DOMContentLoaded', function () {
         inputCodeY.value = '78';
 
         updateCoordLabels();
+        triggerStagePulse();
+    });
+
+    // Clean Preview Mode Toggle (Aperçu Net sans repères)
+    const btnToggleCleanPreview = document.getElementById('btnToggleCleanPreview');
+    const iconCleanPreview = document.getElementById('iconCleanPreview');
+    const lblCleanPreviewText = document.getElementById('lblCleanPreviewText');
+    let isCleanPreview = false;
+
+    btnToggleCleanPreview?.addEventListener('click', function () {
+        isCleanPreview = !isCleanPreview;
+        viewport.classList.toggle('clean-preview-mode', isCleanPreview);
+        this.classList.toggle('btn-primary', isCleanPreview);
+        this.classList.toggle('text-white', isCleanPreview);
+        this.classList.toggle('btn-light', !isCleanPreview);
+        if (isCleanPreview) {
+            if (iconCleanPreview) iconCleanPreview.className = 'bi bi-eye-slash me-1';
+            if (lblCleanPreviewText) lblCleanPreviewText.textContent = 'Repères Masqués';
+        } else {
+            if (iconCleanPreview) iconCleanPreview.className = 'bi bi-eye me-1';
+            if (lblCleanPreviewText) lblCleanPreviewText.textContent = 'Aperçu Net';
+        }
         triggerStagePulse();
     });
 
