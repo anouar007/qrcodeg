@@ -23,7 +23,7 @@
     <nav class="navbar navbar-expand-lg navbar-light sticky-top py-2.5 navbar-public-glass">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2.5" href="{{ route('home') }}">
-                <div class="sidebar-brand-mark shadow-sm" style="width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%);">
+                <div class="sidebar-brand-mark shadow-sm" style="width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg, #5736e9 0%, #4326c9 100%);">
                     <i class="bi bi-qr-code-scan text-white fs-5"></i>
                 </div>
                 <div class="d-flex flex-column">
@@ -130,10 +130,10 @@
             <div class="row g-4 mb-4">
                 <div class="col-lg-4 col-md-6">
                     <div class="d-flex align-items-center gap-2.5 mb-3">
-                        <div class="sidebar-brand-mark shadow-sm" style="width: 36px; height: 36px; border-radius: 9px; background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%);">
+                        <div class="sidebar-brand-mark shadow-sm" style="width: 36px; height: 36px; border-radius: 9px; background: linear-gradient(135deg, #5736e9 0%, #4326c9 100%);">
                             <i class="bi bi-qr-code-scan text-white fs-6"></i>
                         </div>
-                        <span class="fw-bold fs-4 text-white brand-font">YNS<span style="color: #a855f7;">NFC</span> &amp; QR</span>
+                        <span class="fw-bold fs-4 text-white brand-font">YNS<span style="color: #7e63f5;">NFC</span> &amp; QR</span>
                     </div>
                     <p class="text-secondary small pe-lg-4 lh-base">
                         Plateforme tout-en-un de gestion de Cartes de Visite Digitales, Menus &amp; Catalogues Interactifs, Tags NFC et QR Codes Dynamiques. Modifiez vos contenus en temps réel sans jamais réimprimer vos supports.

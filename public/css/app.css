@@ -5,22 +5,22 @@
    ========================================================================== */
 
 :root {
-    /* Core Vibrant Violet & Pure White Modern SaaS Palette (YNS NFC Style) */
-    --primary: #6320ee;
-    --primary-rgb: 99, 32, 238;
-    --primary-hover: #5015d8;
-    --primary-light: #f3f0ff;
-    --primary-glow: rgba(99, 32, 238, 0.35);
-    --primary-gradient: linear-gradient(135deg, #6320ee 0%, #7c3aed 100%);
-    --primary-gradient-subtle: linear-gradient(135deg, rgba(99, 32, 238, 0.08) 0%, rgba(124, 58, 237, 0.05) 100%);
+    /* Core Vibrant Violet & Pure White Modern SaaS Palette (YNS NFC Style - #5736e9) */
+    --primary: #5736e9;
+    --primary-rgb: 87, 54, 233;
+    --primary-hover: #4326c9;
+    --primary-light: #ece8fc;
+    --primary-glow: rgba(87, 54, 233, 0.35);
+    --primary-gradient: linear-gradient(135deg, #5736e9 0%, #7e63f5 100%);
+    --primary-gradient-subtle: linear-gradient(135deg, rgba(87, 54, 233, 0.08) 0%, rgba(126, 99, 245, 0.05) 100%);
 
     --secondary: #64748b;
     --secondary-rgb: 100, 116, 139;
     --secondary-hover: #475569;
     --secondary-glow: rgba(100, 116, 139, 0.3);
 
-    --cyan-accent: #6320ee;
-    --violet-accent: #7c3aed;
+    --cyan-accent: #5736e9;
+    --violet-accent: #7e63f5;
     --fuchsia-accent: #a855f7;
 
     --success: #16a34a;
@@ -38,9 +38,9 @@
     --danger-subtle: rgba(239, 68, 68, 0.12);
     --danger-glow: rgba(239, 68, 68, 0.4);
 
-    --info: #6320ee;
-    --info-rgb: 99, 32, 238;
-    --info-subtle: #f3f0ff;
+    --info: #5736e9;
+    --info-rgb: 87, 54, 233;
+    --info-subtle: #ece8fc;
 
     /* Backgrounds & Crisp White Surfaces */
     --body-bg: #f8fafc;
@@ -55,7 +55,7 @@
     --sidebar-gradient: #ffffff;
     --sidebar-slate: #ffffff;
     --sidebar-hover: #f8fafc;
-    --sidebar-active-gradient: #6320ee;
+    --sidebar-active-gradient: #5736e9;
     --sidebar-text: #64748b;
     --sidebar-text-hover: #0f172a;
     --sidebar-text-active: #ffffff;
@@ -171,7 +171,7 @@ code, .font-mono {
     width: 34px;
     height: 34px;
     border-radius: 8px;
-    background: #6320ee;
+    background: #5736e9;
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -226,7 +226,7 @@ code, .font-mono {
 }
 
 .sidebar-link.active {
-    background: #6320ee !important;
+    background: #5736e9 !important;
     color: #ffffff !important;
     font-weight: 600;
     box-shadow: 0 4px 14px rgba(99, 32, 238, 0.25);
@@ -264,7 +264,7 @@ code, .font-mono {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: #6320ee;
+    background: #5736e9;
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -687,7 +687,7 @@ code, .font-mono {
     padding: 0.28rem 0.65rem;
     border-radius: 8px;
     background: #f3f0ff;
-    color: #6320ee;
+    color: #5736e9;
     border: 1px solid #ddd6fe;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     text-decoration: none;
@@ -728,7 +728,7 @@ code, .font-mono {
     transition: color 0.15s ease;
 }
 .breadcrumb-custom a:hover {
-    color: #6320ee;
+    color: #5736e9;
 }
 .breadcrumb-custom li.active {
     color: #0f172a;
@@ -1046,7 +1046,7 @@ code, .font-mono {
     width: 68px;
     height: 68px;
     border-radius: 20px;
-    background: linear-gradient(135deg, #6320ee 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #5736e9 0%, #7c3aed 100%);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1101,16 +1101,16 @@ code, .font-mono {
     width: 100%;
 }
 .quick-fill-btn:hover {
-    border-color: #6320ee;
+    border-color: #5736e9;
     background: #f5f3ff;
-    color: #6320ee;
+    color: #5736e9;
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(99, 32, 238, 0.10);
 }
 .quick-fill-btn.active {
-    border-color: #6320ee;
+    border-color: #5736e9;
     background: #f5f3ff;
-    color: #6320ee;
+    color: #5736e9;
     box-shadow: 0 0 0 2px rgba(99, 32, 238, 0.22);
 }
 .quick-fill-btn .chip-role {
@@ -1130,7 +1130,7 @@ code, .font-mono {
     max-width: 100%;
 }
 .quick-fill-btn.active .chip-email {
-    color: #6320ee;
+    color: #5736e9;
 }
 
 /* Modern Input Controls with Subtle Floating Feel */
@@ -1176,13 +1176,13 @@ code, .font-mono {
     font-weight: 400;
 }
 .guest-input-control:focus {
-    border-color: #6320ee;
+    border-color: #5736e9;
     background: #ffffff;
     box-shadow: 0 0 0 4px rgba(99, 32, 238, 0.12);
     outline: none;
 }
 .guest-input-group:focus-within .guest-input-icon {
-    color: #6320ee;
+    color: #5736e9;
     transform: scale(1.08);
 }
 .guest-input-control.is-invalid {
@@ -1206,7 +1206,7 @@ code, .font-mono {
     z-index: 6;
 }
 .guest-password-toggle:hover {
-    color: #6320ee;
+    color: #5736e9;
     background: rgba(99, 32, 238, 0.08);
 }
 
@@ -1217,7 +1217,7 @@ code, .font-mono {
     font-weight: 700;
     letter-spacing: -0.01em;
     color: #ffffff;
-    background: linear-gradient(135deg, #6320ee 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #5736e9 0%, #7c3aed 100%);
     border: none;
     border-radius: 14px;
     box-shadow: 0 10px 24px -4px rgba(99, 32, 238, 0.42);
@@ -1252,7 +1252,7 @@ code, .font-mono {
 }
 .guest-alt-box:hover {
     background: #f1f5f9;
-    border-color: #6320ee;
+    border-color: #5736e9;
 }
 
 @media (max-width: 576px) {
@@ -1365,8 +1365,8 @@ code, .font-mono {
 
 /* Button Primary */
 .btn-primary {
-    background: #6320ee;
-    border: 1px solid #6320ee;
+    background: #5736e9;
+    border: 1px solid #5736e9;
     color: #ffffff;
     border-radius: 8px;
     font-weight: 500;
@@ -1483,16 +1483,16 @@ code, .font-mono {
 
 /* Outline Buttons */
 .btn-outline-primary {
-    border: 1px solid #6320ee;
-    color: #6320ee;
+    border: 1px solid #5736e9;
+    color: #5736e9;
     background: transparent;
     border-radius: 8px;
     font-weight: 500;
 }
 
 .btn-outline-primary:hover {
-    background: #6320ee;
-    border-color: #6320ee;
+    background: #5736e9;
+    border-color: #5736e9;
     color: #ffffff;
     box-shadow: 0 4px 12px rgba(99, 32, 238, 0.25);
 }
