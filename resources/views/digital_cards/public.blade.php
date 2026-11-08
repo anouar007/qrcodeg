@@ -348,6 +348,32 @@
                     </a>
                 </div>
             @endif
+
+            {{-- Interactive Restaurant / Brand Menu CTA Banner --}}
+            @php
+                $menuCfg = $card->menu_config ?? [];
+                $isMenuActive = !empty($menuCfg['enabled']) && !empty($menuCfg['categories']);
+                $menuBtnLabel = $menuCfg['button_label'] ?? ($menuCfg['title'] ?? 'Consulter le Menu / Catalogue');
+                $menuSubtitle = $menuCfg['subtitle'] ?? 'Parcourir nos produits, plats et tarifs';
+                $menuCatsCount = is_array($menuCfg['categories'] ?? null) ? count($menuCfg['categories']) : 0;
+            @endphp
+            @if($isMenuActive)
+                <div class="mt-2.5 pt-2">
+                    <a href="{{ route('digital-cards.public.menu', $card->slug) }}" class="custom-link-card text-start" style="background: linear-gradient(135deg, {{ $primaryColor }}33 0%, rgba(255,255,255,0.08) 100%); border-color: {{ $primaryColor }}88;">
+                        <div class="link-icon-wrap" style="background: var(--primary-color); color: #ffffff;">
+                            <i class="fa-solid fa-utensils"></i>
+                        </div>
+                        <div class="link-content">
+                            <div class="link-title d-flex align-items-center gap-2">
+                                <span>{{ $menuBtnLabel }}</span>
+                                <span class="badge rounded-pill" style="background: var(--primary-color); font-size: 0.62rem;">{{ $menuCatsCount }} cat.</span>
+                            </div>
+                            <div class="link-subtitle">{{ $menuSubtitle }}</div>
+                        </div>
+                        <i class="bi bi-arrow-right-circle-fill fs-5" style="color: var(--primary-color);"></i>
+                    </a>
+                </div>
+            @endif
         </div>
 
         @php
@@ -369,7 +395,11 @@
                         $target = '_blank';
                         $iconClass = 'bi bi-link-45deg';
 
-                        if ($type === 'phone') {
+                        if ($type === 'menu' || $val === '#menu' || str_ends_with($val, '/menu')) {
+                            $url = route('digital-cards.public.menu', $card->slug);
+                            $target = '_self';
+                            $iconClass = 'fa-solid fa-utensils';
+                        } elseif ($type === 'phone') {
                             $url = 'tel:' . preg_replace('/[^0-9+]/', '', $val);
                             $target = '_self';
                             $iconClass = 'bi bi-telephone-fill';
@@ -404,7 +434,7 @@
                             if (!str_starts_with($val, 'http')) $url = 'https://' . $val;
                             $iconClass = 'bi bi-globe';
                         } else {
-                            if (!str_starts_with($val, 'http') && !str_starts_with($val, 'mailto:') && !str_starts_with($val, 'tel:')) {
+                            if (!str_starts_with($val, 'http') && !str_starts_with($val, 'mailto:') && !str_starts_with($val, 'tel:') && !str_starts_with($val, '/')) {
                                 $url = 'https://' . $val;
                             }
                         }

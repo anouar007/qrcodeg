@@ -137,13 +137,18 @@
                                     </span>
                                 </td>
                                 <td class="pe-4 text-end">
-                                    <form action="{{ route('admin.digital-cards.destroy', $card) }}" method="POST" class="d-inline" onsubmit="return confirm('Confirmez-vous la suppression de cette carte ?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-link text-muted p-1 border-0" title="Supprimer">
-                                            <i class="bi bi-trash3" style="font-size: 1rem; color: #94a3b8;"></i>
-                                        </button>
-                                    </form>
+                                    <div class="d-inline-flex align-items-center gap-1">
+                                        <a href="{{ route('admin.digital-cards.menu.edit', $card) }}" class="btn btn-sm btn-outline-warning text-dark rounded-pill px-2.5 py-0.5 small fw-medium" title="Gérer le Menu / Catalogue Interactif" style="font-size: 0.75rem;">
+                                            <i class="fa-solid fa-utensils text-warning me-1"></i>Menu
+                                        </a>
+                                        <form action="{{ route('admin.digital-cards.destroy', $card) }}" method="POST" class="d-inline" onsubmit="return confirm('Confirmez-vous la suppression de cette carte ?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-link text-muted p-1 border-0" title="Supprimer">
+                                                <i class="bi bi-trash3" style="font-size: 1rem; color: #94a3b8;"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

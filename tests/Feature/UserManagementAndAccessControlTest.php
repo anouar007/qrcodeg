@@ -327,4 +327,61 @@ class UserManagementAndAccessControlTest extends TestCase
         $this->assertTrue(Gate::allows('view_clients') === false);
         $this->assertTrue(Gate::allows('export_digital_cards') === true);
     }
+
+    /**
+     * 11. Test Collaborator Dossier (show view), CSV export, quick password reset, and bulk actions
+     */
+    public function test_user_dossier_export_password_reset_and_bulk_actions(): void
+    {
+        $userA = User::factory()->create([
+            'name' => 'Nadia Berrada',
+            'email' => 'nadia@agency.test',
+            'username' => 'nberrada',
+            'status' => 'active',
+        ]);
+        $userB = User::factory()->create([
+            'name' => 'Omar Tazi',
+            'email' => 'omar@agency.test',
+            'username' => 'otazi',
+            'status' => 'active',
+        ]);
+
+        // 1. Collaborator Dossier View (show)
+        $showResponse = $this->actingAs($this->admin, 'web')->get(route('admin.users.show', $userA));
+        $showResponse->assertOk();
+        $showResponse->assertSee('Nadia Berrada');
+        $showResponse->assertSee('Matrice des Privilèges Effectifs');
+
+        // 2. CSV Export
+        $exportResponse = $this->actingAs($this->admin, 'web')->get(route('admin.users.export'));
+        $exportResponse->assertOk();
+        $this->assertStringContainsString('text/csv', (string) $exportResponse->headers->get('Content-Type'));
+
+        // 3. Quick Password Reset
+        $resetResponse = $this->actingAs($this->admin, 'web')->post(route('admin.users.reset-password', $userA), [
+            'password' => 'NewStrongPass99!',
+            'password_confirmation' => 'NewStrongPass99!',
+        ]);
+        $resetResponse->assertRedirect();
+        $resetResponse->assertSessionHas('success');
+
+        // 4. Bulk Action: suspend & assign_role (while protecting current admin from self-suspension)
+        $bulkSuspend = $this->actingAs($this->admin, 'web')->post(route('admin.users.bulk-action'), [
+            'action' => 'suspend',
+            'user_ids' => [$userA->id, $userB->id, $this->admin->id],
+        ]);
+        $bulkSuspend->assertRedirect();
+        $this->assertEquals('suspended', $userA->fresh()->status);
+        $this->assertEquals('suspended', $userB->fresh()->status);
+        $this->assertEquals('active', $this->admin->fresh()->status);
+
+        $bulkRole = $this->actingAs($this->admin, 'web')->post(route('admin.users.bulk-action'), [
+            'action' => 'assign_role',
+            'role_id' => $this->staffRole->id,
+            'user_ids' => [$userA->id, $userB->id],
+        ]);
+        $bulkRole->assertRedirect();
+        $this->assertTrue($userA->fresh()->hasRole('staff'));
+        $this->assertTrue($userB->fresh()->hasRole('staff'));
+    }
 }

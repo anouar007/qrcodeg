@@ -54,8 +54,9 @@ Route::get('/qr/{code}', [DynamicQrCodeController::class, 'redirect'])->name('qr
 Route::get('/q/{publicCode}', [DynamicQrController::class, 'handle'])->name('qr.scan');
 Route::get('/q/{publicCode}/vcard', [DynamicQrController::class, 'downloadVCard'])->name('qr.vcard');
 
-// Carte Visite Digitale (Public View & vCard Download)
+// Carte Visite Digitale (Public View, Interactive Menu & vCard Download)
 Route::get('/c/{slug}', [PublicDigitalCardController::class, 'show'])->name('digital-cards.public.show');
+Route::get('/c/{slug}/menu', [PublicDigitalCardController::class, 'showMenu'])->name('digital-cards.public.menu');
 Route::get('/c/{slug}/vcard', [PublicDigitalCardController::class, 'downloadVCard'])->name('digital-cards.public.vcard');
 
 // NFC Touch & Telemetry Redirection Endpoint
@@ -115,8 +116,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth:web')->group(function (
 
     // Users & Staff
     Route::middleware('permission:view_users,manage_users')->group(function () {
-        Route::resource('users', UserController::class);
+        Route::get('users/export', [UserController::class, 'exportCsv'])->name('users.export');
+        Route::post('users/bulk-action', [UserController::class, 'bulkAction'])->name('users.bulk-action');
         Route::post('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+        Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
+        Route::resource('users', UserController::class);
     });
 
     // Roles & Dynamic Permissions
@@ -136,6 +140,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth:web')->group(function (
     // Carte Visite Digitale
     Route::middleware('permission:view_digital_cards')->group(function () {
         Route::get('digital-cards/export', [DigitalCardController::class, 'exportCsv'])->name('digital-cards.export');
+        Route::post('digital-cards/upload-image', [DigitalCardController::class, 'uploadImage'])->name('digital-cards.upload-image');
+        Route::get('digital-cards/{digital_card}/menu', [DigitalCardController::class, 'manageMenu'])->name('digital-cards.menu.edit');
+        Route::put('digital-cards/{digital_card}/menu', [DigitalCardController::class, 'updateMenu'])->name('digital-cards.menu.update');
         Route::resource('digital-cards', DigitalCardController::class);
     });
 

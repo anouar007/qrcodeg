@@ -125,6 +125,10 @@ class QrTemplateStudioTest extends TestCase
 
     public function test_composite_image_endpoint_and_download_render_successfully(): void
     {
+        Storage::fake('public');
+        $fakeImg = UploadedFile::fake()->image('google_review_plaque.jpg', 800, 800);
+        $templatePath = $fakeImg->storeAs('images/templates', 'google_review_plaque.jpg', 'public');
+
         $qrCode = QrCode::create([
             'public_code' => 'VP-789123',
             'access_code' => 'SEC-998877',
@@ -137,7 +141,7 @@ class QrTemplateStudioTest extends TestCase
         $qrCode->design()->create([
             'foreground_color' => '#000000',
             'background_color' => '#ffffff',
-            'template_image_path' => 'images/templates/google_review_plaque.jpg',
+            'template_image_path' => $templatePath,
             'custom_template_config' => [
                 'qr_x' => 63.5,
                 'qr_y' => 65.5,

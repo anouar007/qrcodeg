@@ -141,6 +141,15 @@ class DigitalCardController extends Controller
                 'shadow_style' => 'glow',
                 'element_spacing' => '18px',
             ],
+            'gourmet' => [
+                'name' => 'Gourmet & Prestige',
+                'primary_color' => '#d97706',
+                'background_color' => '#18181b',
+                'font_family' => 'Playfair Display',
+                'border_radius' => '14px',
+                'shadow_style' => 'deep',
+                'element_spacing' => '14px',
+            ],
         ];
 
         $defaultTheme = $presets['modern'];
@@ -153,7 +162,42 @@ class DigitalCardController extends Controller
             ['id' => (string) Str::uuid(), 'type' => 'social', 'icon' => 'bi-linkedin', 'label' => 'LinkedIn Profile', 'url' => 'https://linkedin.com/in/profile', 'order' => 5],
         ];
 
-        return view('admin.digital_cards.create', compact('clients', 'presets', 'defaultTheme', 'defaultBlocks'));
+        $defaultMenu = [
+            'enabled' => true,
+            'title' => 'Notre Menu & Catalogue',
+            'button_label' => 'Consulter le Menu / Catalogue',
+            'subtitle' => 'Découvrez nos spécialités, offres et tarifs mis à jour en temps réel.',
+            'currency' => 'MAD',
+            'navigation_mode' => 'vertical',
+            'item_layout' => 'grid',
+            'design_preset' => 'card_theme',
+            'accent_color' => '#ea580c',
+            'bg_color' => '#0f172a',
+            'show_search' => true,
+            'show_images' => true,
+            'categories' => [
+                [
+                    'id' => 'cat_1',
+                    'name' => 'Sélection Signature',
+                    'icon' => 'fa-solid fa-star',
+                    'description' => 'Nos incontournables préparés avec soin.',
+                    'cover_image' => '',
+                    'items' => [
+                        [
+                            'id' => 'itm_1',
+                            'name' => 'Formule Exécutive / Offre Phare',
+                            'description' => 'Service complet sur mesure avec accompagnement dédié.',
+                            'price' => '250',
+                            'badge' => 'Populaire',
+                            'image_url' => '',
+                            'available' => true,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        return view('admin.digital_cards.create', compact('clients', 'presets', 'defaultTheme', 'defaultBlocks', 'defaultMenu'));
     }
 
     /**
@@ -178,6 +222,7 @@ class DigitalCardController extends Controller
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:6144',
             'theme_config' => 'nullable',
             'content_blocks' => 'nullable',
+            'menu_config' => 'nullable',
             'links' => 'nullable',
             'status' => 'required|in:active,inactive',
         ]);
@@ -219,6 +264,14 @@ class DigitalCardController extends Controller
             'shadow_style' => $request->input('shadow_style', 'soft'),
             'element_spacing' => $request->input('element_spacing', '14px'),
         ], $themeConfig);
+
+        // Process menu_config
+        $menuConfig = $request->input('menu_config');
+        if (is_string($menuConfig)) {
+            $menuConfig = json_decode($menuConfig, true) ?? null;
+        } elseif (! is_array($menuConfig)) {
+            $menuConfig = null;
+        }
 
         // Process content_blocks and links
         $contentBlocks = $request->input('content_blocks');
@@ -280,6 +333,7 @@ class DigitalCardController extends Controller
             'theme_config' => $themeConfig,
             'style_settings' => $themeConfig,
             'content_blocks' => $contentBlocks,
+            'menu_config' => $menuConfig,
             'links' => $cleanLinks,
             'status' => $validated['status'],
         ]);
@@ -341,6 +395,15 @@ class DigitalCardController extends Controller
                 'shadow_style' => 'glow',
                 'element_spacing' => '18px',
             ],
+            'gourmet' => [
+                'name' => 'Gourmet & Prestige',
+                'primary_color' => '#d97706',
+                'background_color' => '#18181b',
+                'font_family' => 'Playfair Display',
+                'border_radius' => '14px',
+                'shadow_style' => 'deep',
+                'element_spacing' => '14px',
+            ],
         ];
 
         $currentTheme = array_merge(
@@ -363,7 +426,23 @@ class DigitalCardController extends Controller
             }
         }
 
-        return view('admin.digital_cards.edit', compact('digitalCard', 'clients', 'presets', 'currentTheme', 'currentBlocks'));
+        $currentMenu = array_merge([
+            'enabled' => false,
+            'title' => 'Notre Menu & Catalogue',
+            'button_label' => 'Consulter le Menu / Catalogue',
+            'subtitle' => 'Découvrez nos spécialités, offres et tarifs mis à jour en temps réel.',
+            'currency' => 'MAD',
+            'navigation_mode' => 'vertical',
+            'item_layout' => 'grid',
+            'design_preset' => 'card_theme',
+            'accent_color' => '#ea580c',
+            'bg_color' => '#0f172a',
+            'show_search' => true,
+            'show_images' => true,
+            'categories' => [],
+        ], $digitalCard->menu_config ?? []);
+
+        return view('admin.digital_cards.edit', compact('digitalCard', 'clients', 'presets', 'currentTheme', 'currentBlocks', 'currentMenu'));
     }
 
     /**
@@ -388,6 +467,7 @@ class DigitalCardController extends Controller
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:6144',
             'theme_config' => 'nullable',
             'content_blocks' => 'nullable',
+            'menu_config' => 'nullable',
             'links' => 'nullable',
             'status' => 'required|in:active,inactive',
         ]);
@@ -440,6 +520,13 @@ class DigitalCardController extends Controller
             ],
             $themeConfig
         );
+
+        $menuConfig = $request->input('menu_config');
+        if (is_string($menuConfig)) {
+            $menuConfig = json_decode($menuConfig, true) ?? $digitalCard->menu_config;
+        } elseif (! is_array($menuConfig)) {
+            $menuConfig = $digitalCard->menu_config;
+        }
 
         $contentBlocks = $request->input('content_blocks');
         if (is_string($contentBlocks)) {
@@ -495,6 +582,7 @@ class DigitalCardController extends Controller
             'theme_config' => $themeConfig,
             'style_settings' => $themeConfig,
             'content_blocks' => $contentBlocks,
+            'menu_config' => $menuConfig,
             'links' => $cleanLinks,
             'status' => $validated['status'],
         ]);
@@ -508,6 +596,109 @@ class DigitalCardController extends Controller
 
         return redirect()->route('admin.digital-cards.index')
             ->with('success', "Digital Business Card '{$digitalCard->title}' updated successfully!");
+    }
+
+    /**
+     * Show the dedicated Interactive Menu & Catalogue Studio for a digital card.
+     */
+    public function manageMenu(DigitalCard $digitalCard)
+    {
+        $digitalCard->load('client');
+
+        $currentTheme = array_merge([
+            'primary_color' => '#4f46e5',
+            'background_color' => '#0f172a',
+            'font_family' => 'Outfit',
+            'border_radius' => '16px',
+            'shadow_style' => 'soft',
+            'element_spacing' => '14px',
+        ], $digitalCard->theme_config ?? ($digitalCard->style_settings ?? []));
+
+        $currentMenu = array_merge([
+            'enabled' => true,
+            'title' => 'Notre Menu & Catalogue',
+            'button_label' => 'Consulter le Menu / Catalogue',
+            'subtitle' => 'Découvrez nos spécialités, offres et tarifs mis à jour en temps réel.',
+            'currency' => 'MAD',
+            'navigation_mode' => 'vertical',
+            'item_layout' => 'grid',
+            'design_preset' => 'card_theme',
+            'accent_color' => $currentTheme['primary_color'] ?? '#ea580c',
+            'bg_color' => $currentTheme['background_color'] ?? '#0f172a',
+            'show_search' => true,
+            'show_images' => true,
+            'categories' => [
+                [
+                    'id' => 'cat_1',
+                    'name' => 'Sélection Signature',
+                    'icon' => 'fa-solid fa-star',
+                    'description' => 'Nos incontournables préparés avec soin.',
+                    'cover_image' => '',
+                    'items' => [
+                        [
+                            'id' => 'itm_1',
+                            'name' => 'Formule Exécutive / Offre Phare',
+                            'description' => 'Service complet sur mesure avec accompagnement dédié.',
+                            'price' => '250',
+                            'badge' => 'Populaire',
+                            'image_url' => '',
+                            'available' => true,
+                        ],
+                    ],
+                ],
+            ],
+        ], $digitalCard->menu_config ?? []);
+
+        return view('admin.digital_cards.menu', compact('digitalCard', 'currentTheme', 'currentMenu'));
+    }
+
+    /**
+     * Persist updated menu_config from the dedicated Menu & Catalogue Studio.
+     */
+    public function updateMenu(Request $request, DigitalCard $digitalCard)
+    {
+        $menuConfig = $request->input('menu_config');
+        if (is_string($menuConfig)) {
+            $menuConfig = json_decode($menuConfig, true) ?? [];
+        } elseif (! is_array($menuConfig)) {
+            $menuConfig = [];
+        }
+
+        $digitalCard->update([
+            'menu_config' => $menuConfig,
+        ]);
+
+        ActivityLog::log(
+            action: 'digital_card_menu_updated',
+            resourceType: 'DigitalCard',
+            resourceId: $digitalCard->id,
+            details: [
+                'name' => $digitalCard->title,
+                'navigation_mode' => $menuConfig['navigation_mode'] ?? 'vertical',
+                'categories_count' => count($menuConfig['categories'] ?? []),
+            ]
+        );
+
+        return redirect()->route('admin.digital-cards.menu.edit', $digitalCard)
+            ->with('success', 'Le Menu / Catalogue interactif a été enregistré et publié avec succès !');
+    }
+
+    /**
+     * Upload an image for a menu category cover or a menu product.
+     */
+    public function uploadImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp,svg,gif|max:6144',
+        ]);
+
+        $path = $request->file('image')->store('digital_cards/menu', 'public');
+
+        return response()->json([
+            'success' => true,
+            'url' => asset('storage/'.$path),
+            'path' => $path,
+        ]);
     }
 
     /**

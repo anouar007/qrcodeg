@@ -37,6 +37,25 @@ class PublicDigitalCardController extends Controller
     }
 
     /**
+     * Display the dedicated interactive restaurant/brand menu page for the card.
+     */
+    public function showMenu(Request $request, string $slug)
+    {
+        $card = DigitalCard::where('slug', $slug)
+            ->with('client')
+            ->firstOrFail();
+
+        if (! $card->isActive()) {
+            return response()->view('qr.unavailable', [
+                'title' => 'Digital Card Unavailable',
+                'message' => 'This digital business card is currently deactivated or unavailable.',
+            ], 200);
+        }
+
+        return view('digital_cards.menu', compact('card'));
+    }
+
+    /**
      * Generate and download the vCard (.vcf) file.
      */
     public function downloadVCard(string $slug)

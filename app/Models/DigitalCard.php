@@ -21,6 +21,7 @@ class DigitalCard extends Model
         'template_id',
         'theme_config',
         'content_blocks',
+        'menu_config',
         'views_count',
         'status',
         // Legacy & extended attributes
@@ -47,6 +48,7 @@ class DigitalCard extends Model
         return [
             'theme_config' => 'array',
             'content_blocks' => 'array',
+            'menu_config' => 'array',
             'links' => 'array',
             'layout_settings' => 'array',
             'style_settings' => 'array',
@@ -150,6 +152,26 @@ class DigitalCard extends Model
     public function getPublicUrlAttribute(): string
     {
         return url('/c/'.$this->slug);
+    }
+
+    public function getPublicMenuUrlAttribute(): string
+    {
+        return url('/c/'.$this->slug.'/menu');
+    }
+
+    public function hasActiveMenu(): bool
+    {
+        if (empty($this->menu_config) || ! is_array($this->menu_config)) {
+            return false;
+        }
+
+        if (empty($this->menu_config['enabled'])) {
+            return false;
+        }
+
+        $categories = $this->menu_config['categories'] ?? [];
+
+        return is_array($categories) && count($categories) > 0;
     }
 
     public static function generateUniqueSlug(): string

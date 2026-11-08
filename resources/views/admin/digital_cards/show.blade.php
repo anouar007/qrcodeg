@@ -42,6 +42,14 @@
             <a href="{{ $digitalCard->public_url }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                 <i class="bi bi-box-arrow-up-right me-1"></i>Voir en Direct
             </a>
+            @if($digitalCard->hasActiveMenu())
+                <a href="{{ $digitalCard->public_menu_url }}" target="_blank" class="btn btn-sm btn-outline-warning text-dark rounded-pill px-3">
+                    <i class="fa-solid fa-utensils me-1 text-warning"></i>Voir le Menu (/c/{{ $digitalCard->slug }}/menu)
+                </a>
+            @endif
+            <a href="{{ route('admin.digital-cards.menu.edit', $digitalCard) }}" class="btn btn-sm btn-warning text-dark fw-semibold rounded-pill px-3.5 shadow-sm">
+                <i class="fa-solid fa-utensils me-1"></i>Gérer le Menu / Catalogue
+            </a>
             <a href="{{ route('admin.digital-cards.edit', $digitalCard) }}" class="btn btn-sm text-white rounded-pill px-3.5 shadow-sm" style="background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%);">
                 <i class="bi bi-pencil-square me-1"></i>Modifier dans le Studio
             </a>
@@ -224,6 +232,50 @@
                         </div>
                     @else
                         <p class="text-muted small mb-0">Aucun lien n'a encore été configuré pour ce profil.</p>
+                    @endif
+                </div>
+            </div>
+
+            <!-- 4. Interactive Menu / Catalogue Summary -->
+            @php
+                $menuCfg = is_array($digitalCard->menu_config) ? $digitalCard->menu_config : [];
+                $menuCategories = $menuCfg['categories'] ?? [];
+            @endphp
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between">
+                    <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-utensils text-warning"></i>
+                        Menu Interactif & Catalogue ({{ count($menuCategories) }} catégorie(s))
+                    </h6>
+                    @if($digitalCard->hasActiveMenu())
+                        <a href="{{ $digitalCard->public_menu_url }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                            <i class="bi bi-box-arrow-up-right me-1"></i>Ouvrir le Menu Public
+                        </a>
+                    @endif
+                </div>
+                <div class="card-body p-4">
+                    @if($digitalCard->hasActiveMenu())
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 p-3 rounded-3 bg-light border">
+                            <div>
+                                <div class="fw-bold text-dark">{{ $menuCfg['title'] ?? 'Notre Menu & Catalogue' }}</div>
+                                <div class="small text-muted">Bouton : <span class="fw-semibold">{{ $menuCfg['button_label'] ?? 'Consulter notre Menu / Catalogue' }}</span> &bull; Devise : <span class="font-mono fw-bold">{{ $menuCfg['currency'] ?? 'MAD' }}</span></div>
+                            </div>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1">Menu Actif</span>
+                        </div>
+                        <div class="row g-2">
+                            @foreach($menuCategories as $cat)
+                                <div class="col-md-6">
+                                    <div class="p-2.5 rounded-3 border bg-white d-flex align-items-center justify-content-between">
+                                        <span class="fw-semibold small text-dark"><i class="fa-solid fa-layer-group text-primary me-1.5"></i>{{ $cat['name'] ?? 'Catégorie' }}</span>
+                                        <span class="badge bg-light text-muted border font-mono small">{{ is_array($cat['items'] ?? null) ? count($cat['items']) : 0 }} article(s)</span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-2 text-muted small">
+                            Aucun menu interactif n'est activé sur cette carte. Vous pouvez l'activer dans le Studio d'édition.
+                        </div>
                     @endif
                 </div>
             </div>
