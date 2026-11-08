@@ -19,66 +19,64 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 
-    <!-- Futuristic Public Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light sticky-top py-3 navbar-public-glass">
+    <!-- Clean Mobile-First Single-Page Production Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top py-2.5 navbar-public-glass">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('home') }}">
-                <div class="sidebar-brand-mark shadow-sm" style="width: 38px; height: 38px; border-radius: 10px;">
-                    <i class="bi bi-qr-code text-white fs-5"></i>
+            <a class="navbar-brand d-flex align-items-center gap-2.5" href="{{ route('home') }}">
+                <div class="sidebar-brand-mark shadow-sm" style="width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%);">
+                    <i class="bi bi-qr-code-scan text-white fs-5"></i>
                 </div>
                 <div class="d-flex flex-column">
-                    <span class="fw-bold fs-4 text-dark brand-font lh-1">QR<span class="text-primary">Studio</span></span>
-                    <span class="text-uppercase tracking-wider text-muted font-mono" style="font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;">Next-Gen SaaS</span>
+                    <span class="fw-extrabold fs-5 text-dark brand-font lh-1">YNS<span class="text-primary">NFC</span> <span class="fw-normal text-muted fs-6">&amp; QR</span></span>
+                    <span class="text-uppercase text-muted font-mono" style="font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em;">Smart Digital Studio</span>
                 </div>
             </a>
 
-            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav">
-                <span class="navbar-toggler-icon"></span>
+            <button class="navbar-toggler border rounded-3 p-2 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav" aria-controls="publicNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="bi bi-list fs-4 text-dark"></i>
             </button>
 
             <div class="collapse navbar-collapse" id="publicNav">
-                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 fw-medium gap-1">
+                <ul class="navbar-nav mx-auto my-3 my-lg-0 fw-semibold gap-1">
                     <li class="nav-item">
-                        <a class="nav-link px-3 rounded-pill {{ request()->routeIs('home') ? 'active text-primary fw-bold bg-primary-subtle' : 'text-secondary hover-primary' }}" href="{{ route('home') }}">Home</a>
+                        <a class="nav-link px-3 py-2 rounded-pill text-secondary hover-primary" href="{{ request()->routeIs('home') ? '#solutions' : route('home') . '#solutions' }}">Solutions</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-3 rounded-pill {{ request()->routeIs('features') ? 'active text-primary fw-bold bg-primary-subtle' : 'text-secondary hover-primary' }}" href="{{ route('features') }}">Features</a>
+                        <a class="nav-link px-3 py-2 rounded-pill text-secondary hover-primary" href="{{ request()->routeIs('home') ? '#interactive-demo' : route('home') . '#interactive-demo' }}">Aperçu Live</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-3 rounded-pill {{ request()->routeIs('types') ? 'active text-primary fw-bold bg-primary-subtle' : 'text-secondary hover-primary' }}" href="{{ route('types') }}">QR Types</a>
+                        <a class="nav-link px-3 py-2 rounded-pill text-secondary hover-primary" href="{{ request()->routeIs('home') ? '#how-it-works' : route('home') . '#how-it-works' }}">Fonctionnement</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-3 rounded-pill {{ request()->routeIs('pricing') ? 'active text-primary fw-bold bg-primary-subtle' : 'text-secondary hover-primary' }}" href="{{ route('pricing') }}">Pricing</a>
+                        <a class="nav-link px-3 py-2 rounded-pill text-secondary hover-primary" href="{{ request()->routeIs('home') ? '#use-cases' : route('home') . '#use-cases' }}">Secteurs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-3 rounded-pill {{ request()->routeIs('about') ? 'active text-primary fw-bold bg-primary-subtle' : 'text-secondary hover-primary' }}" href="{{ route('about') }}">About</a>
+                        <a class="nav-link px-3 py-2 rounded-pill text-secondary hover-primary" href="{{ request()->routeIs('home') ? '#faq' : route('home') . '#faq' }}">FAQ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link px-3 rounded-pill {{ request()->routeIs('contact') ? 'active text-primary fw-bold bg-primary-subtle' : 'text-secondary hover-primary' }}" href="{{ route('contact') }}">Contact</a>
+                        <a class="nav-link px-3 py-2 rounded-pill text-secondary hover-primary" href="{{ request()->routeIs('home') ? '#contact' : route('home') . '#contact' }}">Contact</a>
                     </li>
                 </ul>
 
-                <div class="d-flex align-items-center gap-2">
-                    <!-- Live SLA status pill -->
-                    <div class="d-none d-xl-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-light border me-2 small">
-                        <span class="status-dot-radar"></span>
-                        <span class="text-muted font-mono" style="font-size: 0.72rem; font-weight: 600;">99.99% Core</span>
-                    </div>
-
-                    <a href="{{ route('client.access') }}" class="btn btn-outline-primary px-3 rounded-pill fw-semibold border-2 d-inline-flex align-items-center gap-1">
-                        <i class="bi bi-key-fill text-primary"></i> Client Portal
+                <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 pb-2 pb-lg-0">
+                    <a href="{{ route('client.access') }}" class="btn btn-outline-primary px-3.5 py-2 rounded-pill fw-semibold border-2 d-inline-flex align-items-center justify-content-center gap-1.5">
+                        <i class="bi bi-key-fill text-primary"></i>
+                        <span>Espace Client</span>
                     </a>
                     @if(auth('web')->check())
-                        <a href="{{ route('admin.dashboard') }}" class="btn btn-primary-custom px-4 rounded-pill d-inline-flex align-items-center gap-2">
-                            <i class="bi bi-speedometer2"></i> Dashboard
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-primary-custom px-4 py-2 rounded-pill d-inline-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
                         </a>
                     @elseif(auth('client')->check())
-                        <a href="{{ route('client.dashboard') }}" class="btn btn-primary-custom px-4 rounded-pill d-inline-flex align-items-center gap-2">
-                            <i class="bi bi-grid-fill"></i> My Portal
+                        <a href="{{ route('client.dashboard') }}" class="btn btn-primary-custom px-4 py-2 rounded-pill d-inline-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-grid-fill"></i>
+                            <span>Mon Portail</span>
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="btn btn-primary-custom px-4 rounded-pill d-inline-flex align-items-center gap-2">
-                            <i class="bi bi-box-arrow-in-right"></i> Staff Sign In
+                        <a href="{{ route('login') }}" class="btn btn-primary-custom px-4 py-2 rounded-pill d-inline-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>Connexion</span>
                         </a>
                     @endif
                 </div>
@@ -126,59 +124,53 @@
         {{ $slot ?? '' }}
     </main>
 
-    <!-- Futuristic Cosmic Dark Footer -->
+    <!-- Clean Dark Production Footer -->
     <footer class="footer-futuristic text-white pt-5 pb-4 mt-auto position-relative overflow-hidden">
         <div class="container position-relative z-1">
             <div class="row g-4 mb-4">
                 <div class="col-lg-4 col-md-6">
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <div class="sidebar-brand-mark shadow-sm" style="width: 36px; height: 36px; border-radius: 9px;">
-                            <i class="bi bi-qr-code text-white fs-6"></i>
+                    <div class="d-flex align-items-center gap-2.5 mb-3">
+                        <div class="sidebar-brand-mark shadow-sm" style="width: 36px; height: 36px; border-radius: 9px; background: linear-gradient(135deg, #6320ee 0%, #4f46e5 100%);">
+                            <i class="bi bi-qr-code-scan text-white fs-6"></i>
                         </div>
-                        <span class="fw-bold fs-4 text-white brand-font">QR<span style="color: var(--cyan-accent);">Studio</span></span>
+                        <span class="fw-bold fs-4 text-white brand-font">YNS<span style="color: #a855f7;">NFC</span> &amp; QR</span>
                     </div>
                     <p class="text-secondary small pe-lg-4 lh-base">
-                        The ultimate dynamic QR code management platform for enterprises, agencies, and hospitality. Update destination content anywhere, anytime, without ever reprinting physical assets.
+                        Plateforme tout-en-un de gestion de Cartes de Visite Digitales, Menus &amp; Catalogues Interactifs, Tags NFC et QR Codes Dynamiques. Modifiez vos contenus en temps réel sans jamais réimprimer vos supports.
                     </p>
-                    <div class="d-flex gap-2 text-secondary fs-6">
-                        <a href="#" class="btn btn-sm btn-dark border border-secondary border-opacity-25 rounded-circle" style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;"><i class="bi bi-twitter-x"></i></a>
-                        <a href="#" class="btn btn-sm btn-dark border border-secondary border-opacity-25 rounded-circle" style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;"><i class="bi bi-linkedin"></i></a>
-                        <a href="#" class="btn btn-sm btn-dark border border-secondary border-opacity-25 rounded-circle" style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;"><i class="bi bi-github"></i></a>
-                        <a href="#" class="btn btn-sm btn-dark border border-secondary border-opacity-25 rounded-circle" style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;"><i class="bi bi-shield-check text-success"></i></a>
-                    </div>
                 </div>
 
-                <div class="col-lg-2 col-md-6">
-                    <h6 class="fw-bold text-white text-uppercase tracking-wider mb-3 font-mono" style="font-size: 0.8rem; letter-spacing: 0.08em;">Product</h6>
+                <div class="col-lg-2 col-6">
+                    <h6 class="fw-bold text-white text-uppercase tracking-wider mb-3 font-mono" style="font-size: 0.76rem; letter-spacing: 0.08em;">Navigation</h6>
                     <ul class="list-unstyled text-secondary small d-flex flex-column gap-2">
-                        <li><a href="{{ route('features') }}" class="text-secondary text-decoration-none hover-white">Dynamic QRs (VP)</a></li>
-                        <li><a href="{{ route('types') }}" class="text-secondary text-decoration-none hover-white">Smart NFC Tags</a></li>
-                        <li><a href="{{ route('pricing') }}" class="text-secondary text-decoration-none hover-white">Digital Cards</a></li>
-                        <li><a href="{{ route('client.access') }}" class="text-secondary text-decoration-none hover-white">Client Portal</a></li>
+                        <li><a href="#solutions" class="text-secondary text-decoration-none hover-white">Solutions</a></li>
+                        <li><a href="#interactive-demo" class="text-secondary text-decoration-none hover-white">Aperçu Interactif</a></li>
+                        <li><a href="#how-it-works" class="text-secondary text-decoration-none hover-white">Fonctionnement</a></li>
+                        <li><a href="#use-cases" class="text-secondary text-decoration-none hover-white">Secteurs</a></li>
                     </ul>
                 </div>
 
-                <div class="col-lg-2 col-md-6">
-                    <h6 class="fw-bold text-white text-uppercase tracking-wider mb-3 font-mono" style="font-size: 0.8rem; letter-spacing: 0.08em;">Solutions</h6>
+                <div class="col-lg-2 col-6">
+                    <h6 class="fw-bold text-white text-uppercase tracking-wider mb-3 font-mono" style="font-size: 0.76rem; letter-spacing: 0.08em;">Accès Rapide</h6>
                     <ul class="list-unstyled text-secondary small d-flex flex-column gap-2">
-                        <li><a href="#" class="text-secondary text-decoration-none hover-white">Hotels & Resorts</a></li>
-                        <li><a href="#" class="text-secondary text-decoration-none hover-white">Restaurants & Bars</a></li>
-                        <li><a href="#" class="text-secondary text-decoration-none hover-white">Retail & FMCG</a></li>
-                        <li><a href="#" class="text-secondary text-decoration-none hover-white">Corporate Events</a></li>
+                        <li><a href="{{ route('client.access') }}" class="text-secondary text-decoration-none hover-white">Portail Client (Clé)</a></li>
+                        <li><a href="{{ route('login') }}" class="text-secondary text-decoration-none hover-white">Administration</a></li>
+                        <li><a href="#faq" class="text-secondary text-decoration-none hover-white">Questions Fréquentes</a></li>
+                        <li><a href="#contact" class="text-secondary text-decoration-none hover-white">Nous Contacter</a></li>
                     </ul>
                 </div>
 
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-4 col-md-12">
                     <div class="p-4 rounded-4 border border-secondary border-opacity-25" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px);">
                         <div class="d-flex align-items-center gap-2 mb-2">
                             <span class="status-dot-radar"></span>
-                            <h6 class="fw-bold text-white text-uppercase tracking-wider mb-0 font-mono" style="font-size: 0.8rem;">Client Instant Access</h6>
+                            <h6 class="fw-bold text-white text-uppercase tracking-wider mb-0 font-mono" style="font-size: 0.78rem;">Accès Instantané Client</h6>
                         </div>
                         <p class="text-secondary small mb-3">
-                            Have a printed QR card or NFC token? Enter your unique access key to modify your live redirection destination.
+                            Vous possédez une carte NFC ou un chevalet QR ? Entrez votre code d'accès unique pour modifier votre lien de destination en direct.
                         </p>
                         <a href="{{ route('client.access') }}" class="btn btn-primary-custom w-100 rounded-pill py-2 text-white d-inline-flex align-items-center justify-content-center gap-2">
-                            <i class="bi bi-key-fill"></i> Enter Access Key
+                            <i class="bi bi-key-fill"></i> Entrer mon Code d'Accès
                         </a>
                     </div>
                 </div>
@@ -187,13 +179,13 @@
             <hr class="border-secondary border-opacity-25 my-4">
 
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-secondary small">
-                <p class="mb-2 mb-md-0 font-mono" style="font-size: 0.78rem;">&copy; {{ date('Y') }} QR Studio. Quantum Dynamic QR & NFC Engine.</p>
+                <p class="mb-2 mb-md-0 font-mono" style="font-size: 0.78rem;">&copy; {{ date('Y') }} YNS NFC &amp; QR Studio. Tous droits réservés.</p>
                 <div class="d-flex gap-3 font-mono" style="font-size: 0.78rem;">
-                    <a href="#" class="text-secondary text-decoration-none hover-white">Security & Privacy</a>
+                    <a href="#solutions" class="text-secondary text-decoration-none hover-white">Cartes NFC</a>
                     <span class="text-secondary opacity-50">•</span>
-                    <a href="#" class="text-secondary text-decoration-none hover-white">Terms of Service</a>
+                    <a href="#solutions" class="text-secondary text-decoration-none hover-white">Menus Digitaux</a>
                     <span class="text-secondary opacity-50">•</span>
-                    <a href="{{ route('contact') }}" class="text-secondary text-decoration-none hover-white">Telemetry SLA</a>
+                    <a href="#contact" class="text-secondary text-decoration-none hover-white">Support</a>
                 </div>
             </div>
         </div>
@@ -201,7 +193,19 @@
 
     <!-- Bootstrap 5 Bundle JS -->
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const navCollapse = document.getElementById('publicNav');
+        if (!navCollapse) return;
+        navCollapse.querySelectorAll('a.nav-link[href*="#"]').forEach(function (link) {
+            link.addEventListener('click', function () {
+                if (navCollapse.classList.contains('show') && window.bootstrap) {
+                    bootstrap.Collapse.getOrCreateInstance(navCollapse).hide();
+                }
+            });
+        });
+    });
+    </script>
     @stack('scripts')
 </body>
 </html>
