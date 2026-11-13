@@ -22,7 +22,7 @@ class NfcEncoder {
 
         const modalHtml = `
         <div class="modal fade" id="nfcEncoderModal" tabindex="-1" aria-labelledby="nfcEncoderModalLabel" aria-hidden="true" data-bs-backdrop="static">
-            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-dialog modal-dialog-centered mx-2 mx-sm-auto">
                 <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
                     <div class="p-3 text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #180d38 0%, #5736e9 100%);">
                         <div class="d-flex align-items-center gap-2">
@@ -39,7 +39,7 @@ class NfcEncoder {
                         <!-- Target Payload Info -->
                         <div class="p-2.5 rounded-3 bg-light border text-start mb-3">
                             <small class="text-muted text-uppercase d-block fw-bold" style="font-size: 0.68rem;" id="nfcTargetLabel">DESTINATION À GRAVER</small>
-                            <span class="font-mono text-dark small fw-bold text-truncate d-block" id="nfcTargetUrlDisplay">https://...</span>
+                            <span class="font-mono text-dark small fw-bold d-block text-break" id="nfcTargetUrlDisplay">https://...</span>
                         </div>
 
                         <!-- SUPPORTED STATE: ANIMATED PULSE -->
@@ -218,10 +218,11 @@ class NfcEncoder {
 
     copyTargetUrl(btn) {
         const url = document.getElementById('nfcTargetUrlDisplay')?.textContent || this.currentUrl || '';
-        if (!url || !navigator.clipboard) {
+        if (!url) {
             return;
         }
-        navigator.clipboard.writeText(url).then(() => {
+
+        const markCopied = () => {
             if (!btn) return;
             const original = btn.innerHTML;
             btn.innerHTML = '<i class="bi bi-check2 me-1"></i> URL copiée !';
@@ -230,7 +231,29 @@ class NfcEncoder {
                 btn.innerHTML = original;
                 btn.classList.replace('btn-success', 'btn-primary');
             }, 2000);
-        });
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(url).then(markCopied).catch(() => this.fallbackCopy(url, markCopied));
+        } else {
+            this.fallbackCopy(url, markCopied);
+        }
+    }
+
+    fallbackCopy(text, onSuccess) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try {
+            if (document.execCommand('copy') && typeof onSuccess === 'function') {
+                onSuccess();
+            }
+        } catch (e) {}
+        document.body.removeChild(ta);
     }
 
     async startNfcWrite() {
@@ -278,8 +301,15 @@ class NfcEncoder {
         } catch (error) {
             if (error.name === 'AbortError') return;
 
+            let msg = error.message || 'Le tag a été retiré trop vite ou est protégé en écriture.';
+            if (error.name === 'NotAllowedError') {
+                msg = 'Permission NFC refusée. Autorisez l\'accès NFC dans votre navigateur et réessayez.';
+            } else if (error.name === 'NotSupportedError') {
+                msg = 'NFC désactivé ou non pris en charge sur cet appareil. Vérifiez que le NFC est activé dans les paramètres du téléphone.';
+            }
+
             document.getElementById('nfcErrorBanner').classList.remove('d-none');
-            document.getElementById('nfcErrorMessage').textContent = 'Erreur d\'écriture : ' + (error.message || 'Le tag a été retiré trop vite ou est protégé en écriture.');
+            document.getElementById('nfcErrorMessage').textContent = 'Erreur d\'écriture : ' + msg;
             document.getElementById('nfcRetryBtn').classList.remove('d-none');
         }
     }

@@ -2,6 +2,29 @@
 
 @section('title', 'Encodeur NFC Intégré')
 
+@push('styles')
+<style>
+    @media (max-width: 575.98px) {
+        #nfcResourceTabs {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.35rem;
+        }
+        #nfcResourceTabs .nav-link {
+            font-size: 0.78rem;
+            padding: 0.45rem 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .nfc-resource-list {
+            max-height: none !important;
+            overflow-y: visible !important;
+        }
+    }
+</style>
+@endpush
+
 @section('breadcrumbs')
     <li class="breadcrumb-item"><a href="{{ route('admin.nfc-tags.index') }}" class="text-decoration-none text-muted">Cartes &amp; Puces NFC</a></li>
     <li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">Encodeur NFC</li>
@@ -10,15 +33,15 @@
 @section('content')
 <div class="container-fluid px-0">
     <!-- Top Executive Header -->
-    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-            <div class="d-flex align-items-center gap-3">
-                <div class="rounded-4 d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0" style="width: 52px; height: 52px; background: linear-gradient(135deg, #5736e9 0%, #3b22b3 100%);">
+    <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-3 mb-md-4 bg-white">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div class="d-flex align-items-start align-items-sm-center gap-3">
+                <div class="rounded-4 d-flex align-items-center justify-content-center text-white shadow-sm flex-shrink-0" style="width: 48px; height: 48px; background: linear-gradient(135deg, #5736e9 0%, #3b22b3 100%);">
                     <i class="bi bi-broadcast fs-4"></i>
                 </div>
-                <div>
-                    <div class="d-flex align-items-center gap-2 mb-1">
-                        <h1 class="h4 fw-bold text-dark mb-0">Encodeur NFC Intégré</h1>
+                <div class="min-w-0">
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                        <h1 class="h5 h4-md fw-bold text-dark mb-0">Encodeur NFC Intégré</h1>
                         <span id="nfcBrowserSupportBadge" class="badge bg-secondary-subtle text-secondary rounded-pill px-2.5 py-1" style="font-size: 0.72rem;">
                             <i class="bi bi-hourglass-split me-1"></i>Vérification Web NFC...
                         </span>
@@ -27,23 +50,23 @@
                 </div>
             </div>
 
-            <a href="{{ route('admin.nfc-tags.index') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+            <a href="{{ route('admin.nfc-tags.index') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 align-self-stretch align-self-md-center text-center">
                 <i class="bi bi-credit-card me-1"></i>Gérer les Tags NFC
             </a>
         </div>
     </div>
 
-    <div class="row g-4 align-items-start">
+    <div class="row g-3 g-md-4 align-items-start">
         <!-- LEFT COLUMN: Custom / Direct NFC Writer -->
         <div class="col-12 col-lg-5">
-            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 mb-3 mb-md-4">
                 <div class="d-flex align-items-center gap-2.5 mb-3 pb-3 border-bottom">
                     <div class="rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center flex-shrink-0" style="width: 38px; height: 38px;">
                         <i class="bi bi-pencil-square fs-5"></i>
                     </div>
                     <div>
-                        <h5 class="fw-bold text-dark mb-0">Encodage Direct (URL Libre)</h5>
-                        <p class="text-muted small mb-0">Saisissez n'importe quelle URL ou choisissez à droite</p>
+                        <h5 class="fw-bold text-dark mb-0 fs-6 fs-md-5">Encodage Direct (URL Libre)</h5>
+                        <p class="text-muted small mb-0">Saisissez n'importe quelle URL ou choisissez ci-dessous</p>
                     </div>
                 </div>
 
@@ -54,12 +77,12 @@
                     </div>
 
                     <div class="mb-3">
-                        <div class="d-flex align-items-center justify-content-between mb-1">
-                            <label for="nfcCustomUrl" class="form-label fw-semibold small text-dark mb-0">URL / Lien à graver sur la puce <span class="text-danger">*</span></label>
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-1.5">
+                            <label for="nfcCustomUrl" class="form-label fw-semibold small text-dark mb-0">URL / Lien à graver <span class="text-danger">*</span></label>
                             <div class="d-flex gap-1">
-                                <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill py-0 px-2" style="font-size: 0.68rem;" onclick="setNfcPrefix('https://')">https://</button>
-                                <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill py-0 px-2" style="font-size: 0.68rem;" onclick="setNfcPrefix('tel:')">tel:</button>
-                                <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill py-0 px-2" style="font-size: 0.68rem;" onclick="setNfcPrefix('mailto:')">mailto:</button>
+                                <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill py-0 px-2" style="font-size: 0.7rem;" onclick="setNfcPrefix('https://')">https://</button>
+                                <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill py-0 px-2" style="font-size: 0.7rem;" onclick="setNfcPrefix('tel:')">tel:</button>
+                                <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill py-0 px-2" style="font-size: 0.7rem;" onclick="setNfcPrefix('mailto:')">mailto:</button>
                             </div>
                         </div>
                         <div class="input-group">
@@ -76,7 +99,7 @@
             </div>
 
             <!-- Compatibility & Instructions Card -->
-            <div class="card border-0 shadow-sm rounded-4 p-4 bg-light">
+            <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4 bg-light">
                 <h6 class="fw-bold text-dark mb-2.5 d-flex align-items-center gap-2">
                     <i class="bi bi-info-circle-fill text-primary"></i>
                     <span>Comment graver une puce NFC ?</span>
@@ -95,19 +118,19 @@
 
         <!-- RIGHT COLUMN: Quick Picker from Existing Resources -->
         <div class="col-12 col-lg-7">
-            <div class="card border-0 shadow-sm rounded-4 p-4">
-                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 pb-3 border-bottom">
+            <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4">
+                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2.5 mb-3 pb-3 border-bottom">
                     <div class="d-flex align-items-center gap-2.5">
                         <div class="rounded-3 bg-success-subtle text-success d-flex align-items-center justify-content-center flex-shrink-0" style="width: 38px; height: 38px;">
                             <i class="bi bi-collection fs-5"></i>
                         </div>
                         <div>
-                            <h5 class="fw-bold text-dark mb-0">Sélection Rapide (1-Clic)</h5>
+                            <h5 class="fw-bold text-dark mb-0 fs-6 fs-md-5">Sélection Rapide (1-Clic)</h5>
                             <p class="text-muted small mb-0">Encodez directement un de vos tags, cartes, menus ou QR dynamiques</p>
                         </div>
                     </div>
 
-                    <div style="min-width: 210px;">
+                    <div class="w-100 w-md-auto" style="max-width: 260px;">
                         <div class="input-group input-group-sm">
                             <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
                             <input type="text" id="nfcResourceSearch" class="form-control border-start-0" placeholder="Rechercher..." oninput="filterNfcResources(this.value)">
@@ -139,7 +162,7 @@
                     </li>
                 </ul>
 
-                <div class="tab-content" style="max-height: 520px; overflow-y: auto;">
+                <div class="tab-content nfc-resource-list" style="max-height: 520px; overflow-y: auto;">
                     <!-- 1. NFC Tags -->
                     <div class="tab-pane fade show active" id="pane-tags" role="tabpanel">
                         @forelse($nfcTags as $tag)
@@ -147,16 +170,16 @@
                                 $tagUrl = route('nfc.redirect', ['id_or_uid' => $tag->tag_uid ?: $tag->id]);
                                 $tagLabel = $tag->label ?: ($tag->name ?: $tag->tag_uid);
                             @endphp
-                            <div class="nfc-resource-item d-flex align-items-center justify-content-between gap-2 p-2.5 border rounded-3 mb-2 bg-white" data-search="{{ strtolower($tagLabel . ' ' . $tag->tag_uid . ' ' . $tagUrl) }}">
+                            <div class="nfc-resource-item d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center justify-content-between gap-2 p-2.5 border rounded-3 mb-2 bg-white" data-search="{{ strtolower($tagLabel . ' ' . $tag->tag_uid . ' ' . $tagUrl) }}">
                                 <div class="min-w-0">
                                     <div class="fw-bold text-dark small text-truncate">{{ $tagLabel }}</div>
                                     <div class="font-mono text-muted text-truncate" style="font-size: 0.72rem;">{{ $tagUrl }}</div>
                                 </div>
                                 <div class="d-flex align-items-center gap-1.5 flex-shrink-0">
-                                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill px-2" title="Pré-remplir à gauche" onclick="prefillNfcEncoder('{{ addslashes($tagUrl) }}', 'Tag NFC - {{ addslashes($tagLabel) }}')">
-                                        <i class="bi bi-arrow-left"></i>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2.5" title="Pré-remplir à gauche" onclick="prefillNfcEncoder('{{ addslashes($tagUrl) }}', 'Tag NFC - {{ addslashes($tagLabel) }}')">
+                                        <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-success rounded-pill px-3 d-inline-flex align-items-center gap-1" onclick="window.nfcEncoder.writeUrl('{{ $tagUrl }}', 'Tag NFC - {{ addslashes($tagLabel) }}')">
+                                    <button type="button" class="btn btn-sm btn-success rounded-pill px-3 flex-grow-1 flex-sm-grow-0 d-inline-flex align-items-center justify-content-center gap-1" onclick="window.nfcEncoder.writeUrl('{{ $tagUrl }}', 'Tag NFC - {{ addslashes($tagLabel) }}')">
                                         <i class="bi bi-broadcast"></i>
                                         <span>Encoder</span>
                                     </button>
@@ -174,16 +197,16 @@
                                 $cardUrl = $card->public_url;
                                 $cardLabel = $card->full_name ?: $card->name;
                             @endphp
-                            <div class="nfc-resource-item d-flex align-items-center justify-content-between gap-2 p-2.5 border rounded-3 mb-2 bg-white" data-search="{{ strtolower($cardLabel . ' ' . $cardUrl) }}">
+                            <div class="nfc-resource-item d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center justify-content-between gap-2 p-2.5 border rounded-3 mb-2 bg-white" data-search="{{ strtolower($cardLabel . ' ' . $cardUrl) }}">
                                 <div class="min-w-0">
                                     <div class="fw-bold text-dark small text-truncate">{{ $cardLabel }}</div>
                                     <div class="font-mono text-muted text-truncate" style="font-size: 0.72rem;">{{ $cardUrl }}</div>
                                 </div>
                                 <div class="d-flex align-items-center gap-1.5 flex-shrink-0">
-                                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill px-2" title="Pré-remplir à gauche" onclick="prefillNfcEncoder('{{ addslashes($cardUrl) }}', 'Carte Digitale - {{ addslashes($cardLabel) }}')">
-                                        <i class="bi bi-arrow-left"></i>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2.5" title="Pré-remplir à gauche" onclick="prefillNfcEncoder('{{ addslashes($cardUrl) }}', 'Carte Digitale - {{ addslashes($cardLabel) }}')">
+                                        <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-success rounded-pill px-3 d-inline-flex align-items-center gap-1" onclick="window.nfcEncoder.writeUrl('{{ $cardUrl }}', 'Carte Digitale - {{ addslashes($cardLabel) }}')">
+                                    <button type="button" class="btn btn-sm btn-success rounded-pill px-3 flex-grow-1 flex-sm-grow-0 d-inline-flex align-items-center justify-content-center gap-1" onclick="window.nfcEncoder.writeUrl('{{ $cardUrl }}', 'Carte Digitale - {{ addslashes($cardLabel) }}')">
                                         <i class="bi bi-broadcast"></i>
                                         <span>Encoder</span>
                                     </button>
@@ -201,16 +224,16 @@
                                 $menuUrl = route('menu.public.show', $menu->slug);
                                 $menuLabel = $menu->brand_name . ' — ' . $menu->title;
                             @endphp
-                            <div class="nfc-resource-item d-flex align-items-center justify-content-between gap-2 p-2.5 border rounded-3 mb-2 bg-white" data-search="{{ strtolower($menuLabel . ' ' . $menuUrl) }}">
+                            <div class="nfc-resource-item d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center justify-content-between gap-2 p-2.5 border rounded-3 mb-2 bg-white" data-search="{{ strtolower($menuLabel . ' ' . $menuUrl) }}">
                                 <div class="min-w-0">
                                     <div class="fw-bold text-dark small text-truncate">{{ $menuLabel }}</div>
                                     <div class="font-mono text-muted text-truncate" style="font-size: 0.72rem;">{{ $menuUrl }}</div>
                                 </div>
                                 <div class="d-flex align-items-center gap-1.5 flex-shrink-0">
-                                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill px-2" title="Pré-remplir à gauche" onclick="prefillNfcEncoder('{{ addslashes($menuUrl) }}', 'Menu Digital - {{ addslashes($menu->brand_name) }}')">
-                                        <i class="bi bi-arrow-left"></i>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2.5" title="Pré-remplir à gauche" onclick="prefillNfcEncoder('{{ addslashes($menuUrl) }}', 'Menu Digital - {{ addslashes($menu->brand_name) }}')">
+                                        <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-success rounded-pill px-3 d-inline-flex align-items-center gap-1" onclick="window.nfcEncoder.writeUrl('{{ $menuUrl }}', 'Menu Digital - {{ addslashes($menu->brand_name) }}')">
+                                    <button type="button" class="btn btn-sm btn-success rounded-pill px-3 flex-grow-1 flex-sm-grow-0 d-inline-flex align-items-center justify-content-center gap-1" onclick="window.nfcEncoder.writeUrl('{{ $menuUrl }}', 'Menu Digital - {{ addslashes($menu->brand_name) }}')">
                                         <i class="bi bi-broadcast"></i>
                                         <span>Encoder</span>
                                     </button>
@@ -228,16 +251,16 @@
                                 $qrUrl = route('qr.redirect', ['code' => $qr->code]);
                                 $qrLabel = $qr->label ?: $qr->code;
                             @endphp
-                            <div class="nfc-resource-item d-flex align-items-center justify-content-between gap-2 p-2.5 border rounded-3 mb-2 bg-white" data-search="{{ strtolower($qrLabel . ' ' . $qrUrl) }}">
+                            <div class="nfc-resource-item d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center justify-content-between gap-2 p-2.5 border rounded-3 mb-2 bg-white" data-search="{{ strtolower($qrLabel . ' ' . $qrUrl) }}">
                                 <div class="min-w-0">
                                     <div class="fw-bold text-dark small text-truncate">{{ $qrLabel }}</div>
                                     <div class="font-mono text-muted text-truncate" style="font-size: 0.72rem;">{{ $qrUrl }}</div>
                                 </div>
                                 <div class="d-flex align-items-center gap-1.5 flex-shrink-0">
-                                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill px-2" title="Pré-remplir à gauche" onclick="prefillNfcEncoder('{{ addslashes($qrUrl) }}', 'QR Dynamique - {{ addslashes($qrLabel) }}')">
-                                        <i class="bi bi-arrow-left"></i>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2.5" title="Pré-remplir à gauche" onclick="prefillNfcEncoder('{{ addslashes($qrUrl) }}', 'QR Dynamique - {{ addslashes($qrLabel) }}')">
+                                        <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-success rounded-pill px-3 d-inline-flex align-items-center gap-1" onclick="window.nfcEncoder.writeUrl('{{ $qrUrl }}', 'QR Dynamique - {{ addslashes($qrLabel) }}')">
+                                    <button type="button" class="btn btn-sm btn-success rounded-pill px-3 flex-grow-1 flex-sm-grow-0 d-inline-flex align-items-center justify-content-center gap-1" onclick="window.nfcEncoder.writeUrl('{{ $qrUrl }}', 'QR Dynamique - {{ addslashes($qrLabel) }}')">
                                         <i class="bi bi-broadcast"></i>
                                         <span>Encoder</span>
                                     </button>
