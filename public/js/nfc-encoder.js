@@ -26,7 +26,7 @@ class NfcEncoder {
                 <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
                     <div class="p-3 text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #180d38 0%, #5736e9 100%);">
                         <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-circle bg-white text-purple d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                            <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; color: #5736e9;">
                                 <i class="bi bi-broadcast"></i>
                             </div>
                             <h5 class="modal-title fw-bold fs-6 mb-0" id="nfcEncoderModalLabel">Encodeur NFC Intégré</h5>

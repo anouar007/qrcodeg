@@ -374,7 +374,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <i class="bi bi-headset fs-5"></i>
 </a>
 
-<script src="{{ asset('js/nfc-encoder.js') }}"></script>
+<script src="{{ asset('js/nfc-encoder.js') }}?v={{ filemtime(public_path('js/nfc-encoder.js')) }}"></script>
 @stack('scripts')
 </body>
 </html>
