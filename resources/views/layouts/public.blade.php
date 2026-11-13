@@ -59,10 +59,6 @@
                 </ul>
 
                 <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 pb-2 pb-lg-0">
-                    <a href="{{ route('client.access') }}" class="btn btn-outline-primary px-3.5 py-2 rounded-pill fw-semibold border-2 d-inline-flex align-items-center justify-content-center gap-1.5">
-                        <i class="bi bi-key-fill text-primary"></i>
-                        <span>Espace Client</span>
-                    </a>
                     @if(auth('web')->check())
                         <a href="{{ route('admin.dashboard') }}" class="btn btn-primary-custom px-4 py-2 rounded-pill d-inline-flex align-items-center justify-content-center gap-2">
                             <i class="bi bi-speedometer2"></i>
@@ -153,8 +149,7 @@
                 <div class="col-lg-2 col-6">
                     <h6 class="fw-bold text-white text-uppercase tracking-wider mb-3 font-mono" style="font-size: 0.76rem; letter-spacing: 0.08em;">Accès Rapide</h6>
                     <ul class="list-unstyled text-secondary small d-flex flex-column gap-2">
-                        <li><a href="{{ route('client.access') }}" class="text-secondary text-decoration-none hover-white">Portail Client (Clé)</a></li>
-                        <li><a href="{{ route('login') }}" class="text-secondary text-decoration-none hover-white">Administration</a></li>
+                        <li><a href="{{ route('login') }}" class="text-secondary text-decoration-none hover-white">Connexion</a></li>
                         <li><a href="#faq" class="text-secondary text-decoration-none hover-white">Questions Fréquentes</a></li>
                         <li><a href="#contact" class="text-secondary text-decoration-none hover-white">Nous Contacter</a></li>
                     </ul>
@@ -164,13 +159,13 @@
                     <div class="p-4 rounded-4 border border-secondary border-opacity-25" style="background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px);">
                         <div class="d-flex align-items-center gap-2 mb-2">
                             <span class="status-dot-radar"></span>
-                            <h6 class="fw-bold text-white text-uppercase tracking-wider mb-0 font-mono" style="font-size: 0.78rem;">Accès Instantané Client</h6>
+                            <h6 class="fw-bold text-white text-uppercase tracking-wider mb-0 font-mono" style="font-size: 0.78rem;">Accès Portail</h6>
                         </div>
                         <p class="text-secondary small mb-3">
-                            Vous possédez une carte NFC ou un chevalet QR ? Entrez votre code d'accès unique pour modifier votre lien de destination en direct.
+                            Connectez-vous avec votre email et votre mot de passe (ou votre code d'accès portail) pour gérer vos supports en direct.
                         </p>
-                        <a href="{{ route('client.access') }}" class="btn btn-primary-custom w-100 rounded-pill py-2 text-white d-inline-flex align-items-center justify-content-center gap-2">
-                            <i class="bi bi-key-fill"></i> Entrer mon Code d'Accès
+                        <a href="{{ route('login') }}" class="btn btn-primary-custom w-100 rounded-pill py-2 text-white d-inline-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-box-arrow-in-right"></i> Se connecter
                         </a>
                     </div>
                 </div>

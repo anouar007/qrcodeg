@@ -10,7 +10,7 @@ class ClientObserver
     public function created(Client $client): void
     {
         $client->clientHistories()->create([
-            'user_id' => Auth::id(),
+            'user_id' => Auth::guard('web')->id(),
             'action_type' => 'client_created',
             'description' => "Client profile '{$client->name}' created in project '{$client->project_name}'.",
             'metadata' => [
@@ -30,7 +30,7 @@ class ClientObserver
         if (! empty($dirty)) {
             $changedFields = implode(', ', array_keys($dirty));
             $client->clientHistories()->create([
-                'user_id' => Auth::id(),
+                'user_id' => Auth::guard('web')->id(),
                 'action_type' => 'client_updated',
                 'description' => "Profile updated: {$client->name} ({$changedFields}).",
                 'metadata' => [
@@ -44,7 +44,7 @@ class ClientObserver
     public function deleted(Client $client): void
     {
         $client->clientHistories()->create([
-            'user_id' => Auth::id(),
+            'user_id' => Auth::guard('web')->id(),
             'action_type' => 'client_deleted',
             'description' => "Client '{$client->name}' was deleted or archived.",
             'metadata' => [

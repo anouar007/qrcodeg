@@ -38,7 +38,7 @@
 <!-- 1. Key Stat Cards Row -->
 <div class="row g-3 mb-4">
     <!-- Total Cards Assigned -->
-    <div class="col-md-4">
+    <div class="col-md-3">
         <x-stat-card
             title="Digital Business Cards"
             :value="$totalDigitalCards"
@@ -52,7 +52,7 @@
     </div>
 
     <!-- Dynamic QR Codes Assigned -->
-    <div class="col-md-4">
+    <div class="col-md-3">
         <x-stat-card
             title="Dynamic QR Codes"
             :value="$totalQrCodesAssigned"
@@ -66,7 +66,7 @@
     </div>
 
     <!-- Active NFC Tags Assigned -->
-    <div class="col-md-4">
+    <div class="col-md-3">
         <x-stat-card
             title="NFC Tags Assigned"
             :value="$totalNfcTags"
@@ -76,6 +76,22 @@
             color="warning"
         >
             <span class="badge bg-light text-muted border font-mono small mt-2">Tags NFC</span>
+        </x-stat-card>
+    </div>
+
+    <!-- Loyalty Cards Generated vs Quota -->
+    <div class="col-md-3">
+        <x-stat-card
+            title="Cartes Fidélité (Quota)"
+            :value="$totalLoyaltyCards . ' / ' . $loyaltyLimit"
+            icon="bi-award"
+            :trend="($loyaltyLimit - $totalLoyaltyCards) . ' restantes'"
+            trendLabel="Quota admin autorisé"
+            color="success"
+        >
+            <span class="badge {{ $client->loyalty_enabled ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }} border font-mono small mt-2">
+                {{ $client->loyalty_enabled ? 'Programme Actif' : 'Programme Suspendu' }}
+            </span>
         </x-stat-card>
     </div>
 </div>
@@ -110,10 +126,18 @@
             <!-- Client Portal Credentials Box -->
             <div class="p-3 bg-light rounded-3 border mb-4">
                 <div class="d-flex justify-content-between align-items-center mb-1">
-                    <span class="small text-muted text-uppercase fw-bold font-mono" style="font-size: 0.72rem;">Portal Access Code</span>
+                    <span class="small text-muted text-uppercase fw-bold font-mono" style="font-size: 0.72rem;">Portal Access Code (Password)</span>
                     <i class="bi bi-key text-primary"></i>
                 </div>
                 <div class="font-mono fw-extrabold fs-5 text-primary my-1">{{ $client->access_code ?? 'Not configured' }}</div>
+                <div class="small text-muted mb-2">
+                    Login Email: <strong class="text-dark">{{ $client->email }}</strong>
+                </div>
+                @if($client->access_code && $client->email)
+                    <button type="button" class="btn btn-sm btn-outline-primary w-100 rounded-pill mb-2" onclick="copyClientCredentials('{{ route('login') }}', '{{ $client->email }}', '{{ $client->access_code }}', this)">
+                        <i class="bi bi-clipboard me-1"></i> Copy Login &amp; Access Code
+                    </button>
+                @endif
                 <div class="d-flex justify-content-between align-items-center small text-muted pt-1">
                     <span>Password status:</span>
                     @if($client->is_password_set)
@@ -123,7 +147,56 @@
                     @endif
                 </div>
 
-                <div class="mt-3 pt-2 border-top">
+                @if(session('generated_credentials'))
+                    @php $creds = session('generated_credentials'); @endphp
+                    <div class="alert alert-success p-2.5 mt-3 mb-0 small rounded-3 border-success-subtle">
+                        <div class="fw-bold mb-1"><i class="bi bi-check-circle-fill me-1"></i>Credentials Ready to Share</div>
+                        <div class="font-mono" style="font-size: 0.75rem;">
+                            <div><strong>URL:</strong> {{ $creds['login_url'] }}</div>
+                            <div><strong>Login:</strong> {{ $creds['email'] }}</div>
+                            <div><strong>Password:</strong> {{ $creds['password'] }}</div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-success w-100 rounded-pill mt-2" onclick="copyClientCredentials('{{ $creds['login_url'] }}', '{{ $creds['email'] }}', '{{ $creds['password'] }}', this)">
+                            <i class="bi bi-clipboard me-1"></i> Copy Login &amp; Password
+                        </button>
+                    </div>
+                @endif
+
+                <div class="mt-3 pt-2 border-top d-flex flex-column gap-2">
+                    <button type="button" class="btn btn-primary-custom btn-sm w-100 rounded-pill" data-bs-toggle="collapse" data-bs-target="#setCredentialsCollapse" aria-expanded="{{ $errors->has('email') || $errors->has('password') ? 'true' : 'false' }}">
+                        <i class="bi bi-shield-lock me-1"></i> Set Login &amp; Password
+                    </button>
+
+                    <div class="collapse {{ $errors->has('email') || $errors->has('password') ? 'show' : '' }}" id="setCredentialsCollapse">
+                        <form action="{{ route('admin.clients.set-credentials', $client) }}" method="POST" class="p-2.5 bg-white rounded-3 border mt-1">
+                            @csrf
+                            <div class="mb-2">
+                                <label class="form-label small fw-semibold mb-1">Login Email</label>
+                                <input type="email" name="email" class="form-control form-control-sm @error('email') is-invalid @enderror" value="{{ old('email', $client->email) }}" required>
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label class="form-label small fw-semibold mb-0">Password</label>
+                                    <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none" style="font-size: 0.72rem;" onclick="generateClientPassword()">
+                                        <i class="bi bi-magic me-1"></i>Generate
+                                    </button>
+                                </div>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" name="password" id="adminClientPasswordInput" class="form-control font-mono @error('password') is-invalid @enderror" placeholder="Min. 6 characters" required>
+                                </div>
+                                @error('password')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <button type="submit" class="btn btn-dark btn-sm w-100 rounded-pill">
+                                <i class="bi bi-check2 me-1"></i> Save &amp; Generate Share Box
+                            </button>
+                        </form>
+                    </div>
+
                     <form action="{{ route('admin.clients.reset-access', $client) }}" method="POST" onsubmit="return confirm('Regenerate access code? The client will be required to set a new password on their next login.');">
                         @csrf
                         <button type="submit" class="btn btn-outline-warning btn-sm w-100 rounded-pill">
@@ -212,7 +285,14 @@
                         </button>
                     </li>
 
-                    <!-- Tab 3: Complete Historic Activity Timeline -->
+                    <!-- Tab 3: Loyalty Cards -->
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link fw-bold small py-2 px-3" id="loyalty-tab" data-bs-toggle="tab" data-bs-target="#loyalty-pane" type="button" role="tab" aria-selected="false">
+                            <i class="bi bi-award me-1 text-purple"></i> Cartes Fidélité ({{ $totalLoyaltyCards }} / {{ $loyaltyLimit }})
+                        </button>
+                    </li>
+
+                    <!-- Tab 4: Complete Historic Activity Timeline -->
                     <li class="nav-item" role="presentation">
                         <button class="nav-link fw-bold small py-2 px-3" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-pane" type="button" role="tab" aria-selected="false">
                             <i class="bi bi-clock-history me-1 text-warning"></i> Historique Complet ({{ $clientHistories->count() ?: $historicEvents->count() }})
@@ -493,7 +573,102 @@
                     </div>
 
                     <!-- ======================================================== -->
-                    <!-- TAB 3: COMPLETE HISTORIC ACTIVITY TIMELINE -->
+                    <!-- TAB 3: LOYALTY CARDS (CLIENT PROGRAM) -->
+                    <!-- ======================================================== -->
+                    <div class="tab-pane fade" id="loyalty-pane" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="fw-bold mb-0 text-dark">Cartes de Fidélité Générées</h6>
+                                <small class="text-muted">Quota attribué : <strong>{{ $totalLoyaltyCards }}</strong> / <strong>{{ $loyaltyLimit }}</strong> cartes ({{ $loyaltyLimit - $totalLoyaltyCards }} disponibles)</small>
+                            </div>
+                            <span class="badge {{ $client->loyalty_enabled ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }} border px-3 py-2 rounded-pill font-mono">
+                                <i class="bi {{ $client->loyalty_enabled ? 'bi-check-circle' : 'bi-x-circle' }} me-1"></i>
+                                {{ $client->loyalty_enabled ? 'Programme Autorisé' : 'Programme Suspendu' }}
+                            </span>
+                        </div>
+
+                        <div class="card card-custom border shadow-xs overflow-hidden">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Code Carte</th>
+                                            <th>Client Final</th>
+                                            <th>Contact</th>
+                                            <th>Format</th>
+                                            <th>Progression Tampons</th>
+                                            <th>Récompenses</th>
+                                            <th>Statut</th>
+                                            <th class="text-end">Pass Public</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($client->loyaltyCards as $card)
+                                            <tr>
+                                                <td>
+                                                    <span class="badge bg-dark font-mono">{{ $card->card_code }}</span>
+                                                    @if($card->nfc_uid)
+                                                        <span class="d-block text-muted font-mono" style="font-size: 0.72rem;">NFC: {{ $card->nfc_uid }}</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <span class="fw-bold text-dark">{{ $card->customer_name }}</span>
+                                                </td>
+                                                <td>
+                                                    <div class="small text-muted">
+                                                        @if($card->customer_phone) <div><i class="bi bi-telephone me-1"></i>{{ $card->customer_phone }}</div> @endif
+                                                        @if($card->customer_email) <div><i class="bi bi-envelope me-1"></i>{{ $card->customer_email }}</div> @endif
+                                                        @if(!$card->customer_phone && !$card->customer_email) <span class="text-muted italic">—</span> @endif
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @if($card->card_type === 'both')
+                                                        <span class="badge bg-primary-subtle text-primary border"><i class="bi bi-qr-code me-1"></i>QR + <i class="bi bi-broadcast ms-1 me-1"></i>NFC</span>
+                                                    @elseif($card->card_type === 'nfc')
+                                                        <span class="badge bg-warning-subtle text-warning border"><i class="bi bi-broadcast me-1"></i>NFC Tag</span>
+                                                    @else
+                                                        <span class="badge bg-info-subtle text-info border"><i class="bi bi-qr-code me-1"></i>QR Code</span>
+                                                    @endif
+                                                </td>
+                                                <td style="min-width: 140px;">
+                                                    <div class="d-flex align-items-center justify-content-between small mb-1">
+                                                        <span class="fw-bold text-dark">{{ $card->stamps_count }} / {{ $card->max_stamps }}</span>
+                                                        <span class="text-muted">{{ $card->progressPercentage() }}%</span>
+                                                    </div>
+                                                    <div class="progress" style="height: 6px;">
+                                                        <div class="progress-bar bg-success" style="width: {{ $card->progressPercentage() }}%"></div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-purple-subtle text-purple font-mono">{{ $card->rewards_redeemed_count }} réclamée(s)</span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge {{ $card->status === 'active' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary' }} border">
+                                                        {{ ucfirst($card->status) }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <a href="{{ route('loyalty.public.show', ['card_code' => $card->card_code]) }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-2" title="Voir le Pass Client">
+                                                        <i class="bi bi-box-arrow-up-right me-1"></i> Pass
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="8" class="text-center py-4 text-muted">
+                                                    <i class="bi bi-award fs-3 d-block mb-1 text-muted opacity-50"></i>
+                                                    Aucune carte fidélité n'a encore été générée par ce client.
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ======================================================== -->
+                    <!-- TAB 4: COMPLETE HISTORIC ACTIVITY TIMELINE -->
                     <!-- ======================================================== -->
                     <div class="tab-pane fade" id="history-pane" role="tabpanel">
                         <div class="d-flex justify-content-between align-items-center mb-3 pt-1">
@@ -575,3 +750,33 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    function generateClientPassword() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$';
+        let password = '';
+        for (let i = 0; i < 10; i++) {
+            password += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        const input = document.getElementById('adminClientPasswordInput');
+        if (input) {
+            input.value = password;
+        }
+    }
+
+    function copyClientCredentials(url, email, password, btn) {
+        if (!navigator.clipboard) {
+            return;
+        }
+        const text = `Portal Login: ${url}\nEmail: ${email}\nPassword: ${password}`;
+        navigator.clipboard.writeText(text).then(() => {
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check2 me-1"></i> Copied!';
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+            }, 2000);
+        });
+    }
+</script>
+@endpush

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -33,6 +34,8 @@ class Client extends Authenticatable
         'password',
         'is_password_set',
         'last_login_at',
+        'loyalty_card_limit',
+        'loyalty_enabled',
     ];
 
     protected $hidden = [
@@ -46,6 +49,8 @@ class Client extends Authenticatable
             'is_password_set' => 'boolean',
             'last_login_at' => 'datetime',
             'password' => 'hashed',
+            'loyalty_card_limit' => 'integer',
+            'loyalty_enabled' => 'boolean',
         ];
     }
 
@@ -94,6 +99,56 @@ class Client extends Authenticatable
         return $this->hasMany(DynamicQrCode::class);
     }
 
+    public function loyaltyCards(): HasMany
+    {
+        return $this->hasMany(LoyaltyCard::class);
+    }
+
+    public function restaurantMenus(): HasMany
+    {
+        return $this->hasMany(RestaurantMenu::class);
+    }
+
+    public function loyaltySetting(): HasOne
+    {
+        return $this->hasOne(LoyaltyProgramSetting::class);
+    }
+
+    public function getLoyaltyProgramSetting(): LoyaltyProgramSetting
+    {
+        return LoyaltyProgramSetting::getOrCreateForClient($this);
+    }
+
+    public function canGenerateLoyaltyCard(): bool
+    {
+        if (! ($this->loyalty_enabled ?? true)) {
+            return false;
+        }
+
+        $limit = (int) ($this->loyalty_card_limit ?? 20);
+
+        return $this->loyaltyCards()->count() < $limit;
+    }
+
+    public function remainingLoyaltyCardsCount(): int
+    {
+        $limit = (int) ($this->loyalty_card_limit ?? 20);
+        $used = $this->loyaltyCards()->count();
+
+        return max(0, $limit - $used);
+    }
+
+    public function loyaltyCardsUsagePercentage(): float
+    {
+        $limit = (int) ($this->loyalty_card_limit ?? 20);
+        if ($limit <= 0) {
+            return 100.0;
+        }
+        $used = $this->loyaltyCards()->count();
+
+        return round(min(100.0, ($used / $limit) * 100), 1);
+    }
+
     public function clientHistories(): HasMany
     {
         return $this->hasMany(ClientHistory::class)->orderBy('created_at', 'desc');
@@ -135,7 +190,7 @@ class Client extends Authenticatable
     public function logHistory(string $actionType, string $description, ?array $metadata = null, ?int $userId = null): ClientHistory
     {
         return $this->clientHistories()->create([
-            'user_id' => $userId ?? Auth::id(),
+            'user_id' => $userId ?? Auth::guard('web')->id(),
             'action_type' => $actionType,
             'description' => $description,
             'metadata' => $metadata,

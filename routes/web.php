@@ -4,10 +4,12 @@ use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\DigitalCardController;
+use App\Http\Controllers\Admin\LoyaltyController;
 use App\Http\Controllers\Admin\NfcTagController;
 use App\Http\Controllers\Admin\QrCodeController;
 use App\Http\Controllers\Admin\QrDocumentController;
 use App\Http\Controllers\Admin\QrTemplateController;
+use App\Http\Controllers\Admin\RestaurantMenuController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
@@ -15,12 +17,20 @@ use App\Http\Controllers\Auth\AdminAuthController;
 use App\Http\Controllers\Auth\ClientAuthController;
 use App\Http\Controllers\Client\ClientAnalyticsController;
 use App\Http\Controllers\Client\ClientDashboardController;
+use App\Http\Controllers\Client\ClientDigitalCardController;
+use App\Http\Controllers\Client\ClientDynamicQrController;
+use App\Http\Controllers\Client\ClientLoyaltyController;
+use App\Http\Controllers\Client\ClientMenuController;
+use App\Http\Controllers\Client\ClientNfcTagController;
+use App\Http\Controllers\Client\ClientProductController;
 use App\Http\Controllers\Client\ClientQrController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DynamicQrCodeController;
 use App\Http\Controllers\DynamicQrController;
 use App\Http\Controllers\Public\PublicController;
 use App\Http\Controllers\Public\PublicDigitalCardController;
+use App\Http\Controllers\Public\PublicLoyaltyPassController;
+use App\Http\Controllers\Public\PublicMenuController;
 use App\Http\Controllers\Public\PublicNfcController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +46,19 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('aut
 | 1. Public Marketing Website
 |--------------------------------------------------------------------------
 */
+// PWA Manifest & Service Worker
+Route::get('/manifest.json', function () {
+    return response(file_get_contents(public_path('manifest.json')), 200, [
+        'Content-Type' => 'application/manifest+json',
+    ]);
+});
+Route::get('/sw.js', function () {
+    return response(file_get_contents(public_path('sw.js')), 200, [
+        'Content-Type' => 'application/javascript',
+        'Service-Worker-Allowed' => '/',
+    ]);
+});
+
 Route::get('/', [PublicController::class, 'index'])->name('home');
 Route::get('/features', [PublicController::class, 'features'])->name('features');
 Route::get('/types', [PublicController::class, 'types'])->name('types');
@@ -63,6 +86,12 @@ Route::get('/c/{slug}/vcard', [PublicDigitalCardController::class, 'downloadVCar
 Route::get('/nfc/{id_or_uid}', [NfcTagController::class, 'redirect'])->name('nfc.redirect');
 Route::get('/n/{uid}', [PublicNfcController::class, 'handle'])->name('nfc.public.handle');
 
+// Loyalty Digital Card Public Pass
+Route::get('/loyalty/{card_code}', [PublicLoyaltyPassController::class, 'show'])->name('loyalty.public.show');
+
+// Public Digital Restaurant & Brand Menu
+Route::get('/m/{slug}', [PublicMenuController::class, 'show'])->name('menu.public.show');
+
 /*
 |--------------------------------------------------------------------------
 | 3. Staff & Admin Authentication
@@ -78,6 +107,8 @@ Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
 |--------------------------------------------------------------------------
 */
 Route::prefix('client')->name('client.')->group(function () {
+    Route::get('/login', [ClientAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [ClientAuthController::class, 'loginWithEmail'])->name('login.submit');
     Route::get('/access', [ClientAuthController::class, 'showAccess'])->name('access');
     Route::post('/access', [ClientAuthController::class, 'verifyAccessCode'])->name('access.verify');
     Route::get('/password/setup', [ClientAuthController::class, 'showPasswordSetup'])->name('password.setup');
@@ -95,14 +126,61 @@ Route::prefix('client')->name('client.')->group(function () {
 Route::prefix('client')->name('client.')->middleware('client.auth')->group(function () {
     Route::get('/dashboard', [ClientDashboardController::class, 'index'])->name('dashboard');
 
-    // Client QR Codes
+    // Central Products Hub (All products purchased/assigned)
+    Route::get('/products', [ClientProductController::class, 'index'])->name('products.index');
+
+    // Client Dynamic QR Codes (VP-Engine)
+    Route::get('/dynamic-qrs', [ClientDynamicQrController::class, 'index'])->name('dynamic-qrs.index');
+    Route::get('/dynamic-qrs/{dynamicQr}/edit', [ClientDynamicQrController::class, 'edit'])->name('dynamic-qrs.edit');
+    Route::put('/dynamic-qrs/{dynamicQr}', [ClientDynamicQrController::class, 'update'])->name('dynamic-qrs.update');
+    Route::get('/dynamic-qrs/{dynamicQr}/download/{format}', [ClientDynamicQrController::class, 'download'])->name('dynamic-qrs.download');
+
+    // Client Digital Business Cards & Menus
+    Route::get('/digital-cards', [ClientDigitalCardController::class, 'index'])->name('digital-cards.index');
+    Route::get('/digital-cards/{digitalCard}/edit', [ClientDigitalCardController::class, 'edit'])->name('digital-cards.edit');
+    Route::put('/digital-cards/{digitalCard}', [ClientDigitalCardController::class, 'update'])->name('digital-cards.update');
+    Route::get('/digital-cards/{digitalCard}/menu', [ClientDigitalCardController::class, 'menu'])->name('digital-cards.menu');
+    Route::put('/digital-cards/{digitalCard}/menu', [ClientDigitalCardController::class, 'updateMenu'])->name('digital-cards.update-menu');
+
+    // Client NFC Tags
+    Route::get('/nfc-tags', [ClientNfcTagController::class, 'index'])->name('nfc-tags.index');
+    Route::get('/nfc-tags/{nfcTag}/edit', [ClientNfcTagController::class, 'edit'])->name('nfc-tags.edit');
+    Route::put('/nfc-tags/{nfcTag}', [ClientNfcTagController::class, 'update'])->name('nfc-tags.update');
+    Route::post('/nfc-tags/{nfcTag}/bind-nfc', [ClientNfcTagController::class, 'bindUid'])->name('nfc-tags.bind');
+
+    // Client QR Codes (Standard)
     Route::get('/qr-codes', [ClientQrController::class, 'index'])->name('qr-codes.index');
     Route::get('/qr-codes/{qrCode}/customize', [ClientQrController::class, 'customize'])->name('qr-codes.customize');
     Route::put('/qr-codes/{qrCode}/customize', [ClientQrController::class, 'update'])->name('qr-codes.update');
     Route::get('/qr-codes/{qrCode}/download/{format}', [ClientQrController::class, 'download'])->name('qr-codes.download');
 
+    // Client Loyalty Cards Program & Points Scanner Terminal
+    Route::get('/loyalty/terminal', [ClientLoyaltyController::class, 'terminal'])->name('loyalty.terminal');
+    Route::post('/loyalty/terminal/lookup', [ClientLoyaltyController::class, 'lookupCard'])->name('loyalty.terminal.lookup');
+    Route::post('/loyalty/terminal/process', [ClientLoyaltyController::class, 'processPoints'])->name('loyalty.terminal.process');
+    Route::get('/loyalty/settings', [ClientLoyaltyController::class, 'settings'])->name('loyalty.settings');
+    Route::post('/loyalty/settings', [ClientLoyaltyController::class, 'updateSettings'])->name('loyalty.settings.update');
+    Route::post('/loyalty/{loyalty}/points', [ClientLoyaltyController::class, 'adjustCardPoints'])->name('loyalty.points.adjust');
+    Route::post('/loyalty/{loyalty}/bind-nfc', [ClientLoyaltyController::class, 'bindNfcUid'])->name('loyalty.bind-nfc');
+
+    Route::get('/loyalty/scan', [ClientLoyaltyController::class, 'scan'])->name('loyalty.scan');
+    Route::get('/loyalty', [ClientLoyaltyController::class, 'index'])->name('loyalty.index');
+    Route::get('/loyalty/create', [ClientLoyaltyController::class, 'create'])->name('loyalty.create');
+    Route::post('/loyalty', [ClientLoyaltyController::class, 'store'])->name('loyalty.store');
+    Route::get('/loyalty/{loyalty}', [ClientLoyaltyController::class, 'show'])->name('loyalty.show');
+    Route::put('/loyalty/{loyalty}', [ClientLoyaltyController::class, 'update'])->name('loyalty.update');
+    Route::post('/loyalty/{loyalty}/stamp', [ClientLoyaltyController::class, 'stamp'])->name('loyalty.stamp');
+    Route::post('/loyalty/{loyalty}/redeem', [ClientLoyaltyController::class, 'redeem'])->name('loyalty.redeem');
+    Route::delete('/loyalty/{loyalty}', [ClientLoyaltyController::class, 'destroy'])->name('loyalty.destroy');
+
     // Client Analytics
     Route::get('/analytics', [ClientAnalyticsController::class, 'index'])->name('analytics');
+
+    // Client Restaurant & Brand Menus
+    Route::post('menus/upload-item-image', [ClientMenuController::class, 'uploadItemImage'])->name('menus.upload-item-image');
+    Route::post('menus/upload-cover-image', [ClientMenuController::class, 'uploadCoverImage'])->name('menus.upload-cover-image');
+    Route::resource('menus', ClientMenuController::class)->only(['index', 'show', 'edit', 'update']);
+    Route::get('menus/{menu}/download-qr/{format}', [ClientMenuController::class, 'downloadQr'])->name('menus.download-qr');
 });
 
 /*
@@ -135,6 +213,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth:web')->group(function (
         Route::post('clients/{client}/assign-qr', [ClientController::class, 'assignQr'])->name('clients.assign-qr');
         Route::post('clients/{client}/reset-access', [ClientController::class, 'resetAccess'])->name('clients.reset-access');
         Route::post('clients/{client}/toggle-status', [ClientController::class, 'toggleStatus'])->name('clients.toggle-status');
+        Route::post('clients/{client}/set-credentials', [ClientController::class, 'setCredentials'])->name('clients.set-credentials');
     });
 
     // Carte Visite Digitale
@@ -148,6 +227,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth:web')->group(function (
 
     // NFC Tags (Chip Management, Quick Destination Swap & Telemetry)
     Route::middleware('permission:view_nfc_tags')->group(function () {
+        Route::get('nfc-encode', [NfcTagController::class, 'encodeCenter'])->name('nfc-encode.index');
         Route::get('nfc-tags/export', [NfcTagController::class, 'exportCsv'])->name('nfc-tags.export');
         Route::put('nfc-tags/{nfcTag}/destination', [NfcTagController::class, 'swapDestination'])->name('nfc-tags.destination');
         Route::post('nfc-tags/{nfcTag}/toggle-status', [NfcTagController::class, 'toggleStatus'])->name('nfc-tags.toggle-status');
@@ -201,4 +281,19 @@ Route::prefix('admin')->name('admin.')->middleware('auth:web')->group(function (
         Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
     });
+
+    // Global Loyalty System Management
+    Route::get('loyalty', [LoyaltyController::class, 'index'])->name('loyalty.index');
+    Route::post('loyalty/enroll-client', [LoyaltyController::class, 'enrollClient'])->name('loyalty.enroll-client');
+    Route::delete('loyalty/clients/{client}/remove', [LoyaltyController::class, 'removeClient'])->name('loyalty.remove-client');
+    Route::get('loyalty/{loyaltyCard}', [LoyaltyController::class, 'show'])->name('loyalty.show');
+    Route::post('loyalty/{loyaltyCard}/toggle-status', [LoyaltyController::class, 'toggleStatus'])->name('loyalty.toggle-status');
+    Route::put('loyalty/clients/{client}/limit', [LoyaltyController::class, 'updateClientLimit'])->name('loyalty.update-client-limit');
+
+    // Restaurant & Brand Menus Studio
+    Route::post('menus/upload-item-image', [RestaurantMenuController::class, 'uploadItemImage'])->name('menus.upload-item-image');
+    Route::post('menus/upload-cover-image', [RestaurantMenuController::class, 'uploadCoverImage'])->name('menus.upload-cover-image');
+    Route::resource('menus', RestaurantMenuController::class);
+    Route::post('menus/{menu}/toggle-status', [RestaurantMenuController::class, 'toggleStatus'])->name('menus.toggle-status');
+    Route::get('menus/{menu}/download-qr/{format}', [RestaurantMenuController::class, 'downloadQr'])->name('menus.download-qr');
 });

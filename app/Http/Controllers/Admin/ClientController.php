@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\QrCode;
 use App\Services\ClientService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -97,6 +98,8 @@ class ClientController extends Controller
             'access_code' => 'nullable|string|max:64|unique:clients,access_code',
             'password' => 'nullable|string|min:6',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:2048',
+            'loyalty_card_limit' => 'nullable|integer|min:0|max:100000',
+            'loyalty_enabled' => 'nullable|boolean',
         ], [
             'phone.regex' => 'The phone number format is invalid. Please provide a valid international or local phone number (e.g. +212600112233, 0612345678, or +1-555-0199).',
         ]);
@@ -131,6 +134,7 @@ class ClientController extends Controller
             'dynamicQrCodes.scanLogs',
             'nfcTags.scanLogs',
             'qrCodes.scans',
+            'loyaltyCards',
             'clientHistories.performer',
             'activityLogs' => fn ($q) => $q->latest()->take(50),
         ]);
@@ -145,6 +149,8 @@ class ClientController extends Controller
         $totalCardViews = (int) $client->digitalCards->sum('views_count');
         $totalNfcTags = $client->nfcTags->count();
         $totalNfcTaps = (int) ($client->nfcTags->sum('scans_count') ?: $client->nfcTags->sum('tap_count'));
+        $totalLoyaltyCards = $client->loyaltyCards->count();
+        $loyaltyLimit = (int) ($client->loyalty_card_limit ?? 20);
 
         // Combined historic events (prioritize ClientHistory, falling back to legacy ActivityLog)
         $clientHistories = $client->clientHistories;
@@ -161,6 +167,8 @@ class ClientController extends Controller
             'totalCardViews',
             'totalNfcTags',
             'totalNfcTaps',
+            'totalLoyaltyCards',
+            'loyaltyLimit',
             'clientHistories',
             'historicEvents',
             'availableQrs'
@@ -199,6 +207,8 @@ class ClientController extends Controller
             'access_code' => ['nullable', 'string', 'max:64', Rule::unique('clients')->ignore($client->id)],
             'password' => 'nullable|string|min:6',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:2048',
+            'loyalty_card_limit' => 'nullable|integer|min:0|max:100000',
+            'loyalty_enabled' => 'nullable|boolean',
         ], [
             'phone.regex' => 'The phone number format is invalid. Please provide a valid international or local phone number (e.g. +212600112233, 0612345678, or +1-555-0199).',
         ]);
@@ -293,6 +303,45 @@ class ClientController extends Controller
         );
 
         return back()->with('success', "Access code reset! New code: {$newCode}. Client must set password on next login.");
+    }
+
+    /**
+     * Set or update the client's login email and password directly.
+     */
+    public function setCredentials(Request $request, Client $client)
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email', 'max:150', Rule::unique('clients')->ignore($client->id)],
+            'password' => ['required', 'string', 'min:6', 'max:100'],
+        ]);
+
+        $client->update([
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'is_password_set' => true,
+        ]);
+
+        $this->clientService->recordHistory(
+            $client,
+            'client_credentials_updated',
+            "Portal login credentials updated for {$validated['email']}.",
+            ['email' => $validated['email']]
+        );
+
+        ActivityLog::log(
+            action: 'client_credentials_updated',
+            resourceType: 'Client',
+            resourceId: $client->id,
+            details: ['email' => $validated['email']]
+        );
+
+        return back()
+            ->with('success', "Login credentials updated for {$client->name}.")
+            ->with('generated_credentials', [
+                'login_url' => route('client.login'),
+                'email' => $validated['email'],
+                'password' => $validated['password'],
+            ]);
     }
 
     /**

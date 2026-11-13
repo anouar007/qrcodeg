@@ -11,7 +11,7 @@ class NfcTagObserver
     {
         if ($tag->client_id && $tag->client) {
             $tag->client->clientHistories()->create([
-                'user_id' => $tag->created_by ?? Auth::id(),
+                'user_id' => $tag->created_by ?? Auth::guard('web')->id(),
                 'action_type' => 'nfc_tag_created',
                 'description' => "Assigned new NFC Tag '{$tag->label}' (UID: {$tag->tag_uid}).",
                 'metadata' => [
@@ -37,7 +37,7 @@ class NfcTagObserver
             }
 
             $tag->client->clientHistories()->create([
-                'user_id' => Auth::id() ?? $tag->created_by,
+                'user_id' => Auth::guard('web')->id() ?? $tag->created_by,
                 'action_type' => 'nfc_tag_updated',
                 'description' => $description,
                 'metadata' => [
@@ -55,7 +55,7 @@ class NfcTagObserver
     {
         if ($tag->client_id && $tag->client) {
             $tag->client->clientHistories()->create([
-                'user_id' => Auth::id() ?? $tag->created_by,
+                'user_id' => Auth::guard('web')->id() ?? $tag->created_by,
                 'action_type' => 'nfc_tag_deleted',
                 'description' => "Deleted NFC Tag '{$tag->label}'.",
                 'metadata' => [

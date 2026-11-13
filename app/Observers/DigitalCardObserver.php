@@ -12,7 +12,7 @@ class DigitalCardObserver
         if ($card->client_id && $card->client) {
             $cardTitle = $card->title ?: ($card->name ?: 'Digital Business Card');
             $card->client->clientHistories()->create([
-                'user_id' => $card->user_id ?? Auth::id(),
+                'user_id' => $card->user_id ?? Auth::guard('web')->id(),
                 'action_type' => 'digital_card_created',
                 'description' => "Card '{$cardTitle}' created (Slug: {$card->slug}).",
                 'metadata' => [
@@ -32,7 +32,7 @@ class DigitalCardObserver
 
         if (! empty($dirty) && $card->client_id && $card->client) {
             $card->client->clientHistories()->create([
-                'user_id' => Auth::id() ?? $card->user_id,
+                'user_id' => Auth::guard('web')->id() ?? $card->user_id,
                 'action_type' => 'digital_card_updated',
                 'description' => "Updated Digital Business Card '{$card->title}'.",
                 'metadata' => [
@@ -48,7 +48,7 @@ class DigitalCardObserver
     {
         if ($card->client_id && $card->client) {
             $card->client->clientHistories()->create([
-                'user_id' => Auth::id() ?? $card->user_id,
+                'user_id' => Auth::guard('web')->id() ?? $card->user_id,
                 'action_type' => 'digital_card_deleted',
                 'description' => "Deleted Digital Business Card '{$card->title}'.",
                 'metadata' => [

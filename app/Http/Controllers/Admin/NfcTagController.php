@@ -10,10 +10,12 @@ use App\Models\DynamicQrCode;
 use App\Models\NfcTag;
 use App\Models\NfcTap;
 use App\Models\QrCode;
+use App\Models\RestaurantMenu;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\View\View;
 
 class NfcTagController extends Controller
 {
@@ -508,5 +510,18 @@ class NfcTagController extends Controller
 
         return redirect()->route('admin.nfc-tags.index')
             ->with('success', "NFC Tag '{$label}' deleted successfully.");
+    }
+
+    /**
+     * Dedicated Studio Encodeur NFC page
+     */
+    public function encodeCenter(): View
+    {
+        $nfcTags = NfcTag::with('client')->latest()->limit(50)->get();
+        $digitalCards = DigitalCard::latest()->limit(50)->get();
+        $menus = RestaurantMenu::latest()->limit(50)->get();
+        $dynamicQrs = DynamicQrCode::latest()->limit(50)->get();
+
+        return view('admin.nfc_tags.encode', compact('nfcTags', 'digitalCards', 'menus', 'dynamicQrs'));
     }
 }

@@ -49,64 +49,142 @@
             </button>
         </div>
 
-        <!-- Sidebar Navigation Items with Only the 6 Requested Pages -->
+        <!-- Sidebar Navigation Items with All Sections -->
         <div class="sidebar-nav d-flex flex-column h-100">
             <div class="flex-grow-1">
-                <div class="sidebar-heading">Menu</div>
+                <div class="sidebar-heading">Vue d'ensemble</div>
 
-                <!-- 1. Home page -->
-                <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" title="Home page">
+                <!-- 1. Home / Tableau de bord -->
+                <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" title="Tableau de bord">
                     <i class="bi bi-grid"></i>
-                    <span>Home page</span>
+                    <span>Tableau de bord</span>
                 </a>
 
-                <!-- 2. Carte visite digital -->
+                <div class="sidebar-heading mt-3">Produits &amp; Tags</div>
+
+                <!-- 2. Carte visite digitale -->
                 @haspermission('view_digital_cards')
-                <a href="{{ route('admin.digital-cards.index') }}" class="sidebar-link {{ request()->routeIs('admin.digital-cards.*') ? 'active' : '' }}" title="Carte visite digital">
+                <a href="{{ route('admin.digital-cards.index') }}" class="sidebar-link {{ request()->routeIs('admin.digital-cards.*') ? 'active' : '' }}" title="Cartes visite digitales">
                     <i class="bi bi-person-badge"></i>
-                    <span>Carte visite digital</span>
+                    <span>Cartes visite digitales</span>
                 </a>
                 @endhaspermission
+
+                <!-- Menus Digitaux (Restaurants & Marques) -->
+                <a href="{{ route('admin.menus.index') }}" class="sidebar-link {{ request()->routeIs('admin.menus.*') ? 'active' : '' }}" title="Menus Digitaux (Restaurants, Fast-Food, Cafés)">
+                    <i class="bi bi-journal-richtext"></i>
+                    <span>Menus digitaux</span>
+                </a>
 
                 <!-- 3. NFC -->
                 @haspermission('view_nfc_tags')
-                <a href="{{ route('admin.nfc-tags.index') }}" class="sidebar-link {{ request()->routeIs('admin.nfc-tags.*') ? 'active' : '' }}" title="NFC">
+                <a href="{{ route('admin.nfc-tags.index') }}" class="sidebar-link {{ request()->routeIs('admin.nfc-tags.*') ? 'active' : '' }}" title="Cartes &amp; Puces NFC">
                     <i class="bi bi-credit-card"></i>
-                    <span>NFC</span>
+                    <span>Cartes &amp; Puces NFC</span>
+                </a>
+
+                <a href="{{ route('admin.nfc-encode.index') }}" class="sidebar-link {{ request()->routeIs('admin.nfc-encode.*') ? 'active' : '' }}" title="Encodeur NFC Intégré">
+                    <i class="bi bi-broadcast"></i>
+                    <span>Encodeur NFC</span>
                 </a>
                 @endhaspermission
 
-                <!-- 4. Dynamic QR code -->
+                <!-- 4. Dynamic QR code & QR Suite -->
                 @haspermission('view_qr')
-                <a href="{{ route('admin.dynamic-qrs.index') }}" class="sidebar-link {{ request()->routeIs('admin.dynamic-qrs.*') ? 'active' : '' }}" title="Dynamic QR code">
+                <a href="{{ route('admin.dynamic-qrs.index') }}" class="sidebar-link {{ request()->routeIs('admin.dynamic-qrs.*') ? 'active' : '' }}" title="QR codes dynamiques">
+                    <i class="bi bi-lightning-charge"></i>
+                    <span>QR codes dynamiques</span>
+                </a>
+
+                <a href="{{ route('admin.qr-codes.index') }}" class="sidebar-link {{ request()->routeIs('admin.qr-codes.*') ? 'active' : '' }}" title="QR codes standards">
                     <i class="bi bi-qr-code"></i>
-                    <span>Dynamic QR code</span>
+                    <span>QR codes standards</span>
+                </a>
+
+                <a href="{{ route('admin.qr-documents.index') }}" class="sidebar-link {{ request()->routeIs('admin.qr-documents.*') ? 'active' : '' }}" title="Planches d'impression">
+                    <i class="bi bi-file-earmark-pdf"></i>
+                    <span>Planches d'impression</span>
+                </a>
+
+                <a href="{{ route('admin.templates.index') }}" class="sidebar-link {{ request()->routeIs('admin.templates.*') ? 'active' : '' }}" title="Modèles &amp; Gabarits">
+                    <i class="bi bi-palette"></i>
+                    <span>Modèles &amp; Gabarits</span>
                 </a>
                 @endhaspermission
 
-                <!-- 5. Clients -->
+                <div class="sidebar-heading mt-3">Clients</div>
+
+                <!-- Clients -->
                 @haspermission('view_clients')
-                <a href="{{ route('admin.clients.index') }}" class="sidebar-link {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}" title="Clients">
+                <a href="{{ route('admin.clients.index') }}" class="sidebar-link {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}" title="Clients &amp; Entreprises">
                     <i class="bi bi-people"></i>
                     <span>Clients</span>
                 </a>
                 @endhaspermission
 
-                <!-- 6. Users -->
+                <div class="sidebar-heading mt-3">Fidélisation</div>
+
+                <!-- Loyalty System Hub -->
+                <a href="{{ route('admin.loyalty.index') }}" class="sidebar-link {{ request()->routeIs('admin.loyalty.*') ? 'active' : '' }}" title="Cartes &amp; Programme Fidélité">
+                    <i class="bi bi-award"></i>
+                    <span>Cartes de fidélité</span>
+                </a>
+
+                <div class="sidebar-heading mt-3">Télémétrie</div>
+
+                <!-- Analytics -->
+                <a href="{{ route('admin.analytics.index') }}" class="sidebar-link {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}" title="Statistiques &amp; Scans">
+                    <i class="bi bi-graph-up"></i>
+                    <span>Statistiques &amp; Scans</span>
+                </a>
+
+                <!-- Activity Logs -->
+                <a href="{{ route('admin.activity-logs.index') }}" class="sidebar-link {{ request()->routeIs('admin.activity-logs.*') ? 'active' : '' }}" title="Journal d'audit">
+                    <i class="bi bi-journal-text"></i>
+                    <span>Journal d'audit</span>
+                </a>
+
+                <div class="sidebar-heading mt-3">Administration</div>
+
+                <!-- Users -->
                 @haspermission('view_users')
-                <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" title="Users">
+                <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" title="Utilisateurs &amp; Équipe">
                     <i class="bi bi-person-gear"></i>
-                    <span>Users</span>
+                    <span>Utilisateurs</span>
                 </a>
                 @endhaspermission
+
+                <!-- Roles & Permissions -->
+                @haspermission('manage_roles')
+                <a href="{{ route('admin.roles.index') }}" class="sidebar-link {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}" title="Rôles &amp; Permissions">
+                    <i class="bi bi-shield-lock"></i>
+                    <span>Rôles &amp; Permissions</span>
+                </a>
+                @endhaspermission
+
+                <!-- Settings -->
+                @haspermission('manage_settings')
+                <a href="{{ route('admin.settings.index') }}" class="sidebar-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}" title="Paramètres système">
+                    <i class="bi bi-gear"></i>
+                    <span>Paramètres système</span>
+                </a>
+                @endhaspermission
+
+                <div class="sidebar-heading mt-3">Raccourcis</div>
+
+                <!-- Public Site -->
+                <a href="{{ route('home') }}" target="_blank" class="sidebar-link" title="Voir le site public">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    <span>Site public</span>
+                </a>
             </div>
 
             <!-- Bottom Déconnexion Matching Screenshot -->
-            <div class="mt-auto pt-3 pb-2">
+            <div class="mt-auto pt-3 pb-2 border-top">
                 <form method="POST" action="{{ route('logout') }}" id="sidebarLogoutForm">
                     @csrf
-                    <button type="submit" class="sidebar-link w-100 border-0 bg-transparent text-start text-muted" title="Déconnexion" style="cursor: pointer;">
-                        <i class="bi bi-box-arrow-left"></i>
+                    <button type="submit" class="sidebar-link w-100 border-0 bg-transparent text-start text-danger" title="Déconnexion" style="cursor: pointer;">
+                        <i class="bi bi-box-arrow-left text-danger"></i>
                         <span>Déconnexion</span>
                     </button>
                 </form>
@@ -296,6 +374,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <i class="bi bi-headset fs-5"></i>
 </a>
 
+<script src="{{ asset('js/nfc-encoder.js') }}"></script>
 @stack('scripts')
 </body>
 </html>

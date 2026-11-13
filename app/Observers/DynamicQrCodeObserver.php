@@ -11,7 +11,7 @@ class DynamicQrCodeObserver
     {
         if ($qrCode->client_id && $qrCode->client) {
             $qrCode->client->clientHistories()->create([
-                'user_id' => Auth::id(),
+                'user_id' => Auth::guard('web')->id(),
                 'action_type' => 'dynamic_qr_created',
                 'description' => "Generated Dynamic QR Code [{$qrCode->code}] '{$qrCode->label}' with template '{$qrCode->template_type}'.",
                 'metadata' => [
@@ -38,7 +38,7 @@ class DynamicQrCodeObserver
             }
 
             $qrCode->client->clientHistories()->create([
-                'user_id' => Auth::id(),
+                'user_id' => Auth::guard('web')->id(),
                 'action_type' => 'dynamic_qr_updated',
                 'description' => $description,
                 'metadata' => [
@@ -56,7 +56,7 @@ class DynamicQrCodeObserver
     {
         if ($qrCode->client_id && $qrCode->client) {
             $qrCode->client->clientHistories()->create([
-                'user_id' => Auth::id(),
+                'user_id' => Auth::guard('web')->id(),
                 'action_type' => 'dynamic_qr_deleted',
                 'description' => "Deleted Dynamic QR Code [{$qrCode->code}] '{$qrCode->label}'.",
                 'metadata' => [

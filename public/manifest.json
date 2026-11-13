@@ -1,0 +1,31 @@
+{
+  "name": "QR Studio POS & Fidélité",
+  "short_name": "POS Terminal",
+  "description": "Terminal d'encaissement, scanner de fidélité et encodeur QR & NFC",
+  "start_url": "/client/loyalty/terminal",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0a0614",
+  "theme_color": "#5736e9",
+  "categories": [
+    "business",
+    "finance",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

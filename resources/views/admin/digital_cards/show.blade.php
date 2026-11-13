@@ -42,6 +42,9 @@
             <a href="{{ $digitalCard->public_url }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                 <i class="bi bi-box-arrow-up-right me-1"></i>Voir en Direct
             </a>
+            <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3" onclick="window.nfcEncoder.writeUrl('{{ $digitalCard->public_url }}', 'Carte Digitale - {{ addslashes($digitalCard->full_name ?: $digitalCard->name) }}')">
+                <i class="bi bi-broadcast me-1"></i>Encoder NFC
+            </button>
             @if($digitalCard->hasActiveMenu())
                 <a href="{{ $digitalCard->public_menu_url }}" target="_blank" class="btn btn-sm btn-outline-warning text-dark rounded-pill px-3">
                     <i class="fa-solid fa-utensils me-1 text-warning"></i>Voir le Menu (/c/{{ $digitalCard->slug }}/menu)

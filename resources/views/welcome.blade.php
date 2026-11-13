@@ -38,16 +38,20 @@
                     Connectez vos supports physiques (cartes NFC, chevalets de table, vitrines connectées) à des expériences mobiles ultra-fluides. Mettez à jour vos coordonnées vCard, votre <strong>menu restaurant &amp; catalogue</strong> ou vos redirections <strong>en direct</strong>, sans jamais réimprimer.
                 </p>
 
-                <!-- Futuristic Action CTAs -->
+                <!-- Unified Action CTA -->
                 <div class="d-flex flex-column flex-sm-row gap-2.5 justify-content-center justify-content-lg-start mb-4 reveal-on-scroll reveal-fade-up delay-250">
-                    <a href="{{ route('client.access') }}" class="btn btn-primary-custom px-4 py-3 rounded-pill fw-bold d-inline-flex align-items-center justify-content-center gap-2 shadow-lg btn-futuristic-glow">
-                        <i class="bi bi-key-fill text-white"></i>
-                        <span>Espace Client (Code d'Accès)</span>
+                    @php
+                        $heroLoginUrl = auth('web')->check()
+                            ? route('admin.dashboard')
+                            : (auth('client')->check() ? route('client.dashboard') : route('login'));
+                        $heroLoginLabel = auth('web')->check()
+                            ? 'Ouvrir le Dashboard'
+                            : (auth('client')->check() ? 'Accéder à Mon Portail' : 'Connexion');
+                    @endphp
+                    <a href="{{ $heroLoginUrl }}" class="btn btn-primary-custom px-4 py-3 rounded-pill fw-bold d-inline-flex align-items-center justify-content-center gap-2 shadow-lg btn-futuristic-glow">
+                        <i class="bi bi-box-arrow-in-right text-white"></i>
+                        <span>{{ $heroLoginLabel }}</span>
                         <i class="bi bi-arrow-right small ms-1"></i>
-                    </a>
-                    <a href="{{ auth('web')->check() ? route('admin.dashboard') : route('login') }}" class="btn btn-white border px-4 py-3 rounded-pill fw-bold text-dark d-inline-flex align-items-center justify-content-center gap-2 shadow-2xs btn-futuristic-outline">
-                        <i class="bi bi-sliders2-vertical text-primary"></i>
-                        <span>{{ auth('web')->check() ? 'Ouvrir le Dashboard' : 'Administration Studio' }}</span>
                     </a>
                 </div>
 
@@ -973,35 +977,19 @@
                     Notre équipe vous accompagne pour digitaliser vos menus de restaurant, équiper vos commerciaux de cartes de visite NFC haut de gamme ou déployer des QR codes dynamiques personnalisés.
                 </p>
 
-                <!-- Quick Portal Key Card -->
-                <div class="p-3.5 rounded-4 border bg-light mb-3 futuristic-quick-card">
-                    <div class="d-flex align-items-center justify-content-between mb-2">
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="rounded-3 d-inline-flex align-items-center justify-content-center bg-primary text-white" style="width: 32px; height: 32px;">
-                                <i class="bi bi-key-fill small"></i>
-                            </span>
-                            <div>
-                                <div class="fw-bold text-dark small">Déjà client ?</div>
-                                <div class="text-muted" style="font-size: 0.74rem;">Accédez directement à vos supports</div>
-                            </div>
-                        </div>
-                        <a href="{{ route('client.access') }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold flex-shrink-0">Espace Client</a>
-                    </div>
-                </div>
-
-                <!-- Admin Studio Access -->
+                <!-- Unified Portal Login Card -->
                 <div class="p-3.5 rounded-4 border bg-light futuristic-quick-card">
                     <div class="d-flex align-items-center justify-content-between mb-2">
                         <div class="d-flex align-items-center gap-2">
-                            <span class="rounded-3 d-inline-flex align-items-center justify-content-center bg-dark text-white" style="width: 32px; height: 32px;">
-                                <i class="bi bi-shield-lock-fill small"></i>
+                            <span class="rounded-3 d-inline-flex align-items-center justify-content-center bg-primary text-white" style="width: 32px; height: 32px;">
+                                <i class="bi bi-box-arrow-in-right small"></i>
                             </span>
                             <div>
-                                <div class="fw-bold text-dark small">Studio Administration</div>
-                                <div class="text-muted" style="font-size: 0.74rem;">Gestion complète des cartes, menus &amp; NFC</div>
+                                <div class="fw-bold text-dark small">Connexion Portail</div>
+                                <div class="text-muted" style="font-size: 0.74rem;">Accédez à votre espace client ou administration</div>
                             </div>
                         </div>
-                        <a href="{{ auth('web')->check() ? route('admin.dashboard') : route('login') }}" class="btn btn-sm btn-dark rounded-pill px-3 fw-semibold flex-shrink-0">Connexion</a>
+                        <a href="{{ $heroLoginUrl }}" class="btn btn-sm btn-primary-custom rounded-pill px-3 fw-semibold flex-shrink-0">Connexion</a>
                     </div>
                 </div>
             </div>

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Client;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -50,7 +51,7 @@ class BladeComponentsAndLayoutsTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('guest-wrapper', false);
         $response->assertSee('guest-card', false);
-        $response->assertSee('Staff &amp; Admin Login', false);
+        $response->assertSee('Sign In', false);
     }
 
     public function test_card_component_renders_header_actions_and_body(): void
@@ -175,5 +176,63 @@ class BladeComponentsAndLayoutsTest extends TestCase
         $this->assertStringContainsString('name="template_type"', $viewSelect);
         $this->assertStringContainsString('Template Type', $viewSelect);
         $this->assertStringContainsString('value="menu" selected', $viewSelect);
+    }
+
+    public function test_admin_sidebar_contains_all_section_links(): void
+    {
+        $response = $this->actingAs($this->admin, 'web')->get(route('admin.dashboard'));
+        $response->assertStatus(200);
+
+        // Core & Navigation
+        $response->assertSee(route('admin.dashboard'));
+        $response->assertSee(route('admin.digital-cards.index'));
+        $response->assertSee(route('admin.menus.index'));
+        $response->assertSee(route('admin.nfc-tags.index'));
+        $response->assertSee(route('admin.dynamic-qrs.index'));
+        $response->assertSee(route('admin.qr-codes.index'));
+        $response->assertSee(route('admin.qr-documents.index'));
+        $response->assertSee(route('admin.templates.index'));
+        $response->assertSee(route('admin.clients.index'));
+        $response->assertSee(route('admin.loyalty.index'));
+        $response->assertSee(route('admin.analytics.index'));
+        $response->assertSee(route('admin.activity-logs.index'));
+        $response->assertSee(route('admin.users.index'));
+        $response->assertSee(route('admin.roles.index'));
+        $response->assertSee(route('admin.settings.index'));
+        $response->assertSee(route('home'));
+        $response->assertSee(route('logout'));
+    }
+
+    public function test_client_sidebar_contains_all_section_links(): void
+    {
+        $client = Client::create([
+            'company_name' => 'Sidebar Test Corp',
+            'contact_name' => 'Alice Martin',
+            'email' => 'alice.sidebar@example.com',
+            'access_code' => 'SIDEBAR999',
+            'password' => bcrypt('password123'),
+            'status' => 'active',
+            'loyalty_card_limit' => 50,
+        ]);
+
+        $response = $this->actingAs($client, 'client')->get(route('client.dashboard'));
+        $response->assertStatus(200);
+
+        // All Client sections
+        $response->assertSee(route('client.dashboard'));
+        $response->assertSee(route('client.products.index'));
+        $response->assertSee(route('client.menus.index'));
+        $response->assertSee(route('client.digital-cards.index'));
+        $response->assertSee(route('client.dynamic-qrs.index'));
+        $response->assertSee(route('client.nfc-tags.index'));
+        $response->assertSee(route('client.qr-codes.index'));
+        $response->assertSee(route('client.loyalty.terminal'));
+        $response->assertSee(route('client.loyalty.index'));
+        $response->assertSee(route('client.loyalty.scan'));
+        $response->assertSee(route('client.loyalty.settings'));
+        $response->assertSee(route('client.analytics'));
+        $response->assertSee(route('home'));
+        $response->assertSee(route('client.logout'));
+        $response->assertSee('SIDEBAR999');
     }
 }

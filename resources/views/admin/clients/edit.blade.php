@@ -142,6 +142,32 @@
                         </div>
                     </div>
 
+                    <!-- Loyalty System Quota -->
+                    <div class="col-md-6">
+                        <x-input
+                            name="loyalty_card_limit"
+                            label="Limite de Cartes Fidélité (Quota)"
+                            type="number"
+                            :value="old('loyalty_card_limit', $client->loyalty_card_limit ?? 20)"
+                            min="0"
+                            max="100000"
+                            icon="bi-award"
+                            help="Nombre maximal de cartes fidélité que ce client est autorisé à créer (Actuellement : {{ $client->loyaltyCards()->count() }} créées)."
+                        />
+                    </div>
+
+                    <!-- Loyalty System Status -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="loyalty_enabled" class="form-label fw-semibold text-dark small mb-1">Programme Fidélité</label>
+                            <select name="loyalty_enabled" id="loyalty_enabled" class="form-select form-control-custom">
+                                <option value="1" {{ old('loyalty_enabled', (string)$client->loyalty_enabled) !== '0' ? 'selected' : '' }}>Activé (Le client peut émettre des cartes fidélité)</option>
+                                <option value="0" {{ old('loyalty_enabled', (string)$client->loyalty_enabled) === '0' ? 'selected' : '' }}>Désactivé</option>
+                            </select>
+                            <div class="form-text small text-muted">Active ou désactive l'accès au module fidélité pour ce client.</div>
+                        </div>
+                    </div>
+
                     <!-- Notes -->
                     <div class="col-12">
                         <div class="mb-3">

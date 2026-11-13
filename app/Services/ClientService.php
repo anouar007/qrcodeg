@@ -53,6 +53,8 @@ class ClientService
                 'logo' => $logoPath,
                 'password' => ! empty($data['password']) ? Hash::make($data['password']) : null,
                 'is_password_set' => ! empty($data['password']),
+                'loyalty_card_limit' => isset($data['loyalty_card_limit']) ? (int) $data['loyalty_card_limit'] : 20,
+                'loyalty_enabled' => ! empty($data['loyalty_enabled']),
             ]);
 
             return $client;
@@ -93,6 +95,13 @@ class ClientService
             if (! empty($data['password'])) {
                 $updateData['password'] = Hash::make($data['password']);
                 $updateData['is_password_set'] = true;
+            }
+
+            if (array_key_exists('loyalty_card_limit', $data)) {
+                $updateData['loyalty_card_limit'] = (int) $data['loyalty_card_limit'];
+            }
+            if (array_key_exists('loyalty_enabled', $data)) {
+                $updateData['loyalty_enabled'] = (bool) $data['loyalty_enabled'];
             }
 
             if ($logo) {

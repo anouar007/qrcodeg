@@ -1,47 +1,10 @@
 @extends('layouts.guest')
 
-@section('title', 'Staff & Admin Login')
-@section('heading', 'Staff & Admin Login')
-@section('subheading', 'Sign in to access your dashboard and SaaS modules')
+@section('title', 'Sign In — Portal Login')
+@section('heading', 'Sign In')
+@section('subheading', 'Enter your email and password (or Portal Access Code) to access your dashboard')
 
 @section('content')
-<!-- Interactive Fast-Fill Credentials Switcher -->
-<div class="quick-fill-container">
-    <div class="quick-fill-label">
-        <i class="bi bi-lightning-charge-fill text-warning"></i>
-        <span>Instant Demo Credentials</span>
-    </div>
-    <div class="quick-fill-chips">
-        <button
-            type="button"
-            class="quick-fill-btn active"
-            id="quickFillAdminBtn"
-            data-login="admin@example.com"
-            data-password="password"
-            title="Click to fill Master Admin credentials"
-        >
-            <span class="chip-role text-primary">
-                <i class="bi bi-shield-check"></i> Admin
-            </span>
-            <span class="chip-email">admin@example.com</span>
-        </button>
-
-        <button
-            type="button"
-            class="quick-fill-btn"
-            id="quickFillStaffBtn"
-            data-login="staff@example.com"
-            data-password="password"
-            title="Click to fill Operator Staff credentials"
-        >
-            <span class="chip-role text-dark">
-                <i class="bi bi-person-badge"></i> Staff
-            </span>
-            <span class="chip-email">staff@example.com</span>
-        </button>
-    </div>
-</div>
-
 <form method="POST" action="{{ route('login.post') }}" id="loginForm" novalidate>
     @csrf
 
@@ -56,11 +19,11 @@
                 type="text"
                 name="login"
                 id="login"
-                value="{{ old('login', 'admin@example.com') }}"
+                value="{{ old('login') }}"
                 required
                 autofocus
                 autocomplete="username"
-                placeholder="admin@example.com or username"
+                placeholder="email@example.com or username"
                 class="guest-input-control {{ $errors->has('login') ? 'is-invalid' : '' }}"
             >
         </div>
@@ -75,7 +38,7 @@
     <div class="guest-field">
         <div class="guest-field-label">
             <span>Password <span class="text-danger">*</span></span>
-            <span class="badge bg-light text-muted border font-mono px-2 py-0" style="font-size: 0.7rem;">Default: password</span>
+            <span class="badge bg-light text-muted border font-mono px-2 py-0" style="font-size: 0.7rem;">Password or Portal Access Code</span>
         </div>
         <div class="guest-input-group">
             <i class="bi bi-lock-fill guest-input-icon"></i>
@@ -83,10 +46,9 @@
                 type="password"
                 name="password"
                 id="password"
-                value="password"
                 required
                 autocomplete="current-password"
-                placeholder="••••••••"
+                placeholder="•••••••• or Access Code"
                 class="guest-input-control {{ $errors->has('password') ? 'is-invalid' : '' }}"
                 style="padding-right: 3rem;"
             >
@@ -110,41 +72,21 @@
         @endif
     </div>
 
-    <!-- Remember Me & Help Links -->
+    <!-- Remember Me -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="form-check form-switch d-flex align-items-center gap-2 m-0">
             <input class="form-check-input mt-0" type="checkbox" role="switch" id="remember" name="remember" value="1" checked>
             <label class="form-check-label small text-muted user-select-none" for="remember">Remember me</label>
         </div>
-        <a href="{{ route('client.access') }}" class="small text-primary text-decoration-none fw-semibold">
-            Client Portal <i class="bi bi-arrow-right-short"></i>
-        </a>
     </div>
 
     <!-- Submit Button with Interactive Feedback -->
     <button type="submit" id="loginSubmitBtn" class="guest-submit-btn">
         <i class="bi bi-box-arrow-in-right fs-5" id="submitIcon"></i>
-        <span id="submitText">Authorize &amp; Sign In</span>
+        <span id="submitText">Sign In</span>
         <span id="submitSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
     </button>
 </form>
-
-<!-- Physical Card / NFC Client Token Access Box -->
-<div class="guest-alt-box mt-3">
-    <div class="d-flex align-items-center justify-content-between gap-2">
-        <div class="text-start">
-            <div class="fw-bold text-dark small d-flex align-items-center gap-1.5">
-                <i class="bi bi-nfc text-primary fs-6"></i>
-                <span>Client &amp; NFC Access</span>
-            </div>
-            <div class="text-muted" style="font-size: 0.74rem;">Have a physical card or access key?</div>
-        </div>
-        <a href="{{ route('client.access') }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 fw-semibold d-inline-flex align-items-center gap-1" style="font-size: 0.78rem;">
-            <span>Enter Code</span>
-            <i class="bi bi-arrow-right"></i>
-        </a>
-    </div>
-</div>
 
 @push('scripts')
 <script>

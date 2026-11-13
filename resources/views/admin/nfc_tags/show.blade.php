@@ -20,6 +20,10 @@
             </h1>
         </div>
         <div class="d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-success shadow-sm d-inline-flex align-items-center gap-1.5" onclick="window.nfcEncoder.writeUrl('{{ route('nfc.redirect', ['id_or_uid' => $nfcTag->tag_uid ?: $nfcTag->id]) }}', 'Tag NFC - {{ addslashes($nfcTag->label ?: $nfcTag->name) }}')">
+                <i class="bi bi-broadcast"></i>
+                <span>Encoder NFC</span>
+            </button>
             <a href="{{ route('admin.nfc-tags.edit', $nfcTag) }}" class="btn btn-outline-secondary">
                 <i class="bi bi-pencil me-1"></i> Edit Tag
             </a>

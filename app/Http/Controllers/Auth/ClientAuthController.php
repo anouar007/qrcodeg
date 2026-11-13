@@ -12,6 +12,59 @@ use Illuminate\Support\Facades\Hash;
 
 class ClientAuthController extends Controller
 {
+    public function showLogin()
+    {
+        if (Auth::guard('client')->check()) {
+            return redirect()->route('client.dashboard');
+        }
+
+        return view('auth.client_access');
+    }
+
+    public function loginWithEmail(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|string|max:150',
+            'password' => 'required|string',
+        ]);
+
+        $login = trim($credentials['email']);
+
+        $client = Client::where('email', $login)
+            ->orWhere('access_code', strtoupper($login))
+            ->first();
+
+        $clientMatches = $client && (
+            (! empty($client->access_code) && strcasecmp(trim($credentials['password']), trim($client->access_code)) === 0)
+            || (! empty($client->password) && Hash::check($credentials['password'], $client->password))
+        );
+
+        if (! $clientMatches) {
+            return back()->withInput($request->only('email', 'remember'))
+                ->withErrors(['email' => 'The provided credentials do not match our client records.']);
+        }
+
+        if (! $client->isActive()) {
+            return back()->withInput($request->only('email'))
+                ->withErrors(['email' => 'Your client account is currently inactive. Please contact support.']);
+        }
+
+        Auth::guard('client')->login($client, $request->boolean('remember'));
+        $request->session()->regenerate();
+
+        $client->update(['last_login_at' => now()]);
+
+        ActivityLog::log(
+            action: 'client_login',
+            resourceType: 'Client',
+            resourceId: $client->id,
+            details: ['login_method' => 'email', 'email' => $client->email],
+            client: $client
+        );
+
+        return redirect()->intended(route('client.dashboard'))->with('success', "Welcome back, {$client->name}!");
+    }
+
     public function showAccess()
     {
         if (Auth::guard('client')->check()) {

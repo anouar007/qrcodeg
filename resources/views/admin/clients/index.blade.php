@@ -7,33 +7,181 @@
     <li class="breadcrumb-item active" aria-current="page">Clients</li>
 @endsection
 
-@section('content')
-<!-- Page Header -->
-<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2 border-bottom">
-    <div>
-        <div class="d-flex align-items-center gap-2 mb-1">
-            <h4 class="fw-extrabold mb-0 text-dark">Client Management</h4>
-            <span class="badge bg-primary-subtle text-primary font-mono small">Section Clients</span>
-        </div>
-        <p class="text-muted small mb-0">Manage partner accounts, projects, access credentials, and connected IoT assets.</p>
-    </div>
+@push('styles')
+<style>
+    .clients-hero-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 60%, #eef2ff 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    }
+    .clients-hero-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 0.875rem;
+        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+        box-shadow: 0 6px 14px rgba(79, 70, 229, 0.25);
+        flex-shrink: 0;
+    }
+    .client-kpi-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.875rem;
+        padding: 1rem 1.15rem;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        height: 100%;
+    }
+    .client-kpi-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+    .client-kpi-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        flex-shrink: 0;
+    }
+    .client-filter-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.875rem;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+    }
+    .clients-table thead th {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: #64748b;
+        background-color: #f8fafc;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .clients-table tbody tr {
+        transition: background-color 0.15s ease;
+    }
+    .clients-table tbody tr:hover {
+        background-color: #f8fafc;
+    }
+    .client-avatar-box {
+        width: 44px;
+        height: 44px;
+        border-radius: 0.75rem;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+    .copy-code-btn {
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
+        color: #64748b;
+        border-radius: 0.45rem;
+        padding: 0.15rem 0.4rem;
+        font-size: 0.72rem;
+        line-height: 1;
+        transition: all 0.15s ease;
+    }
+    .copy-code-btn:hover {
+        background: #eef2ff;
+        color: #4f46e5;
+        border-color: #c7d2fe;
+    }
+</style>
+@endpush
 
-    <!-- Quick Actions -->
-    <div class="d-flex flex-wrap gap-2">
-        <a href="{{ route('admin.clients.export', request()->query()) }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-xs">
-            <i class="bi bi-download me-1"></i> Export CSV
-        </a>
-        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-xs" data-bs-toggle="modal" data-bs-target="#quickClientModal">
-            <i class="bi bi-lightning-charge me-1"></i> Quick Add
-        </button>
-        <a href="{{ route('admin.clients.create') }}" class="btn btn-sm btn-primary-custom rounded-pill px-3 shadow-sm">
-            <i class="bi bi-person-plus-fill me-1"></i> New Client
-        </a>
+@section('content')
+<!-- Executive Hero Header -->
+<div class="clients-hero-card p-3 p-md-4 mb-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <div class="clients-hero-icon">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div>
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                    <h4 class="fw-extrabold mb-0 text-dark">Client Management</h4>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill font-mono small px-2 py-1">Section Clients</span>
+                </div>
+                <p class="text-muted small mb-0">Manage partner accounts, projects, access credentials, and connected IoT assets.</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ route('admin.clients.export', request()->query()) }}" class="btn btn-sm btn-light border rounded-pill px-3 py-2 fw-semibold shadow-xs">
+                <i class="bi bi-download me-1"></i> Export CSV
+            </a>
+            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-2 fw-semibold shadow-xs" data-bs-toggle="modal" data-bs-target="#quickClientModal">
+                <i class="bi bi-lightning-charge me-1"></i> Quick Add
+            </button>
+            <a href="{{ route('admin.clients.create') }}" class="btn btn-sm btn-primary-custom rounded-pill px-3 py-2 fw-semibold shadow-sm">
+                <i class="bi bi-person-plus-fill me-1"></i> New Client
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- KPI Summary Strip -->
+@php
+    $pageCollection = $clients->getCollection();
+    $activeOnPage = $pageCollection->where('status', 'active')->count();
+    $assetsOnPage = $pageCollection->sum(fn ($c) => ($c->dynamic_qr_codes_count ?? 0) + ($c->qr_codes_count ?? 0) + ($c->digital_cards_count ?? 0) + ($c->nfc_tags_count ?? 0));
+@endphp
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="client-kpi-card d-flex align-items-center gap-3">
+            <div class="client-kpi-icon bg-primary-subtle text-primary">
+                <i class="bi bi-buildings"></i>
+            </div>
+            <div>
+                <div class="text-muted small fw-semibold">Total Clients</div>
+                <div class="fs-4 fw-extrabold text-dark lh-1 mt-1">{{ $clients->total() }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="client-kpi-card d-flex align-items-center gap-3">
+            <div class="client-kpi-icon bg-success-subtle text-success">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <div>
+                <div class="text-muted small fw-semibold">Active (Page)</div>
+                <div class="fs-4 fw-extrabold text-dark lh-1 mt-1">{{ $activeOnPage }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="client-kpi-card d-flex align-items-center gap-3">
+            <div class="client-kpi-icon bg-info-subtle text-info">
+                <i class="bi bi-geo-alt-fill"></i>
+            </div>
+            <div>
+                <div class="text-muted small fw-semibold">Cities Covered</div>
+                <div class="fs-4 fw-extrabold text-dark lh-1 mt-1">{{ $cities->count() }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="client-kpi-card d-flex align-items-center gap-3">
+            <div class="client-kpi-icon bg-warning-subtle text-warning">
+                <i class="bi bi-cpu-fill"></i>
+            </div>
+            <div>
+                <div class="text-muted small fw-semibold">Assets (Page)</div>
+                <div class="fs-4 fw-extrabold text-dark lh-1 mt-1">{{ $assetsOnPage }}</div>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- Search & Filter Card -->
-<div class="card card-custom p-3 bg-white mb-4 border">
+<div class="client-filter-card p-3 mb-4">
     <form method="GET" action="{{ route('admin.clients.index') }}" class="row g-2 align-items-center">
         <!-- Search input -->
         <div class="col-lg-5 col-md-6">
@@ -42,7 +190,7 @@
                 <input
                     type="text"
                     name="search"
-                    class="form-control form-control-custom"
+                    class="form-control form-control-custom rounded-3"
                     placeholder="Search by name, project, city, phone, email, or access code..."
                     value="{{ request('search') }}"
                 >
@@ -51,7 +199,7 @@
 
         <!-- City filter -->
         <div class="col-lg-3 col-md-3 col-sm-6">
-            <select name="city" class="form-select form-control-custom">
+            <select name="city" class="form-select form-control-custom rounded-3">
                 <option value="">All Cities</option>
                 @foreach($cities as $city)
                     <option value="{{ $city }}" {{ request('city') === $city ? 'selected' : '' }}>
@@ -63,7 +211,7 @@
 
         <!-- Status filter -->
         <div class="col-lg-2 col-md-3 col-sm-6">
-            <select name="status" class="form-select form-control-custom">
+            <select name="status" class="form-select form-control-custom rounded-3">
                 <option value="">All Statuses</option>
                 <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
                 <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
@@ -72,11 +220,11 @@
 
         <!-- Actions -->
         <div class="col-lg-2 col-md-12 d-flex gap-2">
-            <button type="submit" class="btn btn-primary-custom w-100">
+            <button type="submit" class="btn btn-primary-custom rounded-3 w-100 fw-semibold">
                 <i class="bi bi-funnel me-1"></i> Filter
             </button>
             @if(request()->hasAny(['search', 'city', 'status']))
-                <a href="{{ route('admin.clients.index') }}" class="btn btn-outline-secondary" title="Reset Filters">
+                <a href="{{ route('admin.clients.index') }}" class="btn btn-light border rounded-3" title="Reset Filters">
                     <i class="bi bi-arrow-counterclockwise"></i>
                 </a>
             @endif
@@ -87,12 +235,12 @@
 <!-- Clients Data Table -->
 <x-card title="Clients Directory" :subtitle="'Showing ' . $clients->total() . ' clients registered across active projects'" icon="bi-people">
     <x-slot:actions>
-        <span class="badge bg-light text-muted border font-mono small">Page {{ $clients->currentPage() }} of {{ $clients->lastPage() ?: 1 }}</span>
+        <span class="badge bg-light text-muted border rounded-pill font-mono small px-2 py-1">Page {{ $clients->currentPage() }} of {{ $clients->lastPage() ?: 1 }}</span>
     </x-slot:actions>
 
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light text-uppercase tracking-wider small">
+        <table class="table clients-table align-middle mb-0">
+            <thead class="text-uppercase tracking-wider">
                 <tr>
                     <th class="ps-3 py-3">Client & Project</th>
                     <th>City & Phone</th>
@@ -109,9 +257,9 @@
                         <td class="ps-3 py-3">
                             <div class="d-flex align-items-center gap-3">
                                 @if($client->logo)
-                                    <img src="{{ asset('storage/' . $client->logo) }}" alt="Logo" class="rounded border p-1 bg-white" style="width: 44px; height: 44px; object-fit: contain;">
+                                    <img src="{{ asset('storage/' . $client->logo) }}" alt="Logo" class="client-avatar-box border p-1 bg-white">
                                 @else
-                                    <div class="rounded-circle bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px; font-size: 1.05rem;">
+                                    <div class="client-avatar-box bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center" style="font-size: 1.05rem;">
                                         {{ strtoupper(substr($client->name ?: ($client->contact_name ?: 'C'), 0, 1)) }}
                                     </div>
                                 @endif
@@ -120,11 +268,15 @@
                                         {{ $client->name ?: $client->contact_name }}
                                     </a>
                                     @if($client->project_name)
-                                        <div class="small text-primary fw-semibold">
-                                            <i class="bi bi-folder2-open me-1"></i>{{ $client->project_name }}
+                                        <div class="mt-1">
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill fw-semibold" style="font-size: 0.72rem;">
+                                                <i class="bi bi-folder2-open me-1"></i>{{ $client->project_name }}
+                                            </span>
                                         </div>
                                     @endif
-                                    <div class="small text-muted">{{ $client->company_name }}</div>
+                                    @if($client->company_name)
+                                        <div class="small text-muted mt-1">{{ $client->company_name }}</div>
+                                    @endif
                                 </div>
                             </div>
                         </td>
@@ -142,9 +294,16 @@
                             </div>
                         </td>
                         <td>
-                            <span class="badge bg-dark-subtle text-dark border font-mono px-2 py-1">
-                                {{ $client->access_code ?? 'Not configured' }}
-                            </span>
+                            <div class="d-inline-flex align-items-center gap-1">
+                                <span class="badge bg-light text-dark border font-mono px-2 py-1 rounded-2">
+                                    {{ $client->access_code ?? 'Not configured' }}
+                                </span>
+                                @if($client->access_code)
+                                    <button type="button" class="copy-code-btn" title="Copy Access Code" onclick="copyAccessCode('{{ $client->access_code }}', this)">
+                                        <i class="bi bi-clipboard"></i>
+                                    </button>
+                                @endif
+                            </div>
                             @if($client->is_password_set)
                                 <small class="text-success d-block mt-1" style="font-size: 0.72rem;"><i class="bi bi-shield-check"></i> Password active</small>
                             @else
@@ -152,18 +311,16 @@
                             @endif
                         </td>
                         <td class="text-center">
-                            <div class="d-flex flex-column gap-1 align-items-center">
-                                <span class="badge bg-primary-subtle text-primary border" title="Dynamic VP QR Codes">
+                            <div class="d-inline-flex flex-wrap gap-1 justify-content-center">
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1" style="font-size: 0.72rem;" title="Dynamic & Static QR Codes">
                                     <i class="bi bi-qr-code me-1"></i>{{ ($client->dynamic_qr_codes_count ?? 0) + ($client->qr_codes_count ?? 0) }} QR
                                 </span>
-                                <div class="d-flex gap-1">
-                                    <span class="badge bg-info-subtle text-info border" style="font-size: 0.7rem;" title="Digital Business Cards">
-                                        <i class="bi bi-person-vcard me-1"></i>{{ $client->digital_cards_count ?? 0 }}
-                                    </span>
-                                    <span class="badge bg-warning-subtle text-warning border" style="font-size: 0.7rem;" title="Physical NFC Tags">
-                                        <i class="bi bi-broadcast me-1"></i>{{ $client->nfc_tags_count ?? 0 }}
-                                    </span>
-                                </div>
+                                <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill px-2 py-1" style="font-size: 0.72rem;" title="Digital Business Cards">
+                                    <i class="bi bi-person-vcard me-1"></i>{{ $client->digital_cards_count ?? 0 }} Cards
+                                </span>
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-2 py-1" style="font-size: 0.72rem;" title="Physical NFC Tags">
+                                    <i class="bi bi-broadcast me-1"></i>{{ $client->nfc_tags_count ?? 0 }} NFC
+                                </span>
                             </div>
                         </td>
                         <td class="text-center">
@@ -173,10 +330,14 @@
                             {{ $client->last_login_at ? $client->last_login_at->diffForHumans() : ($client->created_at ? $client->created_at->diffForHumans() : 'Recently') }}
                         </td>
                         <td class="text-end pe-3">
-                            <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Actions
-                                </button>
+                            <div class="d-inline-flex align-items-center gap-1">
+                                <a href="{{ route('admin.clients.show', $client) }}" class="btn btn-sm btn-light border rounded-pill px-2" title="View Client">
+                                    <i class="bi bi-eye text-primary"></i>
+                                </a>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light border rounded-pill px-3 dropdown-toggle fw-semibold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Actions
+                                    </button>
                                 <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                                     <li>
                                         <a class="dropdown-item" href="{{ route('admin.clients.show', $client) }}">
@@ -217,6 +378,7 @@
                                         </form>
                                     </li>
                                 </ul>
+                                </div>
                             </div>
                         </td>
                     </tr>
@@ -322,3 +484,23 @@
     </x-slot:footer>
 </x-modal>
 @endsection
+
+@push('scripts')
+<script>
+    function copyAccessCode(code, btn) {
+        if (!navigator.clipboard) {
+            return;
+        }
+        navigator.clipboard.writeText(code).then(() => {
+            const icon = btn.querySelector('i');
+            if (!icon) {
+                return;
+            }
+            icon.className = 'bi bi-check2 text-success';
+            setTimeout(() => {
+                icon.className = 'bi bi-clipboard';
+            }, 1500);
+        });
+    }
+</script>
+@endpush

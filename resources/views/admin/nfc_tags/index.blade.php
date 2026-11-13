@@ -140,13 +140,19 @@
                                     </span>
                                 </td>
                                 <td class="pe-4 text-end">
-                                    <form method="POST" action="{{ route('admin.nfc-tags.destroy', $tag) }}" class="d-inline" onsubmit="return confirm('Supprimer cette carte NFC ?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-link p-0 text-muted border-0" title="Supprimer">
-                                            <i class="bi bi-trash fs-6" style="color: #94a3b8;"></i>
+                                    <div class="d-inline-flex align-items-center gap-2">
+                                        <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-2.5 d-inline-flex align-items-center gap-1" title="Encoder cette puce NFC depuis votre navigateur" onclick="window.nfcEncoder.writeUrl('{{ route('nfc.redirect', ['id_or_uid' => $tag->tag_uid ?: $tag->id]) }}', 'Tag NFC - {{ addslashes($tag->label ?: $tag->name) }}')">
+                                            <i class="bi bi-broadcast"></i>
+                                            <span>Encoder NFC</span>
                                         </button>
-                                    </form>
+                                        <form method="POST" action="{{ route('admin.nfc-tags.destroy', $tag) }}" class="d-inline" onsubmit="return confirm('Supprimer cette carte NFC ?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-link p-0 text-muted border-0" title="Supprimer">
+                                                <i class="bi bi-trash fs-6" style="color: #94a3b8;"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty

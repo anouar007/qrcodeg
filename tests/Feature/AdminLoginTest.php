@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Client;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -19,12 +20,11 @@ class AdminLoginTest extends TestCase
         $response->assertSee('guest-card', false);
         $response->assertSee('guest-top-bar', false);
         $response->assertSee('guest-brand-logo', false);
-        $response->assertSee('quick-fill-chips', false);
         $response->assertSee('togglePasswordBtn', false);
         $response->assertSee('name="login"', false);
         $response->assertSee('name="password"', false);
         $response->assertSee('name="remember"', false);
-        $response->assertSee(route('client.access'), false);
+        $response->assertSee('Password or Portal Access Code', false);
     }
 
     public function test_user_can_authenticate_with_valid_credentials(): void
@@ -70,5 +70,27 @@ class AdminLoginTest extends TestCase
         $response = $this->actingAs($user)->get(route('login'));
 
         $response->assertRedirect(route('admin.dashboard'));
+    }
+
+    public function test_client_can_authenticate_on_unified_login_using_email_and_portal_access_code(): void
+    {
+        $client = Client::create([
+            'name' => 'Unified Client',
+            'email' => 'client@unified.test',
+            'access_code' => 'PORTAL-4567',
+            'status' => 'active',
+        ]);
+
+        $response = $this->post(route('login.post'), [
+            'login' => 'client@unified.test',
+            'password' => 'PORTAL-4567',
+        ]);
+
+        $response->assertRedirect(route('client.dashboard'));
+        $this->assertAuthenticatedAs($client, 'client');
+
+        $this->actingAs($client, 'client')
+            ->get(route('login'))
+            ->assertRedirect(route('client.dashboard'));
     }
 }
