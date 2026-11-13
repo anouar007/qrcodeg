@@ -75,29 +75,35 @@ class NfcEncoder {
                             </div>
                         </div>
 
-                        <!-- UNSUPPORTED STATE (iOS / Desktop without Web NFC) -->
+                        <!-- UNSUPPORTED STATE (iOS / HTTP / Desktop without Web NFC) -->
                         <div id="nfcUnsupportedContainer" class="d-none text-start">
                             <div class="alert alert-warning border-0 rounded-3 p-3 mb-3">
                                 <div class="d-flex gap-2">
                                     <i class="bi bi-info-circle-fill fs-5 text-warning flex-shrink-0"></i>
                                     <div>
-                                        <strong class="d-block small">Web NFC restreint sur ce navigateur</strong>
-                                        <p class="small text-muted mb-0">
-                                            L'écriture NFC directe depuis le navigateur est native sur <strong>Android (Chrome, Edge, Samsung Internet)</strong>. Sur iPhone (iOS) ou PC, utilisez l'une des méthodes ci-dessous :
+                                        <strong class="d-block small" id="nfcUnsupportedTitle">Web NFC non disponible sur ce navigateur</strong>
+                                        <p class="small text-muted mb-0" id="nfcUnsupportedDesc">
+                                            L'écriture NFC directe depuis le navigateur est uniquement prise en charge par <strong>Chrome, Edge et Samsung Internet sur Android (en HTTPS)</strong>.
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <h6 class="fw-bold small text-dark mb-2">Options alternatives :</h6>
-                            <ol class="small text-muted ps-3 mb-3">
-                                <li class="mb-1">Ouvrez cette page sur un <strong>smartphone Android avec NFC</strong> pour graver en 1 clic.</li>
-                                <li class="mb-1">Ou copiez l'URL ci-dessus dans n'importe quelle application d'encodage (ex : <em>NFC Tools</em>).</li>
+                            <h6 class="fw-bold small text-dark mb-2">Comment graver depuis cet appareil :</h6>
+                            <ol class="small text-muted ps-3 mb-3" id="nfcUnsupportedSteps">
+                                <li class="mb-1">Copiez l'URL ci-dessous en 1 clic.</li>
+                                <li class="mb-1">Ouvrez l'application gratuite <strong>NFC Tools</strong> (iOS / Android) → <em>Écrire</em> → <em>Ajouter un enregistrement</em> → <em>URL</em>, puis collez le lien.</li>
+                                <li class="mb-1">Ou ouvrez cette page sur un <strong>smartphone Android (Chrome en HTTPS)</strong> pour graver directement sans app.</li>
                             </ol>
 
-                            <button type="button" class="btn btn-outline-secondary w-100 rounded-pill btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('nfcTargetUrlDisplay').textContent); alert('URL copiée dans le presse-papiers !');">
-                                <i class="bi bi-clipboard me-1"></i> Copier l'URL à graver
-                            </button>
+                            <div class="d-grid gap-2">
+                                <button type="button" id="nfcCopyUrlBtn" class="btn btn-primary w-100 rounded-pill btn-sm fw-semibold" onclick="window.nfcEncoder.copyTargetUrl(this)">
+                                    <i class="bi bi-clipboard me-1"></i> Copier l'URL à graver
+                                </button>
+                                <a id="nfcIosAppBtn" href="https://apps.apple.com/app/nfc-tools/id1252962749" target="_blank" rel="noopener" class="btn btn-outline-dark w-100 rounded-pill btn-sm d-none">
+                                    <i class="bi bi-apple me-1"></i> Ouvrir NFC Tools (App Store)
+                                </a>
+                            </div>
                         </div>
 
                     </div>
@@ -181,6 +187,26 @@ class NfcEncoder {
         if (!this.isSupported) {
             document.getElementById('nfcSupportedContainer').classList.add('d-none');
             document.getElementById('nfcUnsupportedContainer').classList.remove('d-none');
+            document.getElementById('nfcRetryBtn')?.classList.add('d-none');
+
+            const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            const titleEl = document.getElementById('nfcUnsupportedTitle');
+            const descEl = document.getElementById('nfcUnsupportedDesc');
+            const iosBtn = document.getElementById('nfcIosAppBtn');
+
+            if (!window.isSecureContext) {
+                titleEl.textContent = 'Connexion HTTPS requise pour le NFC';
+                descEl.innerHTML = 'Les navigateurs bloquent l\'accès à l\'antenne NFC sur HTTP. Accédez au site en <strong>HTTPS</strong> pour activer l\'encodage direct.';
+                iosBtn?.classList.add('d-none');
+            } else if (isIos) {
+                titleEl.textContent = 'iPhone (iOS) : Web NFC bloqué par Apple';
+                descEl.innerHTML = 'Apple interdit l\'écriture NFC depuis tous les navigateurs iPhone (Safari, Chrome, Edge). Pour écrire sur votre puce avec votre iPhone, copiez le lien et utilisez <strong>NFC Tools</strong> (gratuit).';
+                iosBtn?.classList.remove('d-none');
+            } else {
+                titleEl.textContent = 'Web NFC non disponible sur ce navigateur';
+                descEl.innerHTML = 'L\'écriture NFC directe depuis le navigateur fonctionne uniquement sur <strong>Android (Chrome, Edge, Samsung Internet) en HTTPS</strong>.';
+                iosBtn?.classList.add('d-none');
+            }
             return;
         }
 
@@ -190,21 +216,29 @@ class NfcEncoder {
         this.startNfcWrite();
     }
 
+    copyTargetUrl(btn) {
+        const url = document.getElementById('nfcTargetUrlDisplay')?.textContent || this.currentUrl || '';
+        if (!url || !navigator.clipboard) {
+            return;
+        }
+        navigator.clipboard.writeText(url).then(() => {
+            if (!btn) return;
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check2 me-1"></i> URL copiée !';
+            btn.classList.replace('btn-primary', 'btn-success');
+            setTimeout(() => {
+                btn.innerHTML = original;
+                btn.classList.replace('btn-success', 'btn-primary');
+            }, 2000);
+        });
+    }
+
     async startNfcWrite() {
         try {
             this.abortController = new AbortController();
             this.reader = new NDEFReader();
 
-            // Setup reading to capture UID simultaneously
-            this.reader.scan({ signal: this.abortController.signal }).then(() => {
-                this.reader.onreading = event => {
-                    if (event.serialNumber) {
-                        this.capturedUid = event.serialNumber;
-                    }
-                };
-            }).catch(() => {});
-
-            // Execute the physical NDEF URL write
+            // Execute the physical NDEF URL write directly
             await this.reader.write(
                 {
                     records: [
