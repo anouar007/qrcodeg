@@ -18,7 +18,14 @@ class DigitalCardController extends Controller
      */
     public function index(Request $request)
     {
+        $user = auth('web')->user();
+        abort_unless($user && ($user->isAdmin() || $user->hasPermission('view_digital_cards') || $user->assignedDigitalCards()->exists()), 403);
+
         $query = DigitalCard::with(['client', 'creator', 'nfcTags']);
+
+        if (! $user->isAdmin() && $user->assignedDigitalCards()->exists() && ! $user->hasPermission('view_digital_cards')) {
+            $query->whereIn('id', $user->assignedDigitalCards()->pluck('digital_cards.id'));
+        }
 
         if ($request->filled('search')) {
             $search = trim($request->search);
@@ -110,6 +117,9 @@ class DigitalCardController extends Controller
      */
     public function create()
     {
+        $user = auth('web')->user();
+        abort_unless($user && ($user->isAdmin() || $user->hasPermission('create_digital_cards')), 403);
+
         $clients = Client::where('status', 'active')->orderBy('name')->get();
 
         // 3 presets: Modern Minimal, Corporate Sleek, Creative Bold
@@ -205,6 +215,9 @@ class DigitalCardController extends Controller
      */
     public function store(Request $request)
     {
+        $user = auth('web')->user();
+        abort_unless($user && ($user->isAdmin() || $user->hasPermission('create_digital_cards')), 403);
+
         $validated = $request->validate([
             'title' => 'nullable|string|max:150',
             'name' => 'nullable|string|max:150',
@@ -354,6 +367,9 @@ class DigitalCardController extends Controller
      */
     public function show(DigitalCard $digitalCard)
     {
+        $user = auth('web')->user();
+        abort_unless($user && ($user->isAdmin() || $user->hasPermission('view_digital_cards') || $user->canAccessDigitalCard($digitalCard)), 403);
+
         $digitalCard->load(['client', 'creator', 'nfcTags']);
 
         return view('admin.digital_cards.show', compact('digitalCard'));
@@ -364,6 +380,8 @@ class DigitalCardController extends Controller
      */
     public function edit(DigitalCard $digitalCard)
     {
+        abort_unless(auth('web')->user()?->canAccessDigitalCard($digitalCard), 403);
+
         $digitalCard->load('client');
         $clients = Client::where('status', 'active')->orderBy('name')->get();
 
@@ -450,6 +468,8 @@ class DigitalCardController extends Controller
      */
     public function update(Request $request, DigitalCard $digitalCard)
     {
+        abort_unless(auth('web')->user()?->canAccessDigitalCard($digitalCard), 403);
+
         $validated = $request->validate([
             'title' => 'nullable|string|max:150',
             'name' => 'nullable|string|max:150',
@@ -603,6 +623,8 @@ class DigitalCardController extends Controller
      */
     public function manageMenu(DigitalCard $digitalCard)
     {
+        abort_unless(auth('web')->user()?->canAccessDigitalCard($digitalCard), 403);
+
         $digitalCard->load('client');
 
         $currentTheme = array_merge([
@@ -657,6 +679,8 @@ class DigitalCardController extends Controller
      */
     public function updateMenu(Request $request, DigitalCard $digitalCard)
     {
+        abort_unless(auth('web')->user()?->canAccessDigitalCard($digitalCard), 403);
+
         $menuConfig = $request->input('menu_config');
         if (is_string($menuConfig)) {
             $menuConfig = json_decode($menuConfig, true) ?? [];
@@ -688,6 +712,9 @@ class DigitalCardController extends Controller
      */
     public function uploadImage(Request $request)
     {
+        $user = auth('web')->user();
+        abort_unless($user && ($user->isAdmin() || $user->hasPermission('edit_digital_cards') || $user->assignedDigitalCards()->exists()), 403);
+
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,webp,svg,gif|max:6144',
         ]);
@@ -706,6 +733,9 @@ class DigitalCardController extends Controller
      */
     public function destroy(DigitalCard $digitalCard)
     {
+        $user = auth('web')->user();
+        abort_unless($user && ($user->isAdmin() || $user->hasPermission('delete_digital_cards')), 403);
+
         $name = $digitalCard->title;
         $digitalCard->delete();
 

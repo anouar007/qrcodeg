@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\RestaurantMenuController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AssignedWorkspaceController;
 use App\Http\Controllers\Auth\AdminAuthController;
 use App\Http\Controllers\Auth\ClientAuthController;
 use App\Http\Controllers\Client\ClientAnalyticsController;
@@ -27,11 +28,13 @@ use App\Http\Controllers\Client\ClientQrController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DynamicQrCodeController;
 use App\Http\Controllers\DynamicQrController;
+use App\Http\Controllers\MenuCardScannerController;
 use App\Http\Controllers\Public\PublicController;
 use App\Http\Controllers\Public\PublicDigitalCardController;
 use App\Http\Controllers\Public\PublicLoyaltyPassController;
 use App\Http\Controllers\Public\PublicMenuController;
 use App\Http\Controllers\Public\PublicNfcController;
+use App\Http\Controllers\QrLinkEditorController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,6 +43,26 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth:web')->name('dashboard');
+
+Route::get('/my-workspace', [AssignedWorkspaceController::class, 'index'])
+    ->middleware('auth:web')
+    ->name('assigned-workspace.index');
+
+/*
+|--------------------------------------------------------------------------
+| Minimalist QR Link Editor (Scan & Edit Destination Link Only)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('qr-link-editor')->name('qr-link-editor.')->middleware(['auth:web', 'permission:scan_edit_qr_link,edit_qr'])->group(function () {
+    Route::get('/', [QrLinkEditorController::class, 'index'])->name('index');
+    Route::get('/lookup', [QrLinkEditorController::class, 'lookup'])->name('lookup');
+    Route::put('/{dynamicQr}', [QrLinkEditorController::class, 'update'])->name('update');
+});
+
+Route::prefix('menu-card-scanner')->name('menu-card-scanner.')->middleware(['auth:web', 'permission:scan_edit_menu_card,edit_digital_cards'])->group(function () {
+    Route::get('/', [MenuCardScannerController::class, 'index'])->name('index');
+    Route::get('/lookup', [MenuCardScannerController::class, 'lookup'])->name('lookup');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -216,14 +239,12 @@ Route::prefix('admin')->name('admin.')->middleware('auth:web')->group(function (
         Route::post('clients/{client}/set-credentials', [ClientController::class, 'setCredentials'])->name('clients.set-credentials');
     });
 
-    // Carte Visite Digitale
-    Route::middleware('permission:view_digital_cards')->group(function () {
-        Route::get('digital-cards/export', [DigitalCardController::class, 'exportCsv'])->name('digital-cards.export');
-        Route::post('digital-cards/upload-image', [DigitalCardController::class, 'uploadImage'])->name('digital-cards.upload-image');
-        Route::get('digital-cards/{digital_card}/menu', [DigitalCardController::class, 'manageMenu'])->name('digital-cards.menu.edit');
-        Route::put('digital-cards/{digital_card}/menu', [DigitalCardController::class, 'updateMenu'])->name('digital-cards.menu.update');
-        Route::resource('digital-cards', DigitalCardController::class);
-    });
+    // Carte Visite Digitale (global permission OR per-card assigned access enforced in controller)
+    Route::get('digital-cards/export', [DigitalCardController::class, 'exportCsv'])->name('digital-cards.export')->middleware('permission:view_digital_cards');
+    Route::post('digital-cards/upload-image', [DigitalCardController::class, 'uploadImage'])->name('digital-cards.upload-image');
+    Route::get('digital-cards/{digital_card}/menu', [DigitalCardController::class, 'manageMenu'])->name('digital-cards.menu.edit');
+    Route::put('digital-cards/{digital_card}/menu', [DigitalCardController::class, 'updateMenu'])->name('digital-cards.menu.update');
+    Route::resource('digital-cards', DigitalCardController::class);
 
     // NFC Tags (Chip Management, Quick Destination Swap & Telemetry)
     Route::middleware('permission:view_nfc_tags')->group(function () {

@@ -15,6 +15,18 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        if (auth()->user()?->isQrLinkEditorOnly()) {
+            return redirect()->route('qr-link-editor.index');
+        }
+
+        if (auth()->user()?->hasAssignedAssetsOnly()) {
+            return redirect()->route('assigned-workspace.index');
+        }
+
+        if (auth()->user()?->isMenuCardScannerOnly()) {
+            return redirect()->route('menu-card-scanner.index');
+        }
+
         // ------------------------------------------------------------------
         // 1. AGGREGATE METRICS
         // ------------------------------------------------------------------

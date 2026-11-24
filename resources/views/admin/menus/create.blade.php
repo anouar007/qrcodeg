@@ -150,6 +150,14 @@
         box-shadow: 0 4px 12px rgba(87, 54, 233, 0.12);
     }
 
+    /* Highlighted Invalid Fields */
+    .form-control.is-invalid,
+    .form-select.is-invalid {
+        border-color: #dc2626 !important;
+        background-color: #fef2f2 !important;
+        box-shadow: 0 0 0 0.25rem rgba(220, 38, 38, 0.18) !important;
+    }
+
     /* Simulator Pages and Grid Nav styles */
     .sim-tabs-bar {
         background: #f1f5f9;
@@ -673,7 +681,7 @@
                     </ul>
                 </div>
 
-                <button type="button" class="btn btn-primary btn-sm rounded-pill px-4 py-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-1.5" style="background: linear-gradient(135deg, #5736e9 0%, #4324c7 100%); border: none;" onclick="document.getElementById('menuStudioForm').submit();">
+                <button type="button" class="btn btn-primary btn-sm rounded-pill px-4 py-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-1.5" style="background: linear-gradient(135deg, #5736e9 0%, #4324c7 100%); border: none;" onclick="document.getElementById('menuStudioForm').requestSubmit();">
                     <i class="bi bi-cloud-arrow-up"></i>
                     <span>Enregistrer &amp; Publier</span>
                 </button>
@@ -735,7 +743,7 @@
                                 <span>Entreprise / Client Propriétaire</span>
                                 <span class="badge bg-info-subtle text-info">Espace Client Dédié</span>
                             </label>
-                            <select name="client_id" id="client_id" class="form-select">
+                            <select name="client_id" id="client_id" class="form-select @error('client_id') is-invalid @enderror">
                                 <option value="">-- Sans client assigné (Administrateur interne) --</option>
                                 @foreach($clients as $c)
                                     <option value="{{ $c->id }}" {{ (old('client_id', $selectedClientId ?? '') == $c->id) ? 'selected' : '' }}>
@@ -743,6 +751,9 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @error('client_id')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <!-- Brand Name & Menu Title -->
@@ -750,13 +761,19 @@
                             <label for="brand_name" class="form-label fw-semibold small text-dark">Nom de l'Établissement <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light text-muted"><i class="bi bi-building"></i></span>
-                                <input type="text" name="brand_name" id="brand_name" class="form-control" value="{{ old('brand_name', 'Smash & Bun') }}" placeholder="Ex: Smash & Bun, Le Bistrot Gourmand" required oninput="syncSimulatorHeader()">
+                                <input type="text" name="brand_name" id="brand_name" class="form-control @error('brand_name') is-invalid @enderror" value="{{ old('brand_name', 'Smash & Bun') }}" placeholder="Ex: Smash & Bun, Le Bistrot Gourmand" required oninput="syncSimulatorHeader()">
                             </div>
+                            @error('brand_name')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="col-12 col-md-6">
                             <label for="title" class="form-label fw-semibold small text-dark">Titre de la Carte / Menu <span class="text-danger">*</span></label>
-                            <input type="text" name="title" id="title" class="form-control" value="{{ old('title', 'Carte Street Food & Burgers') }}" placeholder="Ex: Carte des Plats & Boissons" required oninput="syncSimulatorHeader()">
+                            <input type="text" name="title" id="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', 'Carte Street Food & Burgers') }}" placeholder="Ex: Carte des Plats & Boissons" required oninput="syncSimulatorHeader()">
+                            @error('title')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <!-- Brand Type (Proposed or Custom Manual) -->
@@ -790,7 +807,10 @@
                                 </div>
                             </div>
 
-                            <input type="hidden" name="brand_type" id="brand_type" value="fast_food">
+                            <input type="hidden" name="brand_type" id="brand_type" value="{{ old('brand_type', 'fast_food') }}">
+                            @error('brand_type')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <!-- Currency (Aligned baseline with Brand Type, chips underneath) -->
@@ -799,7 +819,10 @@
                                 <label for="currency" class="form-label fw-semibold small text-dark mb-0">Devise <span class="text-danger">*</span></label>
                                 <span class="text-muted" style="font-size: 0.7rem;">Choix rapide ou manuel</span>
                             </div>
-                            <input type="text" name="currency" id="currency" class="form-control font-mono fw-bold" value="{{ old('currency', 'DH') }}" placeholder="Ex: DH, €, $..." required oninput="renderCategoryBuilder()">
+                            <input type="text" name="currency" id="currency" class="form-control font-mono fw-bold @error('currency') is-invalid @enderror" value="{{ old('currency', 'DH') }}" placeholder="Ex: DH, €, $..." required oninput="renderCategoryBuilder()">
+                            @error('currency')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                             <div class="d-flex align-items-center gap-1 flex-wrap mt-1.5">
                                 <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill currency-chip active" onclick="setCurrency('DH')">DH</button>
                                 <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill currency-chip" onclick="setCurrency('MAD')">MAD</button>
@@ -811,10 +834,25 @@
                             </div>
                         </div>
 
-                        <!-- Slogan / Subtitle -->
-                        <div class="col-12">
+                        <!-- Status & Slogan -->
+                        <div class="col-12 col-md-4">
+                            <label for="status" class="form-label fw-semibold small text-dark">Statut du Menu <span class="text-danger">*</span></label>
+                            <select name="status" id="status" class="form-select @error('status') is-invalid @enderror" required>
+                                <option value="active" {{ old('status', 'active') === 'active' ? 'selected' : '' }}>En Ligne (Actif)</option>
+                                <option value="draft" {{ old('status') === 'draft' ? 'selected' : '' }}>Brouillon</option>
+                                <option value="archived" {{ old('status') === 'archived' ? 'selected' : '' }}>Archivé</option>
+                            </select>
+                            @error('status')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-12 col-md-8">
                             <label for="description" class="form-label fw-semibold small text-dark">Slogan ou Description d'Accueil</label>
-                            <input type="text" name="description" id="description" class="form-control" value="{{ old('description', 'Burgers pur bœuf smashé minute, frites fraîches maison & milkshakes.') }}" placeholder="Ex: Cuisine savoureuse, terrasse ensoleillée & produits frais." oninput="syncSimulatorHeader()">
+                            <input type="text" name="description" id="description" class="form-control @error('description') is-invalid @enderror" value="{{ old('description', 'Burgers pur bœuf smashé minute, frites fraîches maison & milkshakes.') }}" placeholder="Ex: Cuisine savoureuse, terrasse ensoleillée & produits frais." oninput="syncSimulatorHeader()">
+                            @error('description')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <!-- Palette & Couleurs des Plats & du Menu -->
@@ -1116,8 +1154,11 @@
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-white text-success border-end-0"><i class="bi bi-whatsapp"></i></span>
-                                    <input type="text" name="whatsapp" id="whatsapp" class="form-control border-start-0" value="{{ old('whatsapp', '+212 612-345678') }}" placeholder="+212 600-000000" oninput="syncSimulatorHeader(); syncSimulatorWa();">
+                                    <input type="text" name="whatsapp" id="whatsapp" class="form-control border-start-0 @error('whatsapp') is-invalid @enderror" value="{{ old('whatsapp', '+212 612-345678') }}" placeholder="+212 600-000000" oninput="syncSimulatorHeader(); syncSimulatorWa();">
                                 </div>
+                                @error('whatsapp')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
                                 <span class="form-text small">Affiche le bouton flottant officiel vert « Commander via WhatsApp » sur le mobile.</span>
                             </div>
                         </div>
@@ -1169,14 +1210,20 @@
                             <label for="wifi_ssid" class="form-label fw-semibold small text-dark">
                                 <i class="bi bi-wifi text-warning me-1"></i>Nom du Réseau WiFi (SSID)
                             </label>
-                            <input type="text" name="wifi_ssid" id="wifi_ssid" class="form-control" value="{{ old('wifi_ssid', 'Smash_FreeWifi') }}" placeholder="Ex: LeComptoir_Guest" oninput="syncSimulatorHeader()">
+                            <input type="text" name="wifi_ssid" id="wifi_ssid" class="form-control @error('wifi_ssid') is-invalid @enderror" value="{{ old('wifi_ssid', 'Smash_FreeWifi') }}" placeholder="Ex: LeComptoir_Guest" oninput="syncSimulatorHeader()">
+                            @error('wifi_ssid')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="col-12 col-md-6">
                             <label for="wifi_password" class="form-label fw-semibold small text-dark">
                                 <i class="bi bi-key text-warning me-1"></i>Mot de Passe WiFi
                             </label>
-                            <input type="text" name="wifi_password" id="wifi_password" class="form-control" value="{{ old('wifi_password', 'burgers2026') }}" placeholder="Ex: motdepasse123">
+                            <input type="text" name="wifi_password" id="wifi_password" class="form-control @error('wifi_password') is-invalid @enderror" value="{{ old('wifi_password', 'burgers2026') }}" placeholder="Ex: motdepasse123">
+                            @error('wifi_password')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <!-- Phone, Instagram, Address -->
@@ -1184,21 +1231,30 @@
                             <label for="phone" class="form-label fw-semibold small text-dark">
                                 <i class="bi bi-telephone text-primary me-1"></i>Téléphone Fixe / Réservations
                             </label>
-                            <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone', '+212 522-112233') }}" placeholder="+212 522-000000" oninput="syncSimulatorHeader()">
+                            <input type="text" name="phone" id="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', '+212 522-112233') }}" placeholder="+212 522-000000" oninput="syncSimulatorHeader()">
+                            @error('phone')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="col-12 col-md-4">
                             <label for="instagram" class="form-label fw-semibold small text-dark">
                                 <i class="bi bi-instagram text-danger me-1"></i>Instagram
                             </label>
-                            <input type="text" name="instagram" id="instagram" class="form-control" value="{{ old('instagram', '@smashandbun') }}" placeholder="@monrestaurant" oninput="syncSimulatorHeader()">
+                            <input type="text" name="instagram" id="instagram" class="form-control @error('instagram') is-invalid @enderror" value="{{ old('instagram', '@smashandbun') }}" placeholder="@monrestaurant" oninput="syncSimulatorHeader()">
+                            @error('instagram')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="col-12 col-md-4">
                             <label for="address" class="form-label fw-semibold small text-dark">
                                 <i class="bi bi-geo-alt text-secondary me-1"></i>Adresse / Emplacement
                             </label>
-                            <input type="text" name="address" id="address" class="form-control" value="{{ old('address', 'Boulevard d\'Anfa, Casablanca') }}" placeholder="12 Rue de la Plage, Casablanca">
+                            <input type="text" name="address" id="address" class="form-control @error('address') is-invalid @enderror" value="{{ old('address', 'Boulevard d\'Anfa, Casablanca') }}" placeholder="12 Rue de la Plage, Casablanca">
+                            @error('address')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -2827,7 +2883,30 @@ function setSimScale(scale, btn) {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    loadPreset('fast_food');
+    @if (old('categories_json'))
+        try {
+            const restored = JSON.parse(@json(old('categories_json')));
+            if (Array.isArray(restored) && restored.length > 0) {
+                menuData = restored;
+                renderCategoryBuilder();
+                syncSimulatorHeader();
+            } else {
+                loadPreset('fast_food');
+            }
+        } catch (e) {
+            loadPreset('fast_food');
+        }
+    @else
+        loadPreset('fast_food');
+    @endif
+
+    @if ($errors->any())
+        const firstInvalid = document.querySelector('#menuStudioForm .is-invalid');
+        if (firstInvalid) {
+            firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => firstInvalid.focus({ preventScroll: true }), 350);
+        }
+    @endif
 });
 </script>
 @endpush

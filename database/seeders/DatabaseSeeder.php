@@ -50,6 +50,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'View QR Codes', 'slug' => 'view_qr', 'module' => 'qr', 'description' => 'List and view QR codes'],
             ['name' => 'Create QR Codes', 'slug' => 'create_qr', 'module' => 'qr', 'description' => 'Generate single and dynamic QR codes'],
             ['name' => 'Edit QR Codes', 'slug' => 'edit_qr', 'module' => 'qr', 'description' => 'Modify QR target destinations and templates'],
+            ['name' => 'Scan & Edit QR Link', 'slug' => 'scan_edit_qr_link', 'module' => 'qr', 'description' => 'Scan dynamic QR codes and update their destination link only'],
             ['name' => 'Delete QR Codes', 'slug' => 'delete_qr', 'module' => 'qr', 'description' => 'Delete or archive QR codes'],
             ['name' => 'Assign QR Codes', 'slug' => 'assign_qr', 'module' => 'qr', 'description' => 'Assign QR codes to clients'],
             ['name' => 'Generate QR Documents', 'slug' => 'generate_qr_document', 'module' => 'qr_documents', 'description' => 'Build printable PDF and sheets'],
@@ -60,6 +61,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'View Digital Cards', 'slug' => 'view_digital_cards', 'module' => 'digital_cards', 'description' => 'List and view digital business cards'],
             ['name' => 'Create Digital Cards', 'slug' => 'create_digital_cards', 'module' => 'digital_cards', 'description' => 'Design and publish digital business cards'],
             ['name' => 'Edit Digital Cards', 'slug' => 'edit_digital_cards', 'module' => 'digital_cards', 'description' => 'Modify theme config, blocks, and details'],
+            ['name' => 'Scan & Edit Menu / Digital Card', 'slug' => 'scan_edit_menu_card', 'module' => 'digital_cards', 'description' => 'Scan QR codes or NFC tags to edit the linked menu or digital card'],
             ['name' => 'Delete Digital Cards', 'slug' => 'delete_digital_cards', 'module' => 'digital_cards', 'description' => 'Deactivate or delete digital business cards'],
 
             // NFC Tags
@@ -135,6 +137,30 @@ class DatabaseSeeder extends Seeder
             $permissionModels['generate_qr_document']->id,
             $permissionModels['download_qr']->id,
             $permissionModels['print_qr']->id,
+        ]);
+
+        $qrLinkEditorRole = Role::updateOrCreate(
+            ['slug' => 'qr_link_editor'],
+            [
+                'name' => 'QR Link Editor',
+                'description' => 'Minimalist access: scan dynamic QR codes and edit only their destination link',
+                'is_system' => false,
+            ]
+        );
+        $qrLinkEditorRole->permissions()->sync([
+            $permissionModels['scan_edit_qr_link']->id,
+        ]);
+
+        $menuCardScannerRole = Role::updateOrCreate(
+            ['slug' => 'menu_card_scanner'],
+            [
+                'name' => 'Menu & Card Scanner',
+                'description' => 'Minimalist access: scan QR codes or NFC tags to edit the linked menu or digital card',
+                'is_system' => false,
+            ]
+        );
+        $menuCardScannerRole->permissions()->sync([
+            $permissionModels['scan_edit_menu_card']->id,
         ]);
 
         $clientManagerRole = Role::updateOrCreate(

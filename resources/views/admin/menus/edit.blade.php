@@ -76,6 +76,58 @@
         box-shadow: 0 4px 12px rgba(87, 54, 233, 0.12);
     }
 
+    /* Highlighted Invalid Fields */
+    .form-control.is-invalid,
+    .form-select.is-invalid {
+        border-color: #dc2626 !important;
+        background-color: #fef2f2 !important;
+        box-shadow: 0 0 0 0.25rem rgba(220, 38, 38, 0.18) !important;
+    }
+
+    /* Pro Studio Inputs & Labels */
+    #menuStudioForm .form-label {
+        font-size: 0.84rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.4rem;
+    }
+    #menuStudioForm .form-control:not(.form-control-color),
+    #menuStudioForm .form-select {
+        min-height: 42px;
+        padding: 0.5rem 0.85rem;
+        font-size: 0.9rem;
+        border-radius: 0.65rem;
+        border: 1.5px solid #cbd5e1;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    #menuStudioForm .form-select {
+        padding-right: 2.25rem;
+    }
+    #menuStudioForm .form-control:not(.form-control-color):focus,
+    #menuStudioForm .form-select:focus {
+        border-color: #5736e9;
+        box-shadow: 0 0 0 0.2rem rgba(87, 54, 233, 0.14);
+    }
+    #menuStudioForm .input-group > .form-control:not(:first-child),
+    #menuStudioForm .input-group > .input-group-text:not(:first-child) {
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        border-left: 0;
+    }
+    #menuStudioForm .input-group > .form-control:not(:last-child),
+    #menuStudioForm .input-group > .input-group-text:not(:last-child) {
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+    #menuStudioForm .input-group-text {
+        min-height: 42px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 0.65rem;
+        font-size: 0.85rem;
+        background-color: #f8fafc;
+        color: #475569;
+    }
+
     /* Simulator Pages and Grid Nav styles */
     .sim-tabs-bar {
         background: #f1f5f9;
@@ -216,6 +268,38 @@
         border: 1px solid #e2e8f0;
         border-radius: 16px;
         box-shadow: 0 2px 10px -2px rgba(15, 23, 42, 0.04);
+        scroll-margin-top: 90px;
+        transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .studio-section-card:focus-within {
+        border-color: #c7d2fe;
+        box-shadow: 0 8px 24px -4px rgba(87, 54, 233, 0.08);
+    }
+    .studio-jump-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.32rem 0.78rem;
+        border-radius: 999px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        font-size: 0.74rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+    .studio-jump-pill:hover {
+        background: #eef2ff;
+        border-color: #c7d2fe;
+        color: #4f46e5;
+    }
+    .mobile-preview-fab {
+        position: fixed;
+        bottom: 1.25rem;
+        right: 1.25rem;
+        z-index: 1030;
+        box-shadow: 0 10px 25px rgba(87, 54, 233, 0.35);
     }
     .studio-section-icon {
         width: 42px;
@@ -290,55 +374,93 @@
 
     /* Category & Item Builder Cards */
     .studio-category-card {
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        background: #ffffff;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 18px;
+        background: #f8fafc;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
     .studio-category-card:hover {
         border-color: #cbd5e1;
-        box-shadow: 0 6px 18px -4px rgba(15, 23, 42, 0.06);
+        box-shadow: 0 8px 22px -4px rgba(15, 23, 42, 0.06);
     }
     .studio-item-row {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background: #ffffff;
+        border: 1.5px solid #e2e8f0;
         border-radius: 14px;
-        padding: 0.9rem 1rem;
-        transition: background 0.15s ease, border-color 0.15s ease;
+        padding: 1.1rem 1.15rem;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02);
+        transition: all 0.16s ease;
     }
     .studio-item-row:hover {
-        background: #ffffff;
         border-color: #cbd5e1;
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+    }
+    .studio-item-row:focus-within {
+        border-color: #5736e9;
+        box-shadow: 0 0 0 3px rgba(87, 54, 233, 0.1);
     }
     .studio-item-row.is-out-of-stock {
-        opacity: 0.65;
-        background: #fef2f2;
+        opacity: 0.72;
+        background: #fff5f5;
         border-color: #fecaca;
+    }
+    .dish-field-label {
+        display: block;
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #64748b;
+        margin-bottom: 0.3rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .studio-color-tile {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.5rem 0.75rem;
+        min-height: 48px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 0.75rem;
+        background: #ffffff;
+        cursor: pointer;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .studio-color-tile:hover {
+        border-color: #5736e9;
+        box-shadow: 0 3px 10px rgba(87, 54, 233, 0.08);
+    }
+    .sticky-preview-wrapper {
+        top: 84px;
+        z-index: 10;
     }
 
     /* Dish Image Upload Button & Thumbnail */
     .dish-img-thumb {
-        width: 64px;
-        height: 64px;
+        width: 68px;
+        height: 68px;
         border-radius: 12px;
         object-fit: cover;
         background: #e2e8f0;
-        border: 1px solid #cbd5e1;
+        border: 1.5px solid #cbd5e1;
         flex-shrink: 0;
         cursor: pointer;
     }
     .dish-upload-trigger {
-        width: 64px;
-        height: 64px;
+        width: 68px;
+        height: 68px;
         border-radius: 12px;
-        border: 1.5px dashed #cbd5e1;
-        background: #ffffff;
+        border: 1.5px dashed #94a3b8;
+        background: #f8fafc;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        font-size: 0.68rem;
-        color: #64748b;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #475569;
         cursor: pointer;
         transition: all 0.15s ease;
         flex-shrink: 0;
@@ -586,12 +708,15 @@
 
             <!-- Top Actions -->
             <div class="d-flex flex-wrap align-items-center gap-2">
-                <a href="{{ route('menu.public.show', $menu->slug) }}" target="_blank" class="btn btn-outline-secondary btn-sm px-3 fw-semibold">
+                <span id="unsavedChangesBadge" class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill px-2.5 py-1.5 d-none" style="font-size: 0.72rem;">
+                    <i class="bi bi-dot fs-6 align-middle"></i>Modifications non enregistrées
+                </span>
+                <a href="{{ route('menu.public.show', $menu->slug) }}" target="_blank" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 fw-semibold">
                     <i class="bi bi-box-arrow-up-right me-1"></i>Voir en direct
                 </a>
 
                 <div class="dropdown">
-                    <button class="btn btn-outline-dark btn-sm dropdown-toggle fw-semibold px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-outline-dark btn-sm rounded-pill dropdown-toggle fw-semibold px-3 py-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-magic me-1 text-primary"></i>Remplacer par un modèle
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 p-2" style="min-width: 260px;">
@@ -605,11 +730,22 @@
                     </ul>
                 </div>
 
-                <button type="button" class="btn btn-primary btn-sm px-4 fw-semibold shadow-sm d-inline-flex align-items-center gap-1.5" style="background: #5736e9; border-color: #5736e9;" onclick="document.getElementById('menuStudioForm').submit();">
+                <button type="button" class="btn btn-primary btn-sm rounded-pill px-4 py-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-1.5" style="background: linear-gradient(135deg, #5736e9 0%, #4324c7 100%); border: none;" onclick="document.getElementById('menuStudioForm').requestSubmit();">
                     <i class="bi bi-check2-circle"></i>
                     <span>Enregistrer les Modifications</span>
                 </button>
             </div>
+        </div>
+
+        <!-- Quick Section Jump Pills -->
+        <div class="d-flex flex-wrap align-items-center gap-2 mt-3 pt-3 border-top" style="border-color: #f1f5f9 !important;">
+            <span class="text-muted small fw-semibold me-1" style="font-size: 0.72rem;">Accès rapide :</span>
+            <a href="#sec-identity" class="studio-jump-pill"><i class="bi bi-shop"></i>1. Identité</a>
+            <a href="#sec-media" class="studio-jump-pill"><i class="bi bi-images"></i>2. Visuels</a>
+            <a href="#sec-navigation" class="studio-jump-pill"><i class="bi bi-layout-text-window"></i>3. Navigation</a>
+            <a href="#sec-contact" class="studio-jump-pill"><i class="bi bi-whatsapp"></i>4. WhatsApp &amp; Infos</a>
+            <a href="#sec-items" class="studio-jump-pill"><i class="bi bi-card-list"></i>5. Catégories &amp; Plats</a>
+            <span class="ms-auto text-muted d-none d-md-inline" style="font-size: 0.7rem;">Astuce : <kbd class="bg-light text-dark border">Ctrl/⌘ + S</kbd> pour enregistrer</span>
         </div>
     </div>
 
@@ -639,7 +775,7 @@
                 <input type="hidden" name="remove_logo" id="removeLogoInput" value="0">
 
                 <!-- Section 1: Identité & Marque (Proposé ou Manuel) -->
-                <div class="studio-section-card p-4 mb-4">
+                <div class="studio-section-card p-3 p-md-4 mb-4" id="sec-identity">
                     <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
                         <div class="d-flex align-items-center gap-3">
                             <div class="studio-section-icon bg-primary-subtle text-primary">
@@ -660,7 +796,7 @@
                                 <span>Entreprise / Client Propriétaire</span>
                                 <span class="badge bg-info-subtle text-info">Espace Client Dédié</span>
                             </label>
-                            <select name="client_id" id="client_id" class="form-select">
+                            <select name="client_id" id="client_id" class="form-select @error('client_id') is-invalid @enderror">
                                 <option value="">-- Sans client assigné (Administrateur interne) --</option>
                                 @foreach($clients as $c)
                                     <option value="{{ $c->id }}" {{ old('client_id', $menu->client_id) == $c->id ? 'selected' : '' }}>
@@ -668,6 +804,9 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @error('client_id')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <!-- Brand Name & Menu Title -->
@@ -675,13 +814,19 @@
                             <label for="brand_name" class="form-label fw-semibold small text-dark">Nom de l'Établissement <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light text-muted"><i class="bi bi-building"></i></span>
-                                <input type="text" name="brand_name" id="brand_name" class="form-control" value="{{ old('brand_name', $menu->brand_name) }}" placeholder="Ex: Le Comptoir Gourmand" required oninput="syncSimulatorHeader()">
+                                <input type="text" name="brand_name" id="brand_name" class="form-control @error('brand_name') is-invalid @enderror" value="{{ old('brand_name', $menu->brand_name) }}" placeholder="Ex: Le Comptoir Gourmand" required oninput="syncSimulatorHeader()">
                             </div>
+                            @error('brand_name')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="col-12 col-md-6">
                             <label for="title" class="form-label fw-semibold small text-dark">Titre de la Carte / Menu <span class="text-danger">*</span></label>
-                            <input type="text" name="title" id="title" class="form-control" value="{{ old('title', $menu->title) }}" placeholder="Ex: Carte des Plats & Boissons 2026" required oninput="syncSimulatorHeader()">
+                            <input type="text" name="title" id="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', $menu->title) }}" placeholder="Ex: Carte des Plats & Boissons 2026" required oninput="syncSimulatorHeader()">
+                            @error('title')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <!-- Brand Type (Proposed or Custom Manual) -->
@@ -708,7 +853,7 @@
                             </div>
 
                             <div id="brandTypeCustomWrap" class="d-none mt-2">
-                                <div class="input-group input-group-sm">
+                                <div class="input-group">
                                     <span class="input-group-text bg-light text-muted">Personnalisé</span>
                                     <input type="text" id="brand_type_custom" class="form-control" placeholder="Ex: Glacier Artisanal, Rôtisserie..." oninput="syncSimulatorHeader()">
                                     <button class="btn btn-outline-secondary" type="button" onclick="toggleCustomBrandType()">Retour liste</button>
@@ -716,6 +861,9 @@
                             </div>
 
                             <input type="hidden" name="brand_type" id="brand_type" value="{{ old('brand_type', $menu->brand_type) }}">
+                            @error('brand_type')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <!-- Currency (Aligned baseline with Brand Type, chips underneath) -->
@@ -724,7 +872,10 @@
                                 <label for="currency" class="form-label fw-semibold small text-dark mb-0">Devise <span class="text-danger">*</span></label>
                                 <span class="text-muted" style="font-size: 0.7rem;">Choix rapide ou manuel</span>
                             </div>
-                            <input type="text" name="currency" id="currency" class="form-control font-mono fw-bold" value="{{ old('currency', $menu->currency) }}" placeholder="Ex: DH, €, $..." required oninput="renderCategoryBuilder()">
+                            <input type="text" name="currency" id="currency" class="form-control font-mono fw-bold @error('currency') is-invalid @enderror" value="{{ old('currency', $menu->currency) }}" placeholder="Ex: DH, €, $..." required oninput="renderCategoryBuilder()">
+                            @error('currency')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                             <div class="d-flex align-items-center gap-1 flex-wrap mt-1.5">
                                 <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill currency-chip" onclick="setCurrency('DH')">DH</button>
                                 <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill currency-chip" onclick="setCurrency('MAD')">MAD</button>
@@ -736,19 +887,25 @@
                             </div>
                         </div>
 
-                        <!-- Slogan / Subtitle -->
-                        <div class="col-12">
-                            <label for="description" class="form-label fw-semibold small text-dark">Slogan ou Description d'Accueil</label>
-                            <input type="text" name="description" id="description" class="form-control" value="{{ old('description', $menu->description) }}" placeholder="Ex: Produits frais cuisinés chaque jour avec passion & terrasse ensoleillée" oninput="syncSimulatorHeader()">
-                        </div>
-
-                        <!-- Status -->
-                        <div class="col-12 col-md-12 mb-2">
-                            <label for="status" class="form-label fw-semibold small text-dark">Statut de la Carte</label>
-                            <select name="status" id="status" class="form-select">
+                        <!-- Status & Slogan -->
+                        <div class="col-12 col-md-4">
+                            <label for="status" class="form-label fw-semibold small text-dark">Statut de la Carte <span class="text-danger">*</span></label>
+                            <select name="status" id="status" class="form-select @error('status') is-invalid @enderror" required>
                                 <option value="active" {{ old('status', $menu->status) == 'active' ? 'selected' : '' }}>En Ligne (Actif)</option>
                                 <option value="draft" {{ old('status', $menu->status) == 'draft' ? 'selected' : '' }}>Brouillon (Masqué)</option>
+                                <option value="archived" {{ old('status', $menu->status) == 'archived' ? 'selected' : '' }}>Archivé</option>
                             </select>
+                            @error('status')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-12 col-md-8">
+                            <label for="description" class="form-label fw-semibold small text-dark">Slogan ou Description d'Accueil</label>
+                            <input type="text" name="description" id="description" class="form-control @error('description') is-invalid @enderror" value="{{ old('description', $menu->description) }}" placeholder="Ex: Produits frais cuisinés chaque jour avec passion & terrasse ensoleillée" oninput="syncSimulatorHeader()">
+                            @error('description')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <!-- Palette & Couleurs des Plats & du Menu -->
@@ -763,46 +920,46 @@
                             <div class="row g-2.5">
                                 <!-- 1. Fond des Plats / Cartes -->
                                 <div class="col-6 col-md-3">
-                                    <label class="form-label small fw-semibold text-dark mb-1" style="font-size: 0.78rem;">
+                                    <label class="form-label small fw-semibold text-dark mb-1" for="item_bg_color">
                                         <i class="bi bi-square-fill me-1" style="color: #64748b;"></i>Fond des Plats
                                     </label>
-                                    <div class="d-flex align-items-center gap-1.5 p-1.5 border rounded-3 bg-light">
-                                        <input type="color" name="item_bg_color" id="item_bg_color" class="form-control form-control-color border-0 p-0" value="{{ old('item_bg_color', $menu->item_bg_color ?? '#ffffff') }}" style="width: 28px; height: 28px; cursor: pointer;" oninput="setItemBgColor(this.value)">
-                                        <span class="small font-mono fw-semibold" id="itemBgColorCode" style="font-size: 0.75rem;">{{ old('item_bg_color', $menu->item_bg_color ?? '#ffffff') }}</span>
-                                    </div>
+                                    <label class="studio-color-tile w-100 mb-0" for="item_bg_color">
+                                        <input type="color" name="item_bg_color" id="item_bg_color" class="form-control form-control-color border-0 p-0" value="{{ old('item_bg_color', $menu->item_bg_color ?? '#ffffff') }}" style="width: 34px; height: 34px; cursor: pointer;" oninput="setItemBgColor(this.value)">
+                                        <span class="font-mono fw-bold text-dark" id="itemBgColorCode" style="font-size: 0.82rem;">{{ old('item_bg_color', $menu->item_bg_color ?? '#ffffff') }}</span>
+                                    </label>
                                 </div>
 
                                 <!-- 2. Texte des Plats -->
                                 <div class="col-6 col-md-3">
-                                    <label class="form-label small fw-semibold text-dark mb-1" style="font-size: 0.78rem;">
+                                    <label class="form-label small fw-semibold text-dark mb-1" for="item_text_color">
                                         <i class="bi bi-fonts me-1" style="color: #64748b;"></i>Texte des Plats
                                     </label>
-                                    <div class="d-flex align-items-center gap-1.5 p-1.5 border rounded-3 bg-light">
-                                        <input type="color" name="item_text_color" id="item_text_color" class="form-control form-control-color border-0 p-0" value="{{ old('item_text_color', $menu->item_text_color ?? '#1e293b') }}" style="width: 28px; height: 28px; cursor: pointer;" oninput="setItemTextColor(this.value)">
-                                        <span class="small font-mono fw-semibold" id="itemTextColorCode" style="font-size: 0.75rem;">{{ old('item_text_color', $menu->item_text_color ?? '#1e293b') }}</span>
-                                    </div>
+                                    <label class="studio-color-tile w-100 mb-0" for="item_text_color">
+                                        <input type="color" name="item_text_color" id="item_text_color" class="form-control form-control-color border-0 p-0" value="{{ old('item_text_color', $menu->item_text_color ?? '#1e293b') }}" style="width: 34px; height: 34px; cursor: pointer;" oninput="setItemTextColor(this.value)">
+                                        <span class="font-mono fw-bold text-dark" id="itemTextColorCode" style="font-size: 0.82rem;">{{ old('item_text_color', $menu->item_text_color ?? '#1e293b') }}</span>
+                                    </label>
                                 </div>
 
                                 <!-- 3. Couleur Thématique / Accents -->
                                 <div class="col-6 col-md-3">
-                                    <label class="form-label small fw-semibold text-dark mb-1" style="font-size: 0.78rem;">
+                                    <label class="form-label small fw-semibold text-dark mb-1" for="theme_color">
                                         <i class="bi bi-droplet-fill text-primary me-1"></i>Accent &amp; Prix
                                     </label>
-                                    <div class="d-flex align-items-center gap-1.5 p-1.5 border rounded-3 bg-light">
-                                        <input type="color" name="theme_color" id="theme_color" class="form-control form-control-color border-0 p-0" value="{{ old('theme_color', $menu->theme_color ?? '#5736e9') }}" style="width: 28px; height: 28px; cursor: pointer;" oninput="setThemeColor(this.value)">
-                                        <span class="small font-mono fw-semibold" id="themeColorCode" style="font-size: 0.75rem;">{{ old('theme_color', $menu->theme_color ?? '#5736e9') }}</span>
-                                    </div>
+                                    <label class="studio-color-tile w-100 mb-0" for="theme_color">
+                                        <input type="color" name="theme_color" id="theme_color" class="form-control form-control-color border-0 p-0" value="{{ old('theme_color', $menu->theme_color ?? '#5736e9') }}" style="width: 34px; height: 34px; cursor: pointer;" oninput="setThemeColor(this.value)">
+                                        <span class="font-mono fw-bold text-dark" id="themeColorCode" style="font-size: 0.82rem;">{{ old('theme_color', $menu->theme_color ?? '#5736e9') }}</span>
+                                    </label>
                                 </div>
 
                                 <!-- 4. Fond de la Page Menu -->
                                 <div class="col-6 col-md-3">
-                                    <label class="form-label small fw-semibold text-dark mb-1" style="font-size: 0.78rem;">
+                                    <label class="form-label small fw-semibold text-dark mb-1" for="bg_color">
                                         <i class="bi bi-phone me-1" style="color: #64748b;"></i>Fond de Page
                                     </label>
-                                    <div class="d-flex align-items-center gap-1.5 p-1.5 border rounded-3 bg-light">
-                                        <input type="color" name="bg_color" id="bg_color" class="form-control form-control-color border-0 p-0" value="{{ old('bg_color', $menu->bg_color ?? '#f8fafc') }}" style="width: 28px; height: 28px; cursor: pointer;" oninput="setMenuBgColor(this.value)">
-                                        <span class="small font-mono fw-semibold" id="bgColorCode" style="font-size: 0.75rem;">{{ old('bg_color', $menu->bg_color ?? '#f8fafc') }}</span>
-                                    </div>
+                                    <label class="studio-color-tile w-100 mb-0" for="bg_color">
+                                        <input type="color" name="bg_color" id="bg_color" class="form-control form-control-color border-0 p-0" value="{{ old('bg_color', $menu->bg_color ?? '#f8fafc') }}" style="width: 34px; height: 34px; cursor: pointer;" oninput="setMenuBgColor(this.value)">
+                                        <span class="font-mono fw-bold text-dark" id="bgColorCode" style="font-size: 0.82rem;">{{ old('bg_color', $menu->bg_color ?? '#f8fafc') }}</span>
+                                    </label>
                                 </div>
                             </div>
 
@@ -820,7 +977,7 @@
                 </div>
 
                 <!-- Section 2: Médias, Photo de Couverture & Logo (Upload & URL) -->
-                <div class="studio-section-card p-4 mb-4">
+                <div class="studio-section-card p-3 p-md-4 mb-4" id="sec-media">
                     <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
                         <div class="d-flex align-items-center gap-3">
                             <div class="studio-section-icon bg-info-subtle text-info">
@@ -874,7 +1031,7 @@
                                     <i class="bi bi-link-45deg me-0.5"></i>Ou saisir une URL d'image manuelle
                                 </a>
                                 <div id="coverUrlManualWrap" class="d-none mt-1">
-                                    <input type="url" id="manual_cover_url" class="form-control form-control-sm font-mono" value="{{ $menu->cover_image ?? '' }}" placeholder="https://exemple.com/image-couverture.jpg" oninput="applyManualCoverUrl(this.value)">
+                                    <input type="url" id="manual_cover_url" class="form-control font-mono" value="{{ $menu->cover_image ?? '' }}" placeholder="https://exemple.com/image-couverture.jpg" oninput="applyManualCoverUrl(this.value)">
                                 </div>
                             </div>
                         </div>
@@ -909,7 +1066,7 @@
                                     <i class="bi bi-link-45deg me-0.5"></i>Ou saisir une URL de logo manuelle
                                 </a>
                                 <div id="logoUrlManualWrap" class="d-none mt-1">
-                                    <input type="url" id="manual_logo_url" class="form-control form-control-sm font-mono" value="{{ $menu->logo_url ?? '' }}" placeholder="https://exemple.com/logo.png" oninput="applyManualLogoUrl(this.value)">
+                                    <input type="url" id="manual_logo_url" class="form-control font-mono" value="{{ $menu->logo_url ?? '' }}" placeholder="https://exemple.com/logo.png" oninput="applyManualLogoUrl(this.value)">
                                 </div>
                             </div>
                         </div>
@@ -920,7 +1077,7 @@
                 @php
                     $curNavStyle = in_array($menu->nav_style ?? '', ['horizontal_scroll', 'grid_drawer']) ? 'horizontal_scroll' : (in_array($menu->nav_style ?? '', ['pages', 'tabs']) ? 'pages' : 'vertical_scroll');
                 @endphp
-                <div class="studio-section-card p-4 mb-4">
+                <div class="studio-section-card p-3 p-md-4 mb-4" id="sec-navigation">
                     <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
                         <div class="d-flex align-items-center gap-3">
                             <div class="studio-section-icon text-primary" style="background: rgba(87, 54, 233, 0.1);">
@@ -991,7 +1148,7 @@
                 </div>
 
                 <!-- Section 4: Commande WhatsApp & Services Table -->
-                <div class="studio-section-card p-4 mb-4">
+                <div class="studio-section-card p-3 p-md-4 mb-4" id="sec-contact">
                     <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-3">
                         <div class="d-flex align-items-center gap-3">
                             <div class="studio-section-icon bg-success-subtle text-success">
@@ -1045,24 +1202,24 @@
                         <div class="row g-2.5">
                             <!-- Fond des Éléments & Badges -->
                             <div class="col-12 col-sm-6">
-                                <label class="form-label small fw-semibold text-dark mb-1" style="font-size: 0.78rem;">
+                                <label class="form-label small fw-semibold text-dark mb-1" for="service_bg_color">
                                     <i class="bi bi-square-fill me-1" style="color: #64748b;"></i>Couleur de Fond des Badges / Informations
                                 </label>
-                                <div class="d-flex align-items-center gap-2 p-1.5 border rounded-3 bg-white">
-                                    <input type="color" name="service_bg_color" id="service_bg_color" class="form-control form-control-color border-0 p-0" value="{{ old('service_bg_color', $menu->service_bg_color ?? $menu->item_bg_color ?? '#ffffff') }}" style="width: 32px; height: 32px; cursor: pointer;" oninput="setServiceBgColor(this.value)">
-                                    <span class="small font-mono fw-semibold" id="serviceBgColorCode" style="font-size: 0.78rem;">{{ old('service_bg_color', $menu->service_bg_color ?? $menu->item_bg_color ?? '#ffffff') }}</span>
-                                </div>
+                                <label class="studio-color-tile w-100 mb-0" for="service_bg_color">
+                                    <input type="color" name="service_bg_color" id="service_bg_color" class="form-control form-control-color border-0 p-0" value="{{ old('service_bg_color', $menu->service_bg_color ?? $menu->item_bg_color ?? '#ffffff') }}" style="width: 34px; height: 34px; cursor: pointer;" oninput="setServiceBgColor(this.value)">
+                                    <span class="font-mono fw-bold text-dark" id="serviceBgColorCode" style="font-size: 0.82rem;">{{ old('service_bg_color', $menu->service_bg_color ?? $menu->item_bg_color ?? '#ffffff') }}</span>
+                                </label>
                             </div>
 
                             <!-- Texte des Éléments & Badges -->
                             <div class="col-12 col-sm-6">
-                                <label class="form-label small fw-semibold text-dark mb-1" style="font-size: 0.78rem;">
+                                <label class="form-label small fw-semibold text-dark mb-1" for="service_text_color">
                                     <i class="bi bi-fonts me-1" style="color: #64748b;"></i>Couleur du Texte des Badges / Informations
                                 </label>
-                                <div class="d-flex align-items-center gap-2 p-1.5 border rounded-3 bg-white">
-                                    <input type="color" name="service_text_color" id="service_text_color" class="form-control form-control-color border-0 p-0" value="{{ old('service_text_color', $menu->service_text_color ?? $menu->item_text_color ?? '#1e293b') }}" style="width: 32px; height: 32px; cursor: pointer;" oninput="setServiceTextColor(this.value)">
-                                    <span class="small font-mono fw-semibold" id="serviceTextColorCode" style="font-size: 0.78rem;">{{ old('service_text_color', $menu->service_text_color ?? $menu->item_text_color ?? '#1e293b') }}</span>
-                                </div>
+                                <label class="studio-color-tile w-100 mb-0" for="service_text_color">
+                                    <input type="color" name="service_text_color" id="service_text_color" class="form-control form-control-color border-0 p-0" value="{{ old('service_text_color', $menu->service_text_color ?? $menu->item_text_color ?? '#1e293b') }}" style="width: 34px; height: 34px; cursor: pointer;" oninput="setServiceTextColor(this.value)">
+                                    <span class="font-mono fw-bold text-dark" id="serviceTextColorCode" style="font-size: 0.82rem;">{{ old('service_text_color', $menu->service_text_color ?? $menu->item_text_color ?? '#1e293b') }}</span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -1074,14 +1231,20 @@
                             <label for="wifi_ssid" class="form-label fw-semibold small text-dark">
                                 <i class="bi bi-wifi text-warning me-1"></i>Nom du Réseau WiFi (SSID)
                             </label>
-                            <input type="text" name="wifi_ssid" id="wifi_ssid" class="form-control" value="{{ old('wifi_ssid', $menu->wifi_ssid) }}" placeholder="Ex: LeComptoir_Guest" oninput="syncSimulatorHeader()">
+                            <input type="text" name="wifi_ssid" id="wifi_ssid" class="form-control @error('wifi_ssid') is-invalid @enderror" value="{{ old('wifi_ssid', $menu->wifi_ssid) }}" placeholder="Ex: LeComptoir_Guest" oninput="syncSimulatorHeader()">
+                            @error('wifi_ssid')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="col-12 col-md-6">
                             <label for="wifi_password" class="form-label fw-semibold small text-dark">
                                 <i class="bi bi-key text-warning me-1"></i>Mot de Passe WiFi
                             </label>
-                            <input type="text" name="wifi_password" id="wifi_password" class="form-control" value="{{ old('wifi_password', $menu->wifi_password) }}" placeholder="Ex: bienvenue2026">
+                            <input type="text" name="wifi_password" id="wifi_password" class="form-control @error('wifi_password') is-invalid @enderror" value="{{ old('wifi_password', $menu->wifi_password) }}" placeholder="Ex: bienvenue2026">
+                            @error('wifi_password')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <!-- Phone, Instagram, Address -->
@@ -1089,27 +1252,36 @@
                             <label for="phone" class="form-label fw-semibold small text-dark">
                                 <i class="bi bi-telephone text-primary me-1"></i>Téléphone Fixe / Réservations
                             </label>
-                            <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone', $menu->phone) }}" placeholder="+212 522-000000" oninput="syncSimulatorHeader()">
+                            <input type="text" name="phone" id="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone', $menu->phone) }}" placeholder="+212 522-000000" oninput="syncSimulatorHeader()">
+                            @error('phone')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="col-12 col-md-4">
                             <label for="instagram" class="form-label fw-semibold small text-dark">
                                 <i class="bi bi-instagram text-danger me-1"></i>Instagram
                             </label>
-                            <input type="text" name="instagram" id="instagram" class="form-control" value="{{ old('instagram', $menu->instagram) }}" placeholder="@monrestaurant" oninput="syncSimulatorHeader()">
+                            <input type="text" name="instagram" id="instagram" class="form-control @error('instagram') is-invalid @enderror" value="{{ old('instagram', $menu->instagram) }}" placeholder="@monrestaurant" oninput="syncSimulatorHeader()">
+                            @error('instagram')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
 
                         <div class="col-12 col-md-4">
                             <label for="address" class="form-label fw-semibold small text-dark">
                                 <i class="bi bi-geo-alt text-secondary me-1"></i>Adresse / Emplacement
                             </label>
-                            <input type="text" name="address" id="address" class="form-control" value="{{ old('address', $menu->address) }}" placeholder="12 Rue de la Plage, Casablanca">
+                            <input type="text" name="address" id="address" class="form-control @error('address') is-invalid @enderror" value="{{ old('address', $menu->address) }}" placeholder="12 Rue de la Plage, Casablanca">
+                            @error('address')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                 </div>
 
                 <!-- Section 5: Constructeur de Catégories & Plats (Proposé ou Manuel) -->
-                <div class="studio-section-card p-4 mb-4">
+                <div class="studio-section-card p-3 p-md-4 mb-4" id="sec-items">
                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 border-bottom pb-3">
                         <div class="d-flex align-items-center gap-3">
                             <div class="studio-section-icon bg-warning-subtle text-warning-emphasis">
@@ -1168,12 +1340,12 @@
                 </div>
 
                 <!-- Form Submit Bottom Bar -->
-                <div class="card border-0 shadow-sm rounded-4 p-3 bg-light d-flex flex-row align-items-center justify-content-between">
-                    <a href="{{ route('admin.menus.show', $menu) }}" class="btn btn-outline-secondary">
+                <div class="studio-section-card p-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
+                    <a href="{{ route('admin.menus.show', $menu) }}" class="btn btn-outline-secondary rounded-pill px-4">
                         Annuler
                     </a>
 
-                    <button type="submit" class="btn btn-primary px-4 fw-semibold shadow-xs" style="background: #5736e9; border-color: #5736e9;">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm" style="background: linear-gradient(135deg, #5736e9 0%, #4324c7 100%); border: none;">
                         <i class="bi bi-check2-circle me-1"></i>Enregistrer les Modifications
                     </button>
                 </div>
@@ -1181,7 +1353,7 @@
         </div>
 
         <!-- RIGHT COLUMN: Interactive Smartphone Live Preview Simulator -->
-        <div class="col-12 col-xl-5 sticky-preview-wrapper sticky-top">
+        <div class="col-12 col-xl-5 sticky-preview-wrapper sticky-top" id="mobilePreviewStage">
             <div class="studio-canvas-stage shadow-sm">
                 <!-- Simulator Toolbar -->
                 <div class="d-flex align-items-center justify-content-between mb-3 px-1">
@@ -2047,6 +2219,25 @@ function deleteCategory(catIndex) {
     }
 }
 
+function moveCategory(catIndex, direction) {
+    const targetIdx = catIndex + direction;
+    if (targetIdx < 0 || targetIdx >= menuData.length) return;
+    const temp = menuData[catIndex];
+    menuData[catIndex] = menuData[targetIdx];
+    menuData[targetIdx] = temp;
+    renderCategoryBuilder();
+}
+
+function duplicateItem(catIndex, itemIndex) {
+    if (!menuData[catIndex] || !menuData[catIndex].items[itemIndex]) return;
+    const source = menuData[catIndex].items[itemIndex];
+    const clone = JSON.parse(JSON.stringify(source));
+    clone.id = 'dish_' + Date.now();
+    clone.name = (source.name || 'Plat') + ' (Copie)';
+    menuData[catIndex].items.splice(itemIndex + 1, 0, clone);
+    renderCategoryBuilder();
+}
+
 function updateCategoryField(catIndex, field, value) {
     if (menuData[catIndex]) {
         menuData[catIndex][field] = value;
@@ -2201,75 +2392,79 @@ function renderCategoryBuilder() {
 
                 itemsHtml += `
                     <div class="studio-item-row ${isOut ? 'is-out-of-stock' : ''}">
-                        <div class="d-flex align-items-start gap-3">
-                            <!-- Image Uploader & Preview -->
-                            <div class="flex-shrink-0 pt-0.5">
+                        <!-- Top Bar: Photo + Dish Name + Stock Toggle + Actions -->
+                        <div class="d-flex flex-wrap flex-md-nowrap align-items-end gap-3 pb-3 mb-3 border-bottom">
+                            <div class="flex-shrink-0">
                                 <input type="file" id="dish_file_${catIdx}_${itemIdx}" class="d-none" accept="image/*" onchange="handleDishImageSelect(${catIdx}, ${itemIdx}, this)">
                                 ${hasImg ? `
                                     <div class="position-relative d-inline-block">
                                         <img src="${item.image_url}" class="dish-img-thumb" alt="${escapeHtml(item.name)}" onclick="triggerDishUpload(${catIdx}, ${itemIdx})" title="Cliquer pour changer l'image">
-                                        <button type="button" class="btn btn-xs btn-danger position-absolute top-0 end-0 rounded-circle p-0 shadow-xs" style="width: 18px; height: 18px; font-size: 10px; line-height: 1; transform: translate(25%, -25%);" onclick="removeDishImage(${catIdx}, ${itemIdx})" title="Supprimer la photo">×</button>
+                                        <button type="button" class="btn btn-xs btn-danger position-absolute top-0 end-0 rounded-circle p-0 shadow-xs" style="width: 20px; height: 20px; font-size: 11px; line-height: 1; transform: translate(25%, -25%);" onclick="removeDishImage(${catIdx}, ${itemIdx})" title="Supprimer la photo">×</button>
                                     </div>
                                 ` : `
                                     <div class="dish-upload-trigger" onclick="triggerDishUpload(${catIdx}, ${itemIdx})" title="Téléverser une photo pour ce plat">
-                                        <i class="bi bi-camera fs-6 mb-0.5"></i>
+                                        <i class="bi bi-camera fs-5 mb-0.5"></i>
                                         <span>Photo</span>
                                     </div>
                                 `}
                             </div>
 
-                            <!-- Structured 2-Row Fields Grid -->
                             <div class="flex-grow-1 min-w-0">
-                                <!-- Row 1: Name, Price, Promo, Badge, Delete -->
-                                <div class="row g-2 align-items-center mb-2">
-                                    <div class="col-12 col-md-4">
-                                        <input type="text" class="form-control form-control-sm fw-semibold text-dark" value="${escapeHtml(item.name || '')}" placeholder="Nom du plat / produit" oninput="updateItemField(${catIdx}, ${itemIdx}, 'name', this.value)">
-                                    </div>
+                                <span class="dish-field-label">Nom du Plat / Article</span>
+                                <input type="text" class="form-control fw-bold text-dark" value="${escapeHtml(item.name || '')}" placeholder="Ex: Classic Double Cheese" oninput="updateItemField(${catIdx}, ${itemIdx}, 'name', this.value)">
+                            </div>
 
-                                    <div class="col-6 col-md-2">
-                                        <div class="input-group input-group-sm">
-                                            <input type="number" step="0.5" class="form-control form-control-sm font-mono fw-bold" value="${item.price ?? ''}" placeholder="Prix" oninput="updateItemField(${catIdx}, ${itemIdx}, 'price', this.value)">
-                                            <span class="input-group-text bg-white small px-1.5">${currency}</span>
-                                        </div>
-                                    </div>
+                            <div class="d-flex align-items-center gap-2 ms-auto flex-shrink-0">
+                                <label class="form-switch mb-0 d-inline-flex align-items-center gap-2 bg-light px-3 rounded-3 border" for="stock_${catIdx}_${itemIdx}" style="min-height: 42px; padding-left: 0.75rem !important; cursor: pointer;">
+                                    <input class="form-check-input m-0" style="margin-left: 0 !important; float: none !important; cursor: pointer;" type="checkbox" role="switch" id="stock_${catIdx}_${itemIdx}" ${item.is_available !== false ? 'checked' : ''} onchange="toggleItemStock(${catIdx}, ${itemIdx}, this.checked)">
+                                    <span class="text-dark fw-semibold small text-nowrap">${item.is_available !== false ? 'En stock' : 'Épuisé'}</span>
+                                </label>
 
-                                    <div class="col-6 col-md-2">
-                                        <input type="number" step="0.5" class="form-control form-control-sm font-mono text-muted" value="${item.original_price ?? ''}" placeholder="Prix barré" oninput="updateItemField(${catIdx}, ${itemIdx}, 'original_price', this.value)">
-                                    </div>
+                                <button type="button" class="btn btn-light border rounded-3 d-inline-flex align-items-center justify-content-center" style="width: 42px; height: 42px;" title="Dupliquer le plat" onclick="duplicateItem(${catIdx}, ${itemIdx})">
+                                    <i class="bi bi-copy text-secondary"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-danger rounded-3 d-inline-flex align-items-center justify-content-center" style="width: 42px; height: 42px;" title="Supprimer le plat" onclick="deleteItem(${catIdx}, ${itemIdx})">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
 
-                                    <div class="col-9 col-md-3">
-                                        <select class="form-select form-select-sm" onchange="onBadgeSelectChange(${catIdx}, ${itemIdx}, this)">
-                                            ${badgeOptionsHtml}
-                                            <option value="__custom__">✏️ Autre badge...</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-3 col-md-1 text-end">
-                                        <button type="button" class="btn btn-sm btn-link p-1 text-danger" title="Supprimer le plat" onclick="deleteItem(${catIdx}, ${itemIdx})">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
+                        <!-- Row 1: Price, Strikethrough Price, Badge (3 Equal Columns) -->
+                        <div class="row g-2.5 mb-2.5">
+                            <div class="col-6 col-sm-4">
+                                <span class="dish-field-label">Prix</span>
+                                <div class="input-group">
+                                    <input type="number" step="0.5" class="form-control font-mono fw-bold" value="${item.price ?? ''}" placeholder="0.00" oninput="updateItemField(${catIdx}, ${itemIdx}, 'price', this.value)">
+                                    <span class="input-group-text fw-bold px-2.5">${currency}</span>
                                 </div>
+                            </div>
 
-                                <!-- Row 2: Description, Manual Image URL, Stock Switch -->
-                                <div class="row g-2 align-items-center">
-                                    <div class="col-12 col-md-6">
-                                        <input type="text" class="form-control form-control-sm text-muted" value="${escapeHtml(item.description || '')}" placeholder="Ingrédients ou description (ex: Tomates fraîches, basilic...)" oninput="updateItemField(${catIdx}, ${itemIdx}, 'description', this.value)">
-                                    </div>
+                            <div class="col-6 col-sm-4">
+                                <span class="dish-field-label">Prix Barré</span>
+                                <input type="number" step="0.5" class="form-control font-mono text-muted" value="${item.original_price ?? ''}" placeholder="Optionnel" oninput="updateItemField(${catIdx}, ${itemIdx}, 'original_price', this.value)">
+                            </div>
 
-                                    <div class="col-7 col-md-4">
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text bg-light text-muted px-1.5"><i class="bi bi-link-45deg"></i></span>
-                                            <input type="text" class="form-control form-control-sm font-mono" value="${escapeHtml(hasImg ? item.image_url : '')}" placeholder="URL photo manuelle..." oninput="updateItemField(${catIdx}, ${itemIdx}, 'image_url', this.value)">
-                                        </div>
-                                    </div>
+                            <div class="col-12 col-sm-4">
+                                <span class="dish-field-label">Badge</span>
+                                <select class="form-select" onchange="onBadgeSelectChange(${catIdx}, ${itemIdx}, this)">
+                                    ${badgeOptionsHtml}
+                                    <option value="__custom__">✏️ Autre badge...</option>
+                                </select>
+                            </div>
+                        </div>
 
-                                    <div class="col-5 col-md-2 d-flex justify-content-end">
-                                        <div class="form-check form-switch mb-0 d-flex align-items-center gap-1.5">
-                                            <input class="form-check-input mt-0" type="checkbox" role="switch" id="stock_${catIdx}_${itemIdx}" ${item.is_available !== false ? 'checked' : ''} onchange="toggleItemStock(${catIdx}, ${itemIdx}, this.checked)">
-                                            <label class="form-check-label text-muted fw-medium" for="stock_${catIdx}_${itemIdx}" style="font-size: 0.72rem;">${item.is_available !== false ? 'En stock' : 'Épuisé'}</label>
-                                        </div>
-                                    </div>
+                        <!-- Row 2: Description & External Photo URL -->
+                        <div class="row g-2.5">
+                            <div class="col-12 col-md-7">
+                                <span class="dish-field-label">Ingrédients &amp; Description</span>
+                                <input type="text" class="form-control text-muted" value="${escapeHtml(item.description || '')}" placeholder="Ex: Double steak smashé, cheddar affiné, sauce maison..." oninput="updateItemField(${catIdx}, ${itemIdx}, 'description', this.value)">
+                            </div>
+
+                            <div class="col-12 col-md-5">
+                                <span class="dish-field-label">URL Photo</span>
+                                <div class="input-group">
+                                    <span class="input-group-text px-2.5"><i class="bi bi-link-45deg"></i></span>
+                                    <input type="text" class="form-control font-mono" value="${escapeHtml(hasImg ? item.image_url : '')}" placeholder="https://..." oninput="updateItemField(${catIdx}, ${itemIdx}, 'image_url', this.value)">
                                 </div>
                             </div>
                         </div>
@@ -2286,29 +2481,36 @@ function renderCategoryBuilder() {
 
         catCard.innerHTML = `
             <!-- Category Header -->
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
-                <div class="d-flex align-items-center gap-2 flex-grow-1">
-                    <span class="badge bg-secondary-subtle text-secondary font-mono">${catIdx + 1}</span>
-                    <input type="text" class="form-control fw-bold fs-6 text-dark border-0 bg-light" value="${escapeHtml(cat.name || '')}" placeholder="Nom de la catégorie (ex: Entrées, Plats...)" oninput="updateCategoryField(${catIdx}, 'name', this.value)">
+            <div class="d-flex flex-wrap flex-md-nowrap align-items-center justify-content-between gap-2 mb-2.5">
+                <div class="d-flex align-items-center gap-2 flex-grow-1 min-w-0">
+                    <span class="badge bg-primary text-white font-mono rounded-3 d-inline-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 42px; font-size: 0.85rem;">${catIdx + 1}</span>
+                    <input type="text" class="form-control fw-bold text-dark bg-white" value="${escapeHtml(cat.name || '')}" placeholder="Nom de la catégorie (ex: Entrées, Plats...)" oninput="updateCategoryField(${catIdx}, 'name', this.value)">
                 </div>
 
-                <div class="d-flex align-items-center gap-1">
-                    <button type="button" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1" onclick="addItem(${catIdx})">
+                <div class="d-flex align-items-center gap-1.5 flex-shrink-0">
+                    <span class="badge bg-white text-secondary border rounded-pill px-2.5 py-2">${(cat.items || []).length} plat(s)</span>
+                    <button type="button" class="btn btn-light border rounded-3 d-inline-flex align-items-center justify-content-center" style="width: 38px; height: 38px;" title="Monter la catégorie" ${catIdx === 0 ? 'disabled' : ''} onclick="moveCategory(${catIdx}, -1)">
+                        <i class="bi bi-arrow-up"></i>
+                    </button>
+                    <button type="button" class="btn btn-light border rounded-3 d-inline-flex align-items-center justify-content-center" style="width: 38px; height: 38px;" title="Descendre la catégorie" ${catIdx === menuData.length - 1 ? 'disabled' : ''} onclick="moveCategory(${catIdx}, 1)">
+                        <i class="bi bi-arrow-down"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary rounded-pill px-3 d-inline-flex align-items-center gap-1.5 fw-semibold" style="height: 38px; font-size: 0.82rem;" onclick="addItem(${catIdx})">
                         <i class="bi bi-plus-lg"></i>
                         <span>Ajouter Plat</span>
                     </button>
-                    <button type="button" class="btn btn-sm btn-outline-danger" title="Supprimer la catégorie" onclick="deleteCategory(${catIdx})">
+                    <button type="button" class="btn btn-outline-danger rounded-3 d-inline-flex align-items-center justify-content-center" style="width: 38px; height: 38px;" title="Supprimer la catégorie" onclick="deleteCategory(${catIdx})">
                         <i class="bi bi-trash"></i>
                     </button>
                 </div>
             </div>
 
             <div class="mb-3">
-                <input type="text" class="form-control form-control-sm text-muted" value="${escapeHtml(cat.description || '')}" placeholder="Description facultative de la catégorie..." oninput="updateCategoryField(${catIdx}, 'description', this.value)">
+                <input type="text" class="form-control bg-white text-muted" value="${escapeHtml(cat.description || '')}" placeholder="Description facultative de la catégorie..." oninput="updateCategoryField(${catIdx}, 'description', this.value)">
             </div>
 
             <!-- Items List -->
-            <div class="d-flex flex-column gap-2">
+            <div class="d-flex flex-column gap-3">
                 ${itemsHtml}
             </div>
         `;
@@ -2703,9 +2905,44 @@ document.addEventListener('DOMContentLoaded', function() {
     setMenuBgColor(initMenuBg);
     setServiceBgColor(initServiceBg);
     setServiceTextColor(initServiceText);
+    @if (old('categories_json'))
+        try {
+            const restored = JSON.parse(@json(old('categories_json')));
+            if (Array.isArray(restored)) {
+                menuData = restored;
+            }
+        } catch (e) {}
+    @endif
+
     syncSimulatorHeader();
     syncSimulatorWa();
     renderCategoryBuilder();
+
+    @if ($errors->any())
+        const firstInvalid = document.querySelector('#menuStudioForm .is-invalid');
+        if (firstInvalid) {
+            firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => firstInvalid.focus({ preventScroll: true }), 350);
+        }
+    @endif
+
+    // Track unsaved changes & Ctrl/Cmd+S shortcut
+    const studioForm = document.getElementById('menuStudioForm');
+    const unsavedBadge = document.getElementById('unsavedChangesBadge');
+    if (studioForm && unsavedBadge) {
+        studioForm.addEventListener('input', () => unsavedBadge.classList.remove('d-none'));
+        studioForm.addEventListener('change', () => unsavedBadge.classList.remove('d-none'));
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
+            e.preventDefault();
+            studioForm?.requestSubmit();
+        }
+    });
 });
 </script>
+<a href="#mobilePreviewStage" class="btn btn-primary rounded-pill px-3.5 py-2 fw-semibold d-xl-none mobile-preview-fab" style="background: linear-gradient(135deg, #5736e9 0%, #4324c7 100%); border: none;">
+    <i class="bi bi-phone me-1"></i>Aperçu Mobile
+</a>
 @endpush

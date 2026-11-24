@@ -15,6 +15,19 @@ class AdminAuthController extends Controller
     public function showLogin()
     {
         if (Auth::guard('web')->check()) {
+            $user = Auth::guard('web')->user();
+            if ($user && $user->isQrLinkEditorOnly()) {
+                return redirect()->route('qr-link-editor.index');
+            }
+
+            if ($user && $user->hasAssignedAssetsOnly()) {
+                return redirect()->route('assigned-workspace.index');
+            }
+
+            if ($user && $user->isMenuCardScannerOnly()) {
+                return redirect()->route('menu-card-scanner.index');
+            }
+
             return redirect()->route('admin.dashboard');
         }
 
@@ -56,6 +69,21 @@ class AdminAuthController extends Controller
                 details: ['login_field' => $loginField, 'email' => $user->email],
                 user: $user
             );
+
+            if ($user->isQrLinkEditorOnly()) {
+                return redirect()->route('qr-link-editor.index')
+                    ->with('success', "Welcome back, {$user->first_name}!");
+            }
+
+            if ($user->hasAssignedAssetsOnly()) {
+                return redirect()->route('assigned-workspace.index')
+                    ->with('success', "Welcome back, {$user->first_name}!");
+            }
+
+            if ($user->isMenuCardScannerOnly()) {
+                return redirect()->route('menu-card-scanner.index')
+                    ->with('success', "Welcome back, {$user->first_name}!");
+            }
 
             return redirect()->intended(route('admin.dashboard'))->with('success', "Welcome back, {$user->first_name}!");
         }

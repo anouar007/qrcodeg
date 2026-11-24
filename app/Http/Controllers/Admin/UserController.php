@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Models\ActivityLog;
+use App\Models\DigitalCard;
 use App\Models\Permission;
+use App\Models\RestaurantMenu;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -90,8 +92,10 @@ class UserController extends Controller
         $rolePermissionsMap = $roles->mapWithKeys(fn (Role $r) => [
             $r->id => $r->permissions->pluck('id')->values()->all(),
         ])->all();
+        $allMenus = RestaurantMenu::orderBy('title')->get(['id', 'title', 'brand_name', 'status']);
+        $allDigitalCards = DigitalCard::orderBy('name')->get(['id', 'name', 'full_name', 'slug', 'status']);
 
-        return view('admin.users.create', compact('roles', 'permissionGroups', 'rolePermissionsMap'));
+        return view('admin.users.create', compact('roles', 'permissionGroups', 'rolePermissionsMap', 'allMenus', 'allDigitalCards'));
     }
 
     /**
@@ -127,6 +131,8 @@ class UserController extends Controller
         }
 
         $user->directPermissions()->sync($request->input('permissions', []));
+        $user->assignedMenus()->sync($request->input('assigned_menus', []));
+        $user->assignedDigitalCards()->sync($request->input('assigned_digital_cards', []));
 
         ActivityLog::log(
             action: 'user_created',
@@ -145,7 +151,7 @@ class UserController extends Controller
     {
         Gate::authorize('view', $user);
 
-        $user->load(['roles.permissions', 'directPermissions'])
+        $user->load(['roles.permissions', 'directPermissions', 'assignedMenus', 'assignedDigitalCards'])
             ->loadCount(['digitalCards', 'qrCodes', 'qrDocuments', 'activityLogs']);
 
         $permissionGroups = $this->getCategorizedPermissions();
@@ -181,14 +187,16 @@ class UserController extends Controller
 
         $roles = Role::with('permissions')->get();
         $permissionGroups = $this->getCategorizedPermissions();
-        $user->load(['roles.permissions', 'directPermissions'])
+        $user->load(['roles.permissions', 'directPermissions', 'assignedMenus', 'assignedDigitalCards'])
             ->loadCount(['digitalCards', 'qrCodes', 'activityLogs']);
 
         $rolePermissionsMap = $roles->mapWithKeys(fn (Role $r) => [
             $r->id => $r->permissions->pluck('id')->values()->all(),
         ])->all();
+        $allMenus = RestaurantMenu::orderBy('title')->get(['id', 'title', 'brand_name', 'status']);
+        $allDigitalCards = DigitalCard::orderBy('name')->get(['id', 'name', 'full_name', 'slug', 'status']);
 
-        return view('admin.users.edit', compact('user', 'roles', 'permissionGroups', 'rolePermissionsMap'));
+        return view('admin.users.edit', compact('user', 'roles', 'permissionGroups', 'rolePermissionsMap', 'allMenus', 'allDigitalCards'));
     }
 
     /**
@@ -225,6 +233,8 @@ class UserController extends Controller
         $user->update($updateData);
         $user->roles()->sync($validated['roles'] ?? []);
         $user->directPermissions()->sync($request->input('permissions', []));
+        $user->assignedMenus()->sync($request->input('assigned_menus', []));
+        $user->assignedDigitalCards()->sync($request->input('assigned_digital_cards', []));
 
         ActivityLog::log(
             action: 'user_updated',

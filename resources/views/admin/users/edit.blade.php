@@ -424,6 +424,64 @@
                     @endforeach
                 </div>
             </div>
+
+            <!-- Section 5: Assigned Menus & Digital Cards -->
+            <div class="studio-section-card mt-4">
+                <div class="studio-section-header">
+                    <div class="d-flex align-items-center gap-2.5">
+                        <span class="studio-step-badge">5</span>
+                        <div>
+                            <h5 class="fw-bold text-dark mb-0">Menus &amp; Cartes Digitales Assignés</h5>
+                            <small class="text-muted">Sélectionnez les menus et cartes digitales que cet utilisateur pourra modifier</small>
+                        </div>
+                    </div>
+                    <span class="badge bg-info-subtle text-info border border-info-subtle">Accès Ciblé</span>
+                </div>
+
+                @php
+                    $selectedMenuIds = old('assigned_menus', $user->assignedMenus->pluck('id')->all());
+                    $selectedCardIds = old('assigned_digital_cards', $user->assignedDigitalCards->pluck('id')->all());
+                @endphp
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-dark">
+                            <i class="bi bi-journal-richtext text-primary me-1"></i>Menus ({{ $allMenus->count() }})
+                        </label>
+                        <div class="border rounded-3 p-2.5 bg-light" style="max-height: 220px; overflow-y: auto;">
+                            @forelse($allMenus as $menu)
+                                <div class="form-check mb-1.5">
+                                    <input class="form-check-input" type="checkbox" name="assigned_menus[]" value="{{ $menu->id }}" id="assignMenu{{ $menu->id }}" {{ in_array($menu->id, $selectedMenuIds) ? 'checked' : '' }}>
+                                    <label class="form-check-label small" for="assignMenu{{ $menu->id }}">
+                                        <span class="fw-semibold text-dark">{{ $menu->title }}</span>
+                                        <span class="text-muted">— {{ $menu->brand_name }}</span>
+                                    </label>
+                                </div>
+                            @empty
+                                <div class="text-muted small py-2 text-center">Aucun menu disponible.</div>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-dark">
+                            <i class="bi bi-person-vcard text-info me-1"></i>Cartes Digitales ({{ $allDigitalCards->count() }})
+                        </label>
+                        <div class="border rounded-3 p-2.5 bg-light" style="max-height: 220px; overflow-y: auto;">
+                            @forelse($allDigitalCards as $card)
+                                <div class="form-check mb-1.5">
+                                    <input class="form-check-input" type="checkbox" name="assigned_digital_cards[]" value="{{ $card->id }}" id="assignCard{{ $card->id }}" {{ in_array($card->id, $selectedCardIds) ? 'checked' : '' }}>
+                                    <label class="form-check-label small" for="assignCard{{ $card->id }}">
+                                        <span class="fw-semibold text-dark">{{ $card->full_name ?: $card->name }}</span>
+                                        <span class="text-muted font-mono">({{ $card->slug }})</span>
+                                    </label>
+                                </div>
+                            @empty
+                                <div class="text-muted small py-2 text-center">Aucune carte digitale disponible.</div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Sticky Right Summary Sidebar -->

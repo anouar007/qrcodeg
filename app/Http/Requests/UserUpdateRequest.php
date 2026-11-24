@@ -61,6 +61,10 @@ class UserUpdateRequest extends FormRequest
             'roles.*' => 'exists:roles,id',
             'permissions' => 'nullable|array',
             'permissions.*' => 'exists:permissions,id',
+            'assigned_menus' => 'nullable|array',
+            'assigned_menus.*' => 'exists:restaurant_menus,id',
+            'assigned_digital_cards' => 'nullable|array',
+            'assigned_digital_cards.*' => 'exists:digital_cards,id',
         ];
     }
 

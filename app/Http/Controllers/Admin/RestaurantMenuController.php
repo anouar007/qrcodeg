@@ -24,6 +24,11 @@ class RestaurantMenuController extends Controller
     {
         $query = RestaurantMenu::with('client');
 
+        $user = auth('web')->user();
+        if ($user && ! $user->isAdmin() && $user->assignedMenus()->exists()) {
+            $query->whereIn('id', $user->assignedMenus()->pluck('restaurant_menus.id'));
+        }
+
         if ($request->filled('search')) {
             $search = trim($request->search);
             $query->where(function ($q) use ($search) {
@@ -84,6 +89,11 @@ class RestaurantMenuController extends Controller
      */
     public function create(Request $request): View
     {
+        $user = auth('web')->user();
+        if ($user && ($user->hasAssignedAssetsOnly() || $user->isMenuCardScannerOnly())) {
+            abort(403);
+        }
+
         $clients = Client::where('status', 'active')->orderBy('company_name')->get();
         $selectedClientId = $request->input('client_id');
 
@@ -95,6 +105,11 @@ class RestaurantMenuController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $user = auth('web')->user();
+        if ($user && ($user->hasAssignedAssetsOnly() || $user->isMenuCardScannerOnly())) {
+            abort(403);
+        }
+
         $validated = $request->validate([
             'client_id' => ['nullable', 'exists:clients,id'],
             'title' => ['required', 'string', 'max:150'],
@@ -149,7 +164,7 @@ class RestaurantMenuController extends Controller
         $slug = RestaurantMenu::generateUniqueSlug($validated['brand_name'].' '.$validated['title']);
 
         $menu = RestaurantMenu::create([
-            'client_id' => $validated['client_id'] ?: null,
+            'client_id' => array_key_exists('client_id', $validated) ? ($validated['client_id'] ?: null) : $menu->client_id,
             'title' => $validated['title'],
             'slug' => $slug,
             'brand_name' => $validated['brand_name'],
@@ -196,6 +211,8 @@ class RestaurantMenuController extends Controller
      */
     public function show(RestaurantMenu $menu): View
     {
+        abort_unless(auth('web')->user()?->canAccessMenu($menu), 403);
+
         $menu->load('client');
         $publicUrl = route('menu.public.show', $menu->slug);
 
@@ -213,6 +230,8 @@ class RestaurantMenuController extends Controller
      */
     public function edit(RestaurantMenu $menu): View
     {
+        abort_unless(auth('web')->user()?->canAccessMenu($menu), 403);
+
         $clients = Client::where('status', 'active')->orderBy('company_name')->get();
 
         return view('admin.menus.edit', compact('menu', 'clients'));
@@ -223,6 +242,8 @@ class RestaurantMenuController extends Controller
      */
     public function update(Request $request, RestaurantMenu $menu): RedirectResponse
     {
+        abort_unless(auth('web')->user()?->canAccessMenu($menu), 403);
+
         $validated = $request->validate([
             'client_id' => ['nullable', 'exists:clients,id'],
             'title' => ['required', 'string', 'max:150'],
@@ -257,7 +278,7 @@ class RestaurantMenuController extends Controller
         ]);
 
         $updateData = [
-            'client_id' => $validated['client_id'] ?: null,
+            'client_id' => array_key_exists('client_id', $validated) ? ($validated['client_id'] ?: null) : $menu->client_id,
             'title' => $validated['title'],
             'brand_name' => $validated['brand_name'],
             'brand_type' => $validated['brand_type'],
@@ -394,6 +415,11 @@ class RestaurantMenuController extends Controller
      */
     public function destroy(RestaurantMenu $menu): RedirectResponse
     {
+        $user = auth('web')->user();
+        if ($user && ($user->hasAssignedAssetsOnly() || $user->isMenuCardScannerOnly())) {
+            abort(403);
+        }
+
         $title = $menu->title;
         $menu->delete();
 
@@ -406,6 +432,8 @@ class RestaurantMenuController extends Controller
      */
     public function toggleStatus(RestaurantMenu $menu): RedirectResponse
     {
+        abort_unless(auth('web')->user()?->canAccessMenu($menu), 403);
+
         $newStatus = $menu->status === 'active' ? 'draft' : 'active';
         $menu->update(['status' => $newStatus]);
 
@@ -417,6 +445,8 @@ class RestaurantMenuController extends Controller
      */
     public function downloadQr(RestaurantMenu $menu, string $format): Response
     {
+        abort_unless(auth('web')->user()?->canAccessMenu($menu), 403);
+
         $publicUrl = route('menu.public.show', $menu->slug);
         $cleanName = Str::slug($menu->brand_name.'-'.$menu->title);
 

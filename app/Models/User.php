@@ -90,6 +90,16 @@ class User extends Authenticatable
         return $this->hasMany(DigitalCard::class, 'user_id');
     }
 
+    public function assignedMenus(): BelongsToMany
+    {
+        return $this->belongsToMany(RestaurantMenu::class, 'restaurant_menu_user')->withTimestamps();
+    }
+
+    public function assignedDigitalCards(): BelongsToMany
+    {
+        return $this->belongsToMany(DigitalCard::class, 'digital_card_user')->withTimestamps();
+    }
+
     public function clientHistories(): HasMany
     {
         return $this->hasMany(ClientHistory::class, 'user_id');
@@ -120,6 +130,80 @@ class User extends Authenticatable
         return $this->hasRole('admin')
             || str_starts_with((string) $this->email, 'admin@')
             || $this->username === 'admin';
+    }
+
+    /**
+     * Check if the user only holds the minimalist QR Link Editor role.
+     */
+    public function isQrLinkEditorOnly(): bool
+    {
+        return ! $this->isAdmin()
+            && $this->hasRole('qr_link_editor')
+            && $this->roles->count() === 1;
+    }
+
+    /**
+     * Check if the user only holds the minimalist Menu & Card Scanner role.
+     */
+    public function isMenuCardScannerOnly(): bool
+    {
+        return ! $this->isAdmin()
+            && $this->hasRole('menu_card_scanner')
+            && $this->roles->count() === 1;
+    }
+
+    /**
+     * Check if the user is restricted to editing only their assigned menus or digital cards.
+     */
+    public function hasAssignedAssetsOnly(): bool
+    {
+        if ($this->isAdmin()) {
+            return false;
+        }
+
+        $hasAssigned = $this->assignedMenus()->exists() || $this->assignedDigitalCards()->exists();
+
+        return $hasAssigned && ! $this->hasAnyPermission([
+            'view_dashboard',
+            'view_clients',
+            'view_users',
+            'manage_roles',
+            'manage_settings',
+        ]);
+    }
+
+    public function canAccessMenu(RestaurantMenu $menu): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if ($this->hasPermission('scan_edit_menu_card') && in_array($menu->id, session('scanned_menu_ids', []), true)) {
+            return true;
+        }
+
+        if ($this->assignedMenus()->exists()) {
+            return $this->assignedMenus()->where('restaurant_menus.id', $menu->id)->exists();
+        }
+
+        return ! $this->hasAssignedAssetsOnly() && ! $this->isMenuCardScannerOnly();
+    }
+
+    public function canAccessDigitalCard(DigitalCard $card): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if ($this->hasPermission('scan_edit_menu_card') && in_array($card->id, session('scanned_card_ids', []), true)) {
+            return true;
+        }
+
+        if ($this->assignedDigitalCards()->where('digital_cards.id', $card->id)->exists()) {
+            return true;
+        }
+
+        return $this->hasPermission('edit_digital_cards') && ! $this->assignedDigitalCards()->exists();
     }
 
     public function hasPermission(string $permissionSlug): bool
